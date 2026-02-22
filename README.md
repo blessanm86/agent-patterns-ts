@@ -1,16 +1,18 @@
-# 🏨 Hotel ReAct Agent
+# 🏨 Reason-Act Agent — TypeScript
 
-A minimal ReAct (Reason + Act) agent built in TypeScript, using a local model via Ollama.
+A minimal Reason + Act agent built in TypeScript, using a local model via Ollama.
 
 No frameworks. No LangChain. Just the loop.
 
 Based on the Python original: [smaameri/basic-react-agent](https://github.com/smaameri/basic-react-agent)
 
+📖 **[Read the blog post](./blog.md)** — covers the agent architecture, how evals work, and the LLM-as-judge pattern.
+
 ---
 
-## What is a ReAct Agent?
+## What is a Reason-Act Agent?
 
-ReAct = **Re**ason + **Act**
+Reason + Act (sometimes written ReAct)
 
 The agent loops like this:
 
@@ -50,7 +52,7 @@ It's a hotel reservation assistant that:
 6. Asks for confirmation
 7. **Calls `create_reservation`** → books the room and returns a reservation ID
 
-The multi-step tool usage is what makes this a good ReAct demo — the model genuinely
+The multi-step tool usage is what makes this a good demo — the model genuinely
 has to reason between calls (e.g. "rooms are available, now I should show options and ask preference").
 
 ---
@@ -105,7 +107,7 @@ pnpm dev
 ```
 src/
 ├── index.ts    # CLI loop — handles user input and conversation history
-├── agent.ts    # The ReAct loop — the heart of the agent
+├── agent.ts    # The Reason-Act loop — the heart of the agent
 ├── tools.ts    # Tool definitions (what the model can call) + implementations
 └── types.ts    # Shared TypeScript types
 ```

@@ -2,9 +2,17 @@
 
 export type Role = 'user' | 'assistant' | 'tool'
 
+export interface ToolCall {
+  function: {
+    name: string
+    arguments: Record<string, string>
+  }
+}
+
 export interface Message {
   role: Role
   content: string
+  tool_calls?: ToolCall[]
 }
 
 // ─── Tool Types ───────────────────────────────────────────────────────────────

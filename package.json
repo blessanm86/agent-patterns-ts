@@ -1,19 +1,25 @@
 {
-  "name": "hotel-react-agent",
+  "name": "reason-act-agent-ts",
   "version": "1.0.0",
   "description": "A simple ReAct agent for hotel reservations using Ollama",
   "type": "module",
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "eval": "evalite run",
+    "eval:watch": "evalite watch"
   },
   "dependencies": {
+    "autoevals": "^0.0.132",
+    "dotenv": "^17.3.1",
+    "evalite": "^0.19.0",
     "ollama": "^0.5.9"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "vitest": "^4.0.18"
   }
 }
