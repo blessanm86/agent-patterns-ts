@@ -12,7 +12,7 @@ No frameworks. No LangChain. Just the patterns.
 
 | Agent | Pattern | Domain |
 |---|---|---|
-| `pnpm dev` | ReAct (Reason+Act) | Hotel reservation assistant |
+| `pnpm dev:react` | ReAct (Reason+Act) | Hotel reservation assistant |
 | `pnpm dev:plan-execute` | Plan+Execute | Trip planner |
 
 Each agent is a self-contained example of a different way to structure tool-calling with an LLM. Run them side by side to see the difference in practice.
@@ -126,7 +126,7 @@ cp .env.example .env
 ### 6. Run
 
 ```bash
-pnpm dev                # Hotel reservation — ReAct pattern
+pnpm dev:react          # Hotel reservation — ReAct pattern
 pnpm dev:plan-execute   # Trip planner — Plan+Execute pattern
 ```
 
