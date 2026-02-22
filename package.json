@@ -1,10 +1,11 @@
 {
-  "name": "reason-act-agent-ts",
+  "name": "agent-patterns-ts",
   "version": "1.0.0",
   "description": "A simple ReAct agent for hotel reservations using Ollama",
   "type": "module",
   "scripts": {
     "dev": "tsx src/index.ts",
+    "dev:plan-execute": "tsx src/plan-execute/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

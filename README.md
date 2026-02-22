@@ -6,6 +6,8 @@ No frameworks. No LangChain. Just the loop.
 
 Based on the Python original: [smaameri/basic-react-agent](https://github.com/smaameri/basic-react-agent)
 
+Full source: [blessanm86/agent-patterns-ts](https://github.com/blessanm86/agent-patterns-ts)
+
 📖 **[Read the blog post](./blog.md)** — covers the agent architecture, how evals work, and the LLM-as-judge pattern.
 
 ---
@@ -97,7 +99,8 @@ cp .env.example .env
 ### 6. Run
 
 ```bash
-pnpm dev
+pnpm dev                # Hotel reservation — ReAct pattern
+pnpm dev:plan-execute   # Trip planner — Plan+Execute pattern
 ```
 
 ---
@@ -106,11 +109,32 @@ pnpm dev
 
 ```
 src/
-├── index.ts    # CLI loop — handles user input and conversation history
-├── agent.ts    # The Reason-Act loop — the heart of the agent
-├── tools.ts    # Tool definitions (what the model can call) + implementations
-└── types.ts    # Shared TypeScript types
+├── index.ts          # CLI loop — handles user input and conversation history
+├── agent.ts          # The Reason-Act loop — the heart of the agent
+├── tools.ts          # Tool definitions (what the model can call) + implementations
+├── types.ts          # Shared TypeScript types
+└── plan-execute/
+    ├── index.ts      # CLI entry — Plan+Execute trip planner
+    ├── agent.ts      # The Plan+Execute loop — plan first, execute second
+    └── tools.ts      # Trip planner tools (flights, hotels, attractions, restaurants)
 ```
+
+---
+
+## Pattern Comparison
+
+This repo includes two agents demonstrating two different agentic patterns:
+
+| | ReAct | Plan+Execute |
+|---|---|---|
+| Tool call decisions | One at a time, after seeing each result | All upfront before any tools run |
+| Adapts to unexpected results | Yes | No — plan is fixed |
+| Plan is visible before execution | No | Yes |
+| Best for | Dependent sequential steps | Independent parallel-ish steps |
+
+The hotel agent uses **ReAct** because each step depends on the previous one (you can't confirm price until you know what's available). The trip planner uses **Plan+Execute** because the four research tasks (flights, hotels, attractions, restaurants) are independent — you don't need flight results to search for restaurants.
+
+---
 
 ### Key concept: two parts to every tool
 

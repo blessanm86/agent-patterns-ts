@@ -1,6 +1,6 @@
 # Testing AI Agents: From Tool Trajectories to LLM Judges
 
-*Using a hotel reservation agent as the running example. Full source: [blessanm86/reason-act-agent-ts](https://github.com/blessanm86/reason-act-agent-ts)*
+*Using a hotel reservation agent as the running example. Full source: [blessanm86/agent-patterns-ts](https://github.com/blessanm86/agent-patterns-ts)*
 
 ---
 
@@ -350,6 +350,181 @@ Expected results on the first run:
 
 ---
 
+## Plan + Execute: A Different Approach
+
+ReAct works well when each step depends on the previous result — you can't confirm a room price until you've checked availability. But not all tasks have this dependency structure.
+
+Consider trip planning: searching for flights, hotels, attractions, and restaurants are four **independent** tasks. You don't need flight results before you can look up restaurants. You can decide all four tool calls upfront, run them in any order, and then synthesize the results.
+
+This is the **Plan+Execute** pattern:
+
+```mermaid
+flowchart TD
+    A([User request]) --> B[Planner LLM call\nformat: json]
+    B --> C[Structured plan\nall tool calls decided]
+    C --> D[Execute step 1]
+    C --> E[Execute step 2]
+    C --> F[Execute step 3]
+    C --> G[Execute step 4]
+    D & E & F & G --> H[Synthesizer LLM call]
+    H --> I([Final itinerary])
+```
+
+Compare with ReAct, where the model decides each tool call only after seeing the previous result:
+
+```mermaid
+flowchart TD
+    A([User request]) --> B[LLM call]
+    B -->|tool call| C[Execute tool]
+    C -->|result| B
+    B -->|no tool calls| D([Reply to user])
+```
+
+In Plan+Execute, the phases are completely separated. The plan is a first-class object — visible, inspectable, and testable — before any tools run.
+
+### The Implementation
+
+`createPlan()` is a single LLM call with `format: 'json'`:
+
+```ts
+export async function createPlan(userMessage: string): Promise<Plan> {
+  const response = await ollama.chat({
+    model: MODEL,
+    messages: [
+      { role: 'system', content: PLANNER_PROMPT },
+      { role: 'user', content: userMessage },
+    ],
+    format: 'json',
+  })
+  return JSON.parse(response.message.content) as Plan
+}
+```
+
+The planner prompt lists available tools and asks for a JSON plan:
+
+```
+Available tools:
+- search_flights: Search for available flights between two cities on a given date.
+- search_hotels: Search for hotels in a city for given dates.
+- find_attractions: Find top attractions in a city.
+- find_restaurants: Find restaurant recommendations in a city.
+
+Output a JSON object with this structure:
+{ "goal": "...", "steps": [{ "tool": "...", "args": {...}, "description": "..." }] }
+```
+
+`runPlanExecuteAgent()` orchestrates the three phases:
+
+```ts
+export async function runPlanExecuteAgent(userMessage: string, history: Message[]): Promise<Message[]> {
+  // Phase 1: Plan — one LLM call, returns structured plan
+  const plan = await createPlan(userMessage)
+  messages.push({ role: 'assistant', content: planSummary })
+
+  // Phase 2: Execute — run each tool mechanically, no LLM involved
+  for (const step of plan.steps) {
+    const result = executeTripTool(step.tool, step.args)
+    messages.push({ role: 'tool', content: result })
+  }
+
+  // Phase 3: Synthesize — one LLM call turns results into itinerary
+  const synthResponse = await ollama.chat({ model: MODEL, system: SYNTHESIZER_PROMPT, messages })
+  messages.push(synthResponse.message)
+
+  return messages
+}
+```
+
+There's no loop. The plan is fixed. Phase 2 is pure mechanical execution — no reasoning, no adaptation.
+
+### Why the Trip Planner Fits Plan+Execute
+
+The trip planner's four research tasks have **no dependencies between them**:
+
+- Flight results don't affect what hotels are available
+- Hotel results don't affect what attractions exist
+- Attraction data doesn't change what restaurants to recommend
+
+ReAct would work here too, but it would be slower (four separate LLM calls interleaved with tool calls) and the reasoning trajectory would be harder to test. With Plan+Execute, you get a single fast planning call, then deterministic execution.
+
+When the tasks *do* have dependencies (can't confirm price until you've checked availability), ReAct is the right pattern.
+
+### Phase 3 Evals: Testing the Plan
+
+The most interesting property of Plan+Execute for eval design: **you can test the plan before running any tools**.
+
+`createPlan()` returns a `Plan` object. You can assert on its structure directly:
+
+```ts
+evalite('Plan covers required tools', {
+  data: async () => [{ input: 'Plan a 3-day trip to Paris from New York, departing 2026-07-10' }],
+  task: async (input) => {
+    const plan = await createPlan(input)
+    return plan.steps.map((s) => s.tool)  // ['search_flights', 'search_hotels', ...]
+  },
+  scorers: [
+    createScorer({
+      name: 'All 4 tools included',
+      scorer: ({ output }) =>
+        ['search_flights', 'search_hotels', 'find_attractions', 'find_restaurants']
+          .every((t) => output.includes(t)) ? 1 : 0,
+    }),
+    createScorer({
+      name: 'Flights before hotels',
+      scorer: ({ output }) => {
+        const flightIdx = output.indexOf('search_flights')
+        const hotelIdx = output.indexOf('search_hotels')
+        return flightIdx !== -1 && hotelIdx !== -1 && flightIdx < hotelIdx ? 1 : 0
+      },
+    }),
+  ],
+})
+```
+
+You can also check argument fidelity at the plan level:
+
+```ts
+evalite('Plan argument fidelity', {
+  data: async () => [{ input: 'Plan a 3-day trip to Tokyo from London, departing 2026-08-01' }],
+  task: async (input) => {
+    const plan = await createPlan(input)
+    return plan.steps
+  },
+  scorers: [
+    createScorer({
+      name: 'search_flights destination is Tokyo',
+      scorer: ({ output }) => {
+        const flightStep = output.find((s) => s.tool === 'search_flights')
+        const dest = flightStep?.args.destination ?? ''
+        return dest.toLowerCase().includes('tokyo') ? 1 : 0
+      },
+    }),
+  ],
+})
+```
+
+This kind of eval is **only possible with Plan+Execute**. In ReAct, there's no plan object to inspect — the model makes tool call decisions one at a time, interleaved with execution. You can test the tool call trajectory after the fact, but you can't test "was the plan sensible?" before tools ran.
+
+The third eval uses an LLM judge for the final itinerary quality — same pattern as Phase 2:
+
+```ts
+evalite('LLM judge — itinerary quality', {
+  data: async () => [{ input: 'Plan a 3-day trip to Paris from New York, departing 2026-07-10' }],
+  task: async (input) => {
+    const history = await runPlanExecuteAgent(input, [])
+    return lastAssistantMessage(history)
+  },
+  scorers: [
+    makeOllamaJudge(
+      'Itinerary includes specific details',
+      'Does the itinerary include specific flight options (with airline or price), hotel recommendations (with name), and at least 3 named attractions to visit?',
+    ),
+  ],
+})
+```
+
+---
+
 ## Key Takeaways
 
 **1. Trajectory evals first.** Before you worry about response quality, verify the tool call sequence. It's the cheapest, most reliable signal you have.
@@ -361,6 +536,8 @@ Expected results on the first run:
 **4. Use LLM judges for subjective quality.** Trajectory evals can't tell you if the final response was clear, friendly, or complete. That's what judges are for — but they're slower and less reliable, so use them sparingly.
 
 **5. Local-first evals are fine.** Running `qwen2.5:7b` as both agent and judge is entirely valid for development. The model might be less capable than GPT-4, but the eval infrastructure is the same. You can swap in a stronger model when you need higher fidelity.
+
+**6. Match the pattern to the dependency structure of the task.** ReAct shines when each step depends on the previous result. Plan+Execute is better when tasks are independent — you get a faster pipeline and a structured plan you can test directly. Understanding which pattern fits your problem is as important as getting the implementation right.
 
 ---
 
