@@ -1,29 +1,34 @@
-# 🏨 Reason-Act Agent — TypeScript
+# Agent Patterns — TypeScript
 
-A minimal Reason + Act agent built in TypeScript, using a local model via Ollama.
+Two minimal agent implementations in TypeScript, using a local model via Ollama.
 
-No frameworks. No LangChain. Just the loop.
+No frameworks. No LangChain. Just the patterns.
 
-Based on the Python original: [smaameri/basic-react-agent](https://github.com/smaameri/basic-react-agent)
-
-Full source: [blessanm86/agent-patterns-ts](https://github.com/blessanm86/agent-patterns-ts)
-
-📖 **[Read the blog post](./blog.md)** — covers the agent architecture, how evals work, and the LLM-as-judge pattern.
+📖 **[Read the blog post](./blog.md)** — covers both patterns, eval design, and LLM-as-judge scoring.
 
 ---
 
-## What is a Reason-Act Agent?
+## What's in this repo
 
-Reason + Act (sometimes written ReAct)
+| Agent | Pattern | Domain |
+|---|---|---|
+| `pnpm dev` | ReAct (Reason+Act) | Hotel reservation assistant |
+| `pnpm dev:plan-execute` | Plan+Execute | Trip planner |
 
-The agent loops like this:
+Each agent is a self-contained example of a different way to structure tool-calling with an LLM. Run them side by side to see the difference in practice.
+
+---
+
+## ReAct — Reason + Act
+
+The model decides tool calls **one at a time**, after seeing each result. The loop runs until the model has enough information to respond.
 
 ```
 User message
     │
     ▼
 ┌─────────────────────────────────────────┐
-│           THE REACT LOOP                │
+│             THE REACT LOOP              │
 │                                         │
 │  Model reasons about the conversation   │
 │              │                          │
@@ -38,24 +43,46 @@ User message
 └──────────────────── Reply to user ──────┘
 ```
 
-The "agent" is just this loop — the model deciding when to call tools and what to do with the results.
+The hotel agent uses ReAct because each step depends on the previous result — you can't confirm a price until you've checked availability, and you shouldn't create a reservation until the guest confirms.
 
 ---
 
-## What does this agent do?
+## Plan+Execute
 
-It's a hotel reservation assistant that:
+The model decides **all tool calls upfront** in a single planning step, without seeing any results. The plan is then executed mechanically, and a final LLM call synthesizes the results.
 
-1. Greets the guest and collects their name
-2. Asks for check-in/check-out dates
-3. **Calls `check_availability`** → shows available rooms and prices
-4. Asks which room type they want
-5. **Calls `get_room_price`** → confirms total cost
-6. Asks for confirmation
-7. **Calls `create_reservation`** → books the room and returns a reservation ID
+```
+User request
+    │
+    ▼
+┌─────────────────┐
+│  Planner LLM    │  ← decides ALL tool calls here
+│  returns JSON   │
+└────────┬────────┘
+         │ plan (fixed)
+    ┌────┴─────────────────────┐
+    ▼        ▼        ▼        ▼
+  tool 1   tool 2   tool 3   tool 4   ← no LLM involved
+    └────┬─────────────────────┘
+         │ all results
+         ▼
+┌─────────────────┐
+│ Synthesizer LLM │  ← produces final response
+└─────────────────┘
+```
 
-The multi-step tool usage is what makes this a good demo — the model genuinely
-has to reason between calls (e.g. "rooms are available, now I should show options and ask preference").
+The trip planner uses Plan+Execute because its four research tasks (flights, hotels, attractions, restaurants) are independent — you don't need flight results before you can look up restaurants.
+
+---
+
+## When to use which
+
+| | ReAct | Plan+Execute |
+|---|---|---|
+| Tool call decisions | One at a time, after seeing each result | All upfront before any tools run |
+| Adapts to unexpected results | Yes | No — plan is fixed |
+| Plan is visible before execution | No | Yes |
+| Best for | Dependent sequential steps | Independent parallel-ish steps |
 
 ---
 
@@ -110,40 +137,40 @@ pnpm dev:plan-execute   # Trip planner — Plan+Execute pattern
 ```
 src/
 ├── index.ts          # CLI loop — handles user input and conversation history
-├── agent.ts          # The Reason-Act loop — the heart of the agent
-├── tools.ts          # Tool definitions (what the model can call) + implementations
+├── agent.ts          # The ReAct loop
+├── tools.ts          # Hotel reservation tools + mock data
 ├── types.ts          # Shared TypeScript types
+├── eval-utils.ts     # Helpers for inspecting agent history in evals
 └── plan-execute/
     ├── index.ts      # CLI entry — Plan+Execute trip planner
-    ├── agent.ts      # The Plan+Execute loop — plan first, execute second
-    └── tools.ts      # Trip planner tools (flights, hotels, attractions, restaurants)
+    ├── agent.ts      # createPlan() + runPlanExecuteAgent()
+    └── tools.ts      # Trip planner tools + mock data
+
+evals/
+├── phase1-tool-calls.eval.ts   # Deterministic trajectory evals (ReAct)
+├── phase2-llm-judge.eval.ts    # LLM-as-judge evals (ReAct)
+└── phase3-plan-execute.eval.ts # Plan structure + itinerary quality evals
 ```
 
 ---
 
-## Pattern Comparison
+## Running evals
 
-This repo includes two agents demonstrating two different agentic patterns:
-
-| | ReAct | Plan+Execute |
-|---|---|---|
-| Tool call decisions | One at a time, after seeing each result | All upfront before any tools run |
-| Adapts to unexpected results | Yes | No — plan is fixed |
-| Plan is visible before execution | No | Yes |
-| Best for | Dependent sequential steps | Independent parallel-ish steps |
-
-The hotel agent uses **ReAct** because each step depends on the previous one (you can't confirm price until you know what's available). The trip planner uses **Plan+Execute** because the four research tasks (flights, hotels, attractions, restaurants) are independent — you don't need flight results to search for restaurants.
+```bash
+pnpm eval          # run all evals once
+pnpm eval:watch    # watch mode with UI at localhost:3006
+```
 
 ---
 
-### Key concept: two parts to every tool
+## Key concept: two parts to every tool
 
-In `tools.ts` you'll notice two distinct things:
+In both agents, every tool has two completely separate parts:
 
-- **Tool definitions** (`tools` array) — JSON schema describing what the tool does and its parameters. This is what gets sent to the model so it knows what's available.
-- **Tool implementations** (the functions) — the actual code that runs. The model never sees this.
+- **Definition** — JSON schema sent to the model describing what the tool does and what parameters it accepts. The model reads this to decide when and how to call it.
+- **Implementation** — the actual code that runs. The model never sees this.
 
-The model decides *when* and *how* to call a tool based on the definition. You decide *what actually happens* in the implementation.
+This separation matters for debugging: if an eval fails, you immediately know whether to look at the model side (definition, prompt) or the code side (implementation).
 
 ---
 
