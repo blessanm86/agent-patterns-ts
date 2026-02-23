@@ -18,8 +18,9 @@ Minimal TypeScript implementations of common agentic patterns, using a local mod
 ## Setup
 
 ```bash
-# 1. Install and start Ollama (https://ollama.com), then pull the model
+# 1. Install Ollama (https://ollama.com), pull the model, and start it
 ollama pull qwen2.5:7b
+ollama serve
 
 # 2. Install dependencies and configure environment
 pnpm install

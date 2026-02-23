@@ -18,6 +18,12 @@ pnpm start
 # Evals
 pnpm eval         # run all evals once
 pnpm eval:watch   # watch mode with UI at localhost:3006
+
+# Lint & format (oxlint + oxfmt — also runs automatically on pre-commit)
+pnpm lint         # check for lint errors
+pnpm lint:fix     # auto-fix lint errors
+pnpm fmt          # format all files in src/
+pnpm fmt:check    # check formatting without writing
 ```
 
 **Prerequisites:** Ollama must be running locally (`ollama serve`) with the model pulled (`ollama pull qwen2.5:7b`). Copy `.env.example` to `.env` to configure the model and host.
@@ -62,12 +68,14 @@ Every tool has two distinct parts — a pattern to preserve when adding new tool
 |------|------|
 | `src/shared/types.ts` | `Message`, `ToolCall`, `ToolDefinition` — shared across all agents |
 | `src/shared/eval-utils.ts` | `lastAssistantMessage` — shared eval helper |
+| `src/react/README.md` | Concept explainer — ReAct pattern, evals, LLM-as-judge |
 | `src/react/index.ts` | readline CLI loop, maintains `history: Message[]` across turns |
 | `src/react/agent.ts` | ReAct loop, Ollama calls, tool orchestration, `SYSTEM_PROMPT` |
 | `src/react/tools.ts` | Hotel tool definitions + implementations + mock data |
 | `src/react/types.ts` | Hotel domain types (`Room`, `Reservation`); re-exports shared types |
 | `src/react/eval-utils.ts` | `extractToolCallNames`, `extractToolCalls` — ReAct-specific eval helpers |
 | `src/react/evals/` | Phase 1 (trajectory) + Phase 2 (LLM-as-judge) evals |
+| `src/plan-execute/README.md` | Concept explainer — Plan+Execute pattern, plan-level evals |
 | `src/plan-execute/agent.ts` | `createPlan()`, `runPlanExecuteAgent()`, prompts |
 | `src/plan-execute/tools.ts` | Trip planner tool definitions + implementations + mock data |
 | `src/plan-execute/index.ts` | readline CLI loop for the trip planner |
@@ -77,16 +85,59 @@ Every tool has two distinct parts — a pattern to preserve when adding new tool
 
 This repo is a series of self-contained demos, one per concept from `LEARNING_ROADMAP.md`. Each concept lives in its own folder under `src/`. Evals live inside the concept folder they test.
 
-### Extend vs. new demo
+### Adding a new concept
 
-When a new concept builds on an existing one, choose the simpler option for the reader:
+Follow these steps when implementing a concept from the learning roadmap:
 
-- **Extend** if the addition is small and doesn't obscure how the original works
-- **New demo** if understanding it requires mentally subtracting other features, or the concept is the main point — a focused new demo with some duplication is better than a bloated existing one
+**1. Decide: extend an existing demo or create a new one**
 
-### Shared code
+- **Extend** if the concept is a small additive change that doesn't obscure how the original works (e.g. adding a guardrail to the ReAct loop)
+- **New demo** if understanding it requires the reader to mentally subtract other features, or the concept is the main point — a focused new demo with some duplication is better than a bloated existing one
 
-Extract to `src/shared/` only when the same code appears in two or more demos. Don't pre-emptively share — duplication is fine until the second copy appears.
+**2. Create the concept folder**
+
+```
+src/<concept-name>/
+├── README.md       # required — the concept explainer (see below)
+├── index.ts        # CLI entry point if it's a runnable demo
+├── agent.ts        # agent logic
+├── tools.ts        # tool definitions + implementations
+└── evals/          # evals for this concept
+```
+
+**3. Write the README.md**
+
+Every concept folder gets a `README.md` that reads as a well-written blog post aimed at teaching a developer the concept. It should:
+
+- Open with a hook — why does this concept matter?
+- Show the core idea with a diagram or concise code snippet
+- Walk through the implementation with annotated examples
+- Explain the tradeoffs: when to use this pattern vs. alternatives
+- Close with concrete key takeaways
+- Link back to the root README with `[Agent Patterns — TypeScript](../../README.md)`
+- Reference the previous concept post if this one builds on it
+
+The tone should be that of a good technical blog post — not bare-bones documentation.
+
+**4. Add a dev script to `package.json`**
+
+```json
+"dev:<concept-name>": "tsx src/<concept-name>/index.ts"
+```
+
+**5. Add a row to the patterns table in the root `README.md`**
+
+```markdown
+| [Concept Name](src/<concept-name>/README.md) | Demo description | `pnpm dev:<concept-name>` |
+```
+
+**6. Handle shared code**
+
+Extract to `src/shared/` only when the same code would appear in two or more demos. Don't pre-emptively share — duplication is fine until the second copy appears.
+
+**7. Mark the concept as done in `LEARNING_ROADMAP.md`**
+
+Change `[ ]` to `[x]` and update the status in the progress table at the bottom.
 
 ---
 
