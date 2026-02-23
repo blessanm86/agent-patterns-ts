@@ -10,8 +10,8 @@
 // is wrong, the final answer will be wrong regardless of how good the model is.
 
 import { evalite, createScorer } from 'evalite'
-import { runAgent } from '../src/agent.js'
-import { extractToolCallNames, extractToolCalls } from '../src/eval-utils.js'
+import { runAgent } from '../src/react/agent.js'
+import { extractToolCallNames, extractToolCalls } from '../src/react/eval-utils.js'
 
 // ─── Test 1: Happy Path Trajectory ────────────────────────────────────────────
 //
