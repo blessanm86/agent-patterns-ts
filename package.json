@@ -9,7 +9,15 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
-    "eval:watch": "evalite watch"
+    "eval:watch": "evalite watch",
+    "lint": "oxlint src/",
+    "lint:fix": "oxlint --fix src/",
+    "fmt": "oxfmt src/",
+    "fmt:check": "oxfmt --check src/",
+    "prepare": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm fmt:check && pnpm lint"
   },
   "dependencies": {
     "autoevals": "^0.0.132",
@@ -19,6 +27,9 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "oxfmt": "^0.35.0",
+    "oxlint": "^1.50.0",
+    "simple-git-hooks": "^2.13.1",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
     "vitest": "^4.0.18"

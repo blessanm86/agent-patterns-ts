@@ -1,23 +1,23 @@
-import ollama from 'ollama'
-import { tripTools, executeTripTool } from './tools.js'
-import type { Message } from '../shared/types.js'
+import ollama from "ollama";
+import { tripTools, executeTripTool } from "./tools.js";
+import type { Message } from "../shared/types.js";
 
 // ─── Plan Types ───────────────────────────────────────────────────────────────
 
 export interface PlanStep {
-  tool: string
-  args: Record<string, string>
-  description: string
+  tool: string;
+  args: Record<string, string>;
+  description: string;
 }
 
 export interface Plan {
-  goal: string
-  steps: PlanStep[]
+  goal: string;
+  steps: PlanStep[];
 }
 
 // ─── Prompts ──────────────────────────────────────────────────────────────────
 
-const MODEL = process.env.MODEL ?? 'qwen2.5:7b'
+const MODEL = process.env.MODEL ?? "qwen2.5:7b";
 
 // Lists available tools so the planner knows what to call.
 // The key constraint: the model must commit to ALL tool calls upfront
@@ -28,7 +28,7 @@ const PLANNER_PROMPT = `You are a trip planning assistant. Your job is to create
 Given a trip request, output a JSON plan specifying which tools to call to gather all necessary information.
 
 Available tools:
-${tripTools.map((t) => `- ${t.function.name}: ${t.function.description}`).join('\n')}
+${tripTools.map((t) => `- ${t.function.name}: ${t.function.description}`).join("\n")}
 
 Output a JSON object with this exact structure:
 {
@@ -47,7 +47,7 @@ Rules:
 - Include search_hotels, find_attractions, and find_restaurants for the destination
 - Use YYYY-MM-DD format for all dates
 - All args values must be strings
-- Output only valid JSON, no other text`
+- Output only valid JSON, no other text`;
 
 const SYNTHESIZER_PROMPT = `You are a trip planning assistant. You have gathered research about a trip using various tools.
 Using the research results below, create a practical day-by-day itinerary.
@@ -58,7 +58,7 @@ Include:
 - Day-by-day activity schedule using the attractions found
 - Restaurant recommendations for meals
 
-Be specific — use the actual names, prices, and times from the research. Format as a readable itinerary.`
+Be specific — use the actual names, prices, and times from the research. Format as a readable itinerary.`;
 
 // ─── Phase 1: Planner ─────────────────────────────────────────────────────────
 //
@@ -73,14 +73,14 @@ export async function createPlan(userMessage: string): Promise<Plan> {
   const response = await ollama.chat({
     model: MODEL,
     messages: [
-      { role: 'system', content: PLANNER_PROMPT },
-      { role: 'user', content: userMessage },
+      { role: "system", content: PLANNER_PROMPT },
+      { role: "user", content: userMessage },
     ],
-    format: 'json',
-  })
+    format: "json",
+  });
 
-  const plan = JSON.parse(response.message.content) as Plan
-  return plan
+  const plan = JSON.parse(response.message.content) as Plan;
+  return plan;
 }
 
 // ─── Full Pipeline: Plan → Execute → Synthesize ───────────────────────────────
@@ -94,40 +94,43 @@ export async function createPlan(userMessage: string): Promise<Plan> {
 // Here the phases are completely separated. The plan is visible (and testable)
 // before any tools run.
 
-export async function runPlanExecuteAgent(userMessage: string, history: Message[]): Promise<Message[]> {
-  const messages: Message[] = [...history, { role: 'user', content: userMessage }]
+export async function runPlanExecuteAgent(
+  userMessage: string,
+  history: Message[],
+): Promise<Message[]> {
+  const messages: Message[] = [...history, { role: "user", content: userMessage }];
 
   // ── Phase 1: Plan ───────────────────────────────────────────────────────────
 
-  console.log('\n  📋 Planning...')
-  const plan = await createPlan(userMessage)
+  console.log("\n  📋 Planning...");
+  const plan = await createPlan(userMessage);
 
   // Print the plan so users can see it was decided upfront
-  console.log(`\n  Goal: ${plan.goal}`)
-  console.log(`  Steps (${plan.steps.length} tool calls, all decided before any tools run):`)
+  console.log(`\n  Goal: ${plan.goal}`);
+  console.log(`  Steps (${plan.steps.length} tool calls, all decided before any tools run):`);
   plan.steps.forEach((step, i) => {
-    console.log(`    ${i + 1}. ${step.tool}(${JSON.stringify(step.args)})`)
-    console.log(`       → ${step.description}`)
-  })
+    console.log(`    ${i + 1}. ${step.tool}(${JSON.stringify(step.args)})`);
+    console.log(`       → ${step.description}`);
+  });
 
   // Add a readable summary of the plan to history as an assistant message
-  const planSummary = `I'll research this trip in ${plan.steps.length} steps:\n${plan.steps.map((s, i) => `${i + 1}. ${s.description}`).join('\n')}`
-  messages.push({ role: 'assistant', content: planSummary })
+  const planSummary = `I'll research this trip in ${plan.steps.length} steps:\n${plan.steps.map((s, i) => `${i + 1}. ${s.description}`).join("\n")}`;
+  messages.push({ role: "assistant", content: planSummary });
 
   // ── Phase 2: Execute ────────────────────────────────────────────────────────
   //
   // Run each planned tool call. No LLM involved here — execution is mechanical.
   // The plan is fixed; we don't adapt based on results.
 
-  console.log('\n  ⚡ Executing plan...')
+  console.log("\n  ⚡ Executing plan...");
   for (const step of plan.steps) {
-    console.log(`\n  🔧 Tool call: ${step.tool}`)
-    console.log(`     Args: ${JSON.stringify(step.args, null, 2).replace(/\n/g, '\n     ')}`)
+    console.log(`\n  🔧 Tool call: ${step.tool}`);
+    console.log(`     Args: ${JSON.stringify(step.args, null, 2).replace(/\n/g, "\n     ")}`);
 
-    const result = executeTripTool(step.tool, step.args)
-    console.log(`     Result: ${result}`)
+    const result = executeTripTool(step.tool, step.args);
+    console.log(`     Result: ${result}`);
 
-    messages.push({ role: 'tool', content: result })
+    messages.push({ role: "tool", content: result });
   }
 
   // ── Phase 3: Synthesize ─────────────────────────────────────────────────────
@@ -135,14 +138,14 @@ export async function runPlanExecuteAgent(userMessage: string, history: Message[
   // The synthesizer sees the original request + all tool results and produces
   // the final itinerary. This is a regular LLM call — no tools, no loop.
 
-  console.log('\n  ✍️  Synthesizing itinerary...')
+  console.log("\n  ✍️  Synthesizing itinerary...");
   const synthResponse = await ollama.chat({
     model: MODEL,
     system: SYNTHESIZER_PROMPT,
     messages,
-  })
+  });
 
-  messages.push(synthResponse.message)
+  messages.push(synthResponse.message);
 
-  return messages
+  return messages;
 }

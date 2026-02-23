@@ -1,21 +1,28 @@
-export type { Role, ToolCall, Message, ToolParameter, ToolParameters, ToolDefinition } from '../shared/types.js'
+export type {
+  Role,
+  ToolCall,
+  Message,
+  ToolParameter,
+  ToolParameters,
+  ToolDefinition,
+} from "../shared/types.js";
 
 // ─── Hotel Domain Types ───────────────────────────────────────────────────────
 
 export interface Room {
-  roomNumber: string
-  type: 'single' | 'double' | 'suite'
-  pricePerNight: number
-  available: boolean
+  roomNumber: string;
+  type: "single" | "double" | "suite";
+  pricePerNight: number;
+  available: boolean;
 }
 
 export interface Reservation {
-  reservationId: string
-  guestName: string
-  roomNumber: string
-  roomType: string
-  checkIn: string
-  checkOut: string
-  totalPrice: number
-  nights: number
+  reservationId: string;
+  guestName: string;
+  roomNumber: string;
+  roomType: string;
+  checkIn: string;
+  checkOut: string;
+  totalPrice: number;
+  nights: number;
 }

@@ -11,12 +11,12 @@
 // We use the same local qwen2.5:7b model for both agent and judge —
 // no API keys required, fully offline.
 
-import { evalite, createScorer } from 'evalite'
-import ollama from 'ollama'
-import { runAgent } from '../agent.js'
-import { lastAssistantMessage } from '../../shared/eval-utils.js'
+import { evalite, createScorer } from "evalite";
+import ollama from "ollama";
+import { runAgent } from "../agent.js";
+import { lastAssistantMessage } from "../../shared/eval-utils.js";
 
-const MODEL = process.env.MODEL ?? 'qwen2.5:7b'
+const MODEL = process.env.MODEL ?? "qwen2.5:7b";
 
 // ─── Judge Prompt ──────────────────────────────────────────────────────────────
 //
@@ -40,7 +40,7 @@ Score the response from 0.0 to 1.0:
 - 0.0 = Does not meet the criteria at all
 
 Respond with JSON only, no other text:
-{ "score": <number 0.0-1.0>, "reason": "<one sentence explanation>" }`
+{ "score": <number 0.0-1.0>, "reason": "<one sentence explanation>" }`;
 }
 
 // ─── Custom Ollama Judge Scorer ────────────────────────────────────────────────
@@ -58,18 +58,18 @@ function makeOllamaJudge(name: string, criteria: string) {
       try {
         const result = await ollama.chat({
           model: MODEL,
-          messages: [{ role: 'user', content: judgePrompt(output, criteria) }],
-          format: 'json',
-        })
-        const parsed = JSON.parse(result.message.content) as { score: number; reason: string }
+          messages: [{ role: "user", content: judgePrompt(output, criteria) }],
+          format: "json",
+        });
+        const parsed = JSON.parse(result.message.content) as { score: number; reason: string };
         // Clamp to [0, 1] in case the model goes out of range
-        return Math.max(0, Math.min(1, parsed.score))
+        return Math.max(0, Math.min(1, parsed.score));
       } catch {
         // If the judge fails (bad JSON, network error), score 0
-        return 0
+        return 0;
       }
     },
-  })
+  });
 }
 
 // ─── Test 1: Full Booking Confirmation ────────────────────────────────────────
@@ -81,28 +81,28 @@ function makeOllamaJudge(name: string, criteria: string) {
 //
 // These are subjective quality checks that can't be captured by string matching.
 
-evalite('LLM judge — reservation confirmation quality', {
+evalite("LLM judge — reservation confirmation quality", {
   data: async () => [
     {
-      input: 'My name is Bob Chen. Please book a single room from 2026-06-01 to 2026-06-03.',
+      input: "My name is Bob Chen. Please book a single room from 2026-06-01 to 2026-06-03.",
     },
   ],
   task: async (input) => {
-    const history = await runAgent(input, [])
+    const history = await runAgent(input, []);
     // Return only the final text response — that's what we're judging
-    return lastAssistantMessage(history)
+    return lastAssistantMessage(history);
   },
   scorers: [
     makeOllamaJudge(
-      'Reservation confirmed with ID',
-      'Did the assistant confirm that a hotel reservation was successfully created and include a reservation ID (a code starting with RES-)?',
+      "Reservation confirmed with ID",
+      "Did the assistant confirm that a hotel reservation was successfully created and include a reservation ID (a code starting with RES-)?",
     ),
     makeOllamaJudge(
-      'Guest name acknowledged',
-      'Did the assistant address or mention the guest by name (Bob Chen) in the response?',
+      "Guest name acknowledged",
+      "Did the assistant address or mention the guest by name (Bob Chen) in the response?",
     ),
   ],
-})
+});
 
 // ─── Test 2: Pricing Inquiry Handled Helpfully ────────────────────────────────
 //
@@ -110,25 +110,25 @@ evalite('LLM judge — reservation confirmation quality', {
 // the agent should provide useful information without creating a reservation.
 // The judge evaluates helpfulness and appropriateness of the response.
 
-evalite('LLM judge — pricing inquiry helpfulness', {
+evalite("LLM judge — pricing inquiry helpfulness", {
   data: async () => [
     {
       input:
-        'Can you tell me the price for a suite for 3 nights? I want to compare options before deciding.',
+        "Can you tell me the price for a suite for 3 nights? I want to compare options before deciding.",
     },
   ],
   task: async (input) => {
-    const history = await runAgent(input, [])
-    return lastAssistantMessage(history)
+    const history = await runAgent(input, []);
+    return lastAssistantMessage(history);
   },
   scorers: [
     makeOllamaJudge(
-      'Price information provided',
-      'Did the assistant provide a specific price (in dollars) for a suite room for 3 nights?',
+      "Price information provided",
+      "Did the assistant provide a specific price (in dollars) for a suite room for 3 nights?",
     ),
     makeOllamaJudge(
-      'No reservation created without consent',
-      'Did the assistant avoid creating a reservation (appropriate, since the user was only asking for pricing information)?',
+      "No reservation created without consent",
+      "Did the assistant avoid creating a reservation (appropriate, since the user was only asking for pricing information)?",
     ),
   ],
-})
+});

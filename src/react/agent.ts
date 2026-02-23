@@ -1,6 +1,6 @@
-import ollama from 'ollama'
-import { tools, executeTool } from './tools.js'
-import type { Message } from './types.js'
+import ollama from "ollama";
+import { tools, executeTool } from "./tools.js";
+import type { Message } from "./types.js";
 
 // ─── System Prompt ────────────────────────────────────────────────────────────
 //
@@ -26,15 +26,15 @@ Important rules:
 - Always use tools to check real availability and prices — never make up numbers
 - If no rooms are available, suggest different dates
 - Be concise and friendly
-- Dates should be in YYYY-MM-DD format when calling tools`
+- Dates should be in YYYY-MM-DD format when calling tools`;
 
 // ─── Agent ────────────────────────────────────────────────────────────────────
 
-const MODEL = process.env.MODEL ?? 'qwen2.5:7b'
+const MODEL = process.env.MODEL ?? "qwen2.5:7b";
 
 export async function runAgent(userMessage: string, history: Message[]): Promise<Message[]> {
   // Build the full message history including the new user message
-  const messages: Message[] = [...history, { role: 'user', content: userMessage }]
+  const messages: Message[] = [...history, { role: "user", content: userMessage }];
 
   // ── The ReAct Loop ──────────────────────────────────────────────────────────
   //
@@ -54,39 +54,39 @@ export async function runAgent(userMessage: string, history: Message[]): Promise
       system: SYSTEM_PROMPT,
       messages,
       tools,
-    })
+    });
 
-    const assistantMessage = response.message
+    const assistantMessage = response.message;
 
     // Add assistant's response (with or without tool calls) to history
-    messages.push(assistantMessage)
+    messages.push(assistantMessage);
 
     // ── No tool calls → agent is done reasoning, reply to user ───────────────
     if (!assistantMessage.tool_calls || assistantMessage.tool_calls.length === 0) {
-      break
+      break;
     }
 
     // ── Tool calls → execute each one and feed results back ──────────────────
     for (const toolCall of assistantMessage.tool_calls) {
-      const { name, arguments: args } = toolCall.function
+      const { name, arguments: args } = toolCall.function;
 
-      console.log(`\n  🔧 Tool call: ${name}`)
-      console.log(`     Args: ${JSON.stringify(args, null, 2).replace(/\n/g, '\n     ')}`)
+      console.log(`\n  🔧 Tool call: ${name}`);
+      console.log(`     Args: ${JSON.stringify(args, null, 2).replace(/\n/g, "\n     ")}`);
 
-      const result = executeTool(name, args as Record<string, string>)
+      const result = executeTool(name, args as Record<string, string>);
 
-      console.log(`     Result: ${result}`)
+      console.log(`     Result: ${result}`);
 
       // Tool results go back into the message history
       // The model will see these on the next iteration and reason about them
       messages.push({
-        role: 'tool',
+        role: "tool",
         content: result,
-      })
+      });
     }
 
     // Loop back — model now reasons about the tool results
   }
 
-  return messages
+  return messages;
 }

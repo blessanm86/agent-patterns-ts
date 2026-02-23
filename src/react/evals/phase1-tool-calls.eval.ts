@@ -9,9 +9,9 @@
 // This is the first thing to test for any tool-calling agent. If the trajectory
 // is wrong, the final answer will be wrong regardless of how good the model is.
 
-import { evalite, createScorer } from 'evalite'
-import { runAgent } from '../agent.js'
-import { extractToolCallNames, extractToolCalls } from '../eval-utils.js'
+import { evalite, createScorer } from "evalite";
+import { runAgent } from "../agent.js";
+import { extractToolCallNames, extractToolCalls } from "../eval-utils.js";
 
 // ─── Test 1: Happy Path Trajectory ────────────────────────────────────────────
 //
@@ -22,41 +22,40 @@ import { extractToolCallNames, extractToolCalls } from '../eval-utils.js'
 // If the agent skips a step or calls them out of order, something is broken
 // in the system prompt or the model's reasoning.
 
-evalite('Tool call trajectory — happy path', {
+evalite("Tool call trajectory — happy path", {
   data: async () => [
     {
-      input:
-        'My name is John Smith. Please book a double room from 2026-03-01 to 2026-03-05.',
+      input: "My name is John Smith. Please book a double room from 2026-03-01 to 2026-03-05.",
     },
   ],
   task: async (input) => {
-    const history = await runAgent(input, [])
+    const history = await runAgent(input, []);
     // Return just the ordered list of tool names — that's what we're scoring
-    return extractToolCallNames(history)
+    return extractToolCallNames(history);
   },
   scorers: [
     createScorer({
-      name: 'All tools called',
+      name: "All tools called",
       // All three tools must appear somewhere in the trajectory
       scorer: ({ output }) =>
-        ['check_availability', 'get_room_price', 'create_reservation'].every((t) =>
+        ["check_availability", "get_room_price", "create_reservation"].every((t) =>
           output.includes(t),
         )
           ? 1
           : 0,
     }),
     createScorer({
-      name: 'Correct order',
+      name: "Correct order",
       // Availability must be checked before pricing, pricing before booking
       scorer: ({ output }) => {
-        const i1 = output.indexOf('check_availability')
-        const i2 = output.indexOf('get_room_price')
-        const i3 = output.indexOf('create_reservation')
-        return i1 !== -1 && i2 !== -1 && i3 !== -1 && i1 < i2 && i2 < i3 ? 1 : 0
+        const i1 = output.indexOf("check_availability");
+        const i2 = output.indexOf("get_room_price");
+        const i3 = output.indexOf("create_reservation");
+        return i1 !== -1 && i2 !== -1 && i3 !== -1 && i1 < i2 && i2 < i3 ? 1 : 0;
       },
     }),
   ],
-})
+});
 
 // ─── Test 2: Availability Check Only ──────────────────────────────────────────
 //
@@ -64,29 +63,29 @@ evalite('Tool call trajectory — happy path', {
 // but NOT proceed to booking. This tests that the agent respects intent
 // and doesn't over-trigger create_reservation.
 
-evalite('Tool call trajectory — availability check only', {
+evalite("Tool call trajectory — availability check only", {
   data: async () => [
     {
       input:
-        'What double rooms do you have available from 2026-04-10 to 2026-04-12? Just checking, not ready to book yet.',
+        "What double rooms do you have available from 2026-04-10 to 2026-04-12? Just checking, not ready to book yet.",
     },
   ],
   task: async (input) => {
-    const history = await runAgent(input, [])
-    return extractToolCallNames(history)
+    const history = await runAgent(input, []);
+    return extractToolCallNames(history);
   },
   scorers: [
     createScorer({
-      name: 'Availability was checked',
-      scorer: ({ output }) => (output.includes('check_availability') ? 1 : 0),
+      name: "Availability was checked",
+      scorer: ({ output }) => (output.includes("check_availability") ? 1 : 0),
     }),
     createScorer({
-      name: 'No reservation created',
+      name: "No reservation created",
       // The agent should NOT call create_reservation when user is just browsing
-      scorer: ({ output }) => (output.includes('create_reservation') ? 0 : 1),
+      scorer: ({ output }) => (output.includes("create_reservation") ? 0 : 1),
     }),
   ],
-})
+});
 
 // ─── Test 3: Argument Fidelity ─────────────────────────────────────────────────
 //
@@ -94,52 +93,45 @@ evalite('Tool call trajectory — availability check only', {
 // the *correct values* through the chain. A guest name or date that gets
 // garbled or dropped is a real bug even if all tools were called.
 
-evalite('Argument fidelity — guest name and dates', {
+evalite("Argument fidelity — guest name and dates", {
   data: async () => [
     {
-      input:
-        'My name is Alice Johnson. I need a suite from 2026-05-10 to 2026-05-15.',
+      input: "My name is Alice Johnson. I need a suite from 2026-05-10 to 2026-05-15.",
     },
   ],
   task: async (input) => {
-    const history = await runAgent(input, [])
+    const history = await runAgent(input, []);
     // Return the full tool calls so we can inspect arguments
-    return extractToolCalls(history)
+    return extractToolCalls(history);
   },
   scorers: [
     createScorer({
-      name: 'Guest name preserved',
+      name: "Guest name preserved",
       scorer: ({ output }) => {
-        const reservationCall = output.find(
-          (tc) => tc.function.name === 'create_reservation',
-        )
-        if (!reservationCall) return 0
-        const name = reservationCall.function.arguments.guest_name ?? ''
+        const reservationCall = output.find((tc) => tc.function.name === "create_reservation");
+        if (!reservationCall) return 0;
+        const name = reservationCall.function.arguments.guest_name ?? "";
         // Accept any reasonable casing/spacing of the name
-        return name.toLowerCase().includes('alice') && name.toLowerCase().includes('johnson')
+        return name.toLowerCase().includes("alice") && name.toLowerCase().includes("johnson")
           ? 1
-          : 0
+          : 0;
       },
     }),
     createScorer({
-      name: 'Check-in date preserved',
+      name: "Check-in date preserved",
       scorer: ({ output }) => {
-        const reservationCall = output.find(
-          (tc) => tc.function.name === 'create_reservation',
-        )
-        if (!reservationCall) return 0
-        return reservationCall.function.arguments.check_in === '2026-05-10' ? 1 : 0
+        const reservationCall = output.find((tc) => tc.function.name === "create_reservation");
+        if (!reservationCall) return 0;
+        return reservationCall.function.arguments.check_in === "2026-05-10" ? 1 : 0;
       },
     }),
     createScorer({
-      name: 'Check-out date preserved',
+      name: "Check-out date preserved",
       scorer: ({ output }) => {
-        const reservationCall = output.find(
-          (tc) => tc.function.name === 'create_reservation',
-        )
-        if (!reservationCall) return 0
-        return reservationCall.function.arguments.check_out === '2026-05-15' ? 1 : 0
+        const reservationCall = output.find((tc) => tc.function.name === "create_reservation");
+        if (!reservationCall) return 0;
+        return reservationCall.function.arguments.check_out === "2026-05-15" ? 1 : 0;
       },
     }),
   ],
-})
+});

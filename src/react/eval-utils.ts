@@ -1,4 +1,4 @@
-import type { Message, ToolCall } from '../shared/types.js'
+import type { Message, ToolCall } from "../shared/types.js";
 
 // ─── Eval Utilities ───────────────────────────────────────────────────────────
 //
@@ -11,9 +11,9 @@ export function extractToolCallNames(history: Message[]): string[] {
   return history
     .filter(
       (m): m is Message & { tool_calls: ToolCall[] } =>
-        m.role === 'assistant' && Array.isArray(m.tool_calls) && m.tool_calls.length > 0,
+        m.role === "assistant" && Array.isArray(m.tool_calls) && m.tool_calls.length > 0,
     )
-    .flatMap((m) => m.tool_calls.map((tc) => tc.function.name))
+    .flatMap((m) => m.tool_calls.map((tc) => tc.function.name));
 }
 
 // Extract the full tool calls (name + arguments) for argument-level assertions.
@@ -23,7 +23,7 @@ export function extractToolCalls(history: Message[]): ToolCall[] {
   return history
     .filter(
       (m): m is Message & { tool_calls: ToolCall[] } =>
-        m.role === 'assistant' && Array.isArray(m.tool_calls) && m.tool_calls.length > 0,
+        m.role === "assistant" && Array.isArray(m.tool_calls) && m.tool_calls.length > 0,
     )
-    .flatMap((m) => m.tool_calls)
+    .flatMap((m) => m.tool_calls);
 }
