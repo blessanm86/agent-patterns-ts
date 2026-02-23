@@ -14,7 +14,7 @@
 import { evalite, createScorer } from 'evalite'
 import ollama from 'ollama'
 import { runAgent } from '../agent.js'
-import { lastAssistantMessage } from '../eval-utils.js'
+import { lastAssistantMessage } from '../../shared/eval-utils.js'
 
 const MODEL = process.env.MODEL ?? 'qwen2.5:7b'
 

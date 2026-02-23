@@ -1,6 +1,6 @@
 import * as readline from 'readline'
 import { runPlanExecuteAgent } from './agent.js'
-import type { Message } from '../types.js'
+import type { Message } from '../shared/types.js'
 
 // ─── CLI Chat Loop ────────────────────────────────────────────────────────────
 //

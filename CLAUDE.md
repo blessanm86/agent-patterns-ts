@@ -60,12 +60,14 @@ Every tool has two distinct parts — a pattern to preserve when adding new tool
 
 | File | Role |
 |------|------|
+| `src/shared/types.ts` | `Message`, `ToolCall`, `ToolDefinition` — shared across all agents |
+| `src/shared/eval-utils.ts` | `lastAssistantMessage` — shared eval helper |
 | `src/react/index.ts` | readline CLI loop, maintains `history: Message[]` across turns |
 | `src/react/agent.ts` | ReAct loop, Ollama calls, tool orchestration, `SYSTEM_PROMPT` |
 | `src/react/tools.ts` | Hotel tool definitions + implementations + mock data |
-| `src/react/types.ts` | `Message`, `ToolDefinition`, `Room`, `Reservation` interfaces |
-| `src/react/eval-utils.ts` | `extractToolCallNames`, `extractToolCalls`, `lastAssistantMessage` |
-| `src/react/evals/` | Phase 1 (trajectory) + Phase 2 (LLM-as-judge) evals for the ReAct agent |
+| `src/react/types.ts` | Hotel domain types (`Room`, `Reservation`); re-exports shared types |
+| `src/react/eval-utils.ts` | `extractToolCallNames`, `extractToolCalls` — ReAct-specific eval helpers |
+| `src/react/evals/` | Phase 1 (trajectory) + Phase 2 (LLM-as-judge) evals |
 | `src/plan-execute/agent.ts` | `createPlan()`, `runPlanExecuteAgent()`, prompts |
 | `src/plan-execute/tools.ts` | Trip planner tool definitions + implementations + mock data |
 | `src/plan-execute/index.ts` | readline CLI loop for the trip planner |

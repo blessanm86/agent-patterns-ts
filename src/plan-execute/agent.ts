@@ -1,6 +1,6 @@
 import ollama from 'ollama'
 import { tripTools, executeTripTool } from './tools.js'
-import type { Message } from '../types.js'
+import type { Message } from '../shared/types.js'
 
 // ─── Plan Types ───────────────────────────────────────────────────────────────
 

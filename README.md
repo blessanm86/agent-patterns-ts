@@ -136,12 +136,15 @@ pnpm dev:plan-execute   # Trip planner — Plan+Execute pattern
 
 ```
 src/
+├── shared/
+│   ├── types.ts        # Message, ToolCall, ToolDefinition — shared across agents
+│   └── eval-utils.ts   # lastAssistantMessage — shared eval helper
 ├── react/
 │   ├── index.ts        # CLI loop — handles user input and conversation history
 │   ├── agent.ts        # The ReAct loop
 │   ├── tools.ts        # Hotel reservation tools + mock data
-│   ├── types.ts        # TypeScript types
-│   ├── eval-utils.ts   # Helpers for inspecting agent history in evals
+│   ├── types.ts        # Hotel domain types (Room, Reservation); re-exports shared types
+│   ├── eval-utils.ts   # extractToolCallNames, extractToolCalls
 │   └── evals/
 │       ├── phase1-tool-calls.eval.ts   # Deterministic trajectory evals
 │       └── phase2-llm-judge.eval.ts    # LLM-as-judge evals

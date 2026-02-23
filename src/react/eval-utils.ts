@@ -1,9 +1,8 @@
-import type { Message, ToolCall } from './types.js'
+import type { Message, ToolCall } from '../shared/types.js'
 
 // ─── Eval Utilities ───────────────────────────────────────────────────────────
 //
-// Helpers for inspecting agent history in eval assertions.
-// All three functions work by filtering the returned Message[] from runAgent().
+// Helpers for inspecting ReAct agent history in eval assertions.
 
 // Extract the ordered list of tool names called during a run.
 // Use this for trajectory assertions: did the agent call the right tools
@@ -27,13 +26,4 @@ export function extractToolCalls(history: Message[]): ToolCall[] {
         m.role === 'assistant' && Array.isArray(m.tool_calls) && m.tool_calls.length > 0,
     )
     .flatMap((m) => m.tool_calls)
-}
-
-// Get the final assistant text response — the message the user would see.
-// Excludes messages that only contain tool calls (no visible content).
-export function lastAssistantMessage(history: Message[]): string {
-  const textMessages = history.filter(
-    (m) => m.role === 'assistant' && (!m.tool_calls || m.tool_calls.length === 0),
-  )
-  return textMessages[textMessages.length - 1]?.content ?? ''
 }

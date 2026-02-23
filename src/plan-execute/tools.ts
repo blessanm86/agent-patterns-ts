@@ -1,4 +1,4 @@
-import type { ToolDefinition } from '../types.js'
+import type { ToolDefinition } from '../shared/types.js'
 
 // ─── Tool Definitions (used in planner prompt context) ───────────────────────
 //
