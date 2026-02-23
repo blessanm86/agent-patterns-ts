@@ -204,3 +204,19 @@ evalite("LLM judge — itinerary quality", {
 **The plan is a contract.** Once created, it's fixed. This makes the execution phase simple and fast, but means the agent can't adapt if something goes wrong. Design your tools to return useful results even in edge cases — the synthesizer is your last line of defense.
 
 **Match the pattern to the dependency structure of the task.** ReAct shines when each step depends on the previous result. Plan+Execute is better when tasks are independent. Getting this choice right is as important as getting the implementation right.
+
+---
+
+## Further Reading
+
+**The academic origin of Plan+Execute**
+[Plan-and-Solve Prompting: Improving Zero-Shot Chain-of-Thought Reasoning](https://arxiv.org/abs/2305.04091) — Wang et al., ACL 2023. The paper that formalised the decompose → delegate → synthesize structure. The trip planner in this repo is a direct implementation of this pattern.
+
+**The ReAct paper (for comparison)**
+[ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629) — Yao et al., 2022 (ICLR 2023). Understanding ReAct makes the tradeoffs of Plan+Execute clearer — the two papers are best read together.
+
+**LLM-as-Judge methodology**
+[Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena](https://arxiv.org/abs/2306.05685) — Zheng et al. (UC Berkeley), NeurIPS 2023. The canonical paper on using an LLM to evaluate another LLM's output — the technique used in the itinerary quality eval.
+
+**The eval runner used in this repo**
+[Evalite](https://github.com/mattpocock/evalite) — Matt Pocock. TypeScript-native eval framework built on vitest. The source behind `pnpm eval` and `pnpm eval:watch`.

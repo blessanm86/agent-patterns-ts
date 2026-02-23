@@ -369,3 +369,19 @@ Expected results on the first run:
 **Use LLM judges for subjective quality.** Trajectory evals can't tell you if the final response was clear, friendly, or complete. That's what judges are for — but they're slower and less reliable, so use them sparingly.
 
 **Local-first evals are fine.** Running `qwen2.5:7b` as both agent and judge is entirely valid for development. The model might be less capable than GPT-4, but the eval infrastructure is the same. You can swap in a stronger model when you need higher fidelity.
+
+---
+
+## Further Reading
+
+**The original ReAct paper**
+[ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629) — Yao et al., 2022 (ICLR 2023). The paper that named and formalised the Reason+Act loop. Worth reading to understand the original benchmarks and how the pattern was validated.
+
+**LLM-as-Judge methodology**
+[Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena](https://arxiv.org/abs/2306.05685) — Zheng et al. (UC Berkeley), NeurIPS 2023. The canonical paper establishing LLM-as-judge as a rigorous evaluation method. Covers agreement with human raters, positional bias, and when judges are reliable.
+
+**Practical agent design guidance**
+[Building effective agents](https://www.anthropic.com/research/building-effective-agents) — Anthropic, 2024. Practitioner-level guidance on when to use agents vs. simpler pipelines, how to design tools, and what guardrails to add. Directly applicable to the patterns in this repo.
+
+**The eval runner used in this repo**
+[Evalite](https://github.com/mattpocock/evalite) — Matt Pocock. TypeScript-native eval framework built on vitest. The source behind `pnpm eval` and `pnpm eval:watch`.
