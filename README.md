@@ -2,7 +2,6 @@
 
 Minimal TypeScript implementations of common agentic patterns, using a local model via Ollama. No frameworks. Just the patterns.
 
-📖 **[Read the blog post](./blog.md)** — deep dive into both patterns, evals, and LLM-as-judge scoring.
 🗺️ **[See the learning roadmap](./LEARNING_ROADMAP.md)** — 20 concepts from foundations to production.
 
 ---
@@ -11,8 +10,8 @@ Minimal TypeScript implementations of common agentic patterns, using a local mod
 
 | Pattern | Demo | Entry point |
 | --- | --- | --- |
-| ReAct (Reason+Act) | Hotel reservation assistant | `pnpm dev:react` |
-| Plan+Execute | Trip planner | `pnpm dev:plan-execute` |
+| [ReAct (Reason+Act)](src/react/README.md) | Hotel reservation assistant | `pnpm dev:react` |
+| [Plan+Execute](src/plan-execute/README.md) | Trip planner | `pnpm dev:plan-execute` |
 
 ---
 
