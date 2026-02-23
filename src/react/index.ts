@@ -25,6 +25,9 @@ function printWelcome() {
   console.log(
     "💡  Tool calls will be shown in the console so you can see the ReAct loop in action.",
   );
+  console.log('\n    Try: "I\'d like to book a double room from 2026-03-01 to 2026-03-05"');
+  console.log('    Try: "What rooms do you have available next weekend?"');
+  console.log('    Try: "How much does a suite cost for 3 nights?"');
 }
 
 function printResponse(history: Message[]) {
