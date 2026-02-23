@@ -60,7 +60,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 3. Reasoning Tool Pattern (Forced Structured Thinking)
+### [x] 3. Reasoning Tool Pattern (Forced Structured Thinking)
 
 **What it is:** Creating a "fake" tool that exists only to force the LLM to reason in a structured way. Combined with `tool_choice: "any"`, the LLM must call this tool — it can't skip to a text response.
 
@@ -529,7 +529,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 |---|---------|------|--------|
 | 1 | Multi-Turn Conversation Memory | 1 | Not started |
 | 2 | Structured Output (JSON Mode) | 1 | Not started |
-| 3 | Reasoning Tool Pattern | 1 | Not started |
+| 3 | Reasoning Tool Pattern | 1 | Done |
 | 4 | Guardrails & Circuit Breakers | 1 | Not started |
 | 5 | State Graph | 2 | Not started |
 | 6 | Context Window Management | 2 | Not started |
