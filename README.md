@@ -137,20 +137,20 @@ pnpm dev:plan-execute   # Trip planner — Plan+Execute pattern
 ```
 src/
 ├── react/
-│   ├── index.ts      # CLI loop — handles user input and conversation history
-│   ├── agent.ts      # The ReAct loop
-│   ├── tools.ts      # Hotel reservation tools + mock data
-│   ├── types.ts      # Shared TypeScript types
-│   └── eval-utils.ts # Helpers for inspecting agent history in evals
+│   ├── index.ts        # CLI loop — handles user input and conversation history
+│   ├── agent.ts        # The ReAct loop
+│   ├── tools.ts        # Hotel reservation tools + mock data
+│   ├── types.ts        # TypeScript types
+│   ├── eval-utils.ts   # Helpers for inspecting agent history in evals
+│   └── evals/
+│       ├── phase1-tool-calls.eval.ts   # Deterministic trajectory evals
+│       └── phase2-llm-judge.eval.ts    # LLM-as-judge evals
 └── plan-execute/
-    ├── index.ts      # CLI entry — Plan+Execute trip planner
-    ├── agent.ts      # createPlan() + runPlanExecuteAgent()
-    └── tools.ts      # Trip planner tools + mock data
-
-evals/
-├── phase1-tool-calls.eval.ts   # Deterministic trajectory evals (ReAct)
-├── phase2-llm-judge.eval.ts    # LLM-as-judge evals (ReAct)
-└── phase3-plan-execute.eval.ts # Plan structure + itinerary quality evals
+    ├── index.ts        # CLI entry — Plan+Execute trip planner
+    ├── agent.ts        # createPlan() + runPlanExecuteAgent()
+    ├── tools.ts        # Trip planner tools + mock data
+    └── evals/
+        └── phase3-plan-execute.eval.ts # Plan structure + itinerary quality evals
 ```
 
 ---

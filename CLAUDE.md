@@ -65,9 +65,28 @@ Every tool has two distinct parts — a pattern to preserve when adding new tool
 | `src/react/tools.ts` | Hotel tool definitions + implementations + mock data |
 | `src/react/types.ts` | `Message`, `ToolDefinition`, `Room`, `Reservation` interfaces |
 | `src/react/eval-utils.ts` | `extractToolCallNames`, `extractToolCalls`, `lastAssistantMessage` |
+| `src/react/evals/` | Phase 1 (trajectory) + Phase 2 (LLM-as-judge) evals for the ReAct agent |
 | `src/plan-execute/agent.ts` | `createPlan()`, `runPlanExecuteAgent()`, prompts |
 | `src/plan-execute/tools.ts` | Trip planner tool definitions + implementations + mock data |
 | `src/plan-execute/index.ts` | readline CLI loop for the trip planner |
+| `src/plan-execute/evals/` | Phase 3 evals for the Plan+Execute agent |
+
+## Repo Philosophy
+
+This repo is a series of self-contained demos, one per concept from `LEARNING_ROADMAP.md`. Each concept lives in its own folder under `src/`. Evals live inside the concept folder they test.
+
+### Extend vs. new demo
+
+When a new concept builds on an existing one, choose the simpler option for the reader:
+
+- **Extend** if the addition is small and doesn't obscure how the original works
+- **New demo** if understanding it requires mentally subtracting other features, or the concept is the main point — a focused new demo with some duplication is better than a bloated existing one
+
+### Shared code
+
+Extract to `src/shared/` only when the same code appears in two or more demos. Don't pre-emptively share — duplication is fine until the second copy appears.
+
+---
 
 ### Model Configuration
 
