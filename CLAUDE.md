@@ -26,10 +26,10 @@ pnpm eval:watch   # watch mode with UI at localhost:3006
 
 This repo contains two agents demonstrating two different agentic patterns:
 
-1. **ReAct (Reason+Act)** — hotel reservation assistant (`src/`)
+1. **ReAct (Reason+Act)** — hotel reservation assistant (`src/react/`)
 2. **Plan+Execute** — trip planner (`src/plan-execute/`)
 
-### The ReAct Loop (`src/agent.ts`)
+### The ReAct Loop (`src/react/agent.ts`)
 
 `runAgent()` accepts a user message and the full conversation history, then runs a `while(true)` loop:
 
@@ -60,11 +60,11 @@ Every tool has two distinct parts — a pattern to preserve when adding new tool
 
 | File | Role |
 |------|------|
-| `src/index.ts` | readline CLI loop, maintains `history: Message[]` across turns |
-| `src/agent.ts` | ReAct loop, Ollama calls, tool orchestration, `SYSTEM_PROMPT` |
-| `src/tools.ts` | Hotel tool definitions + implementations + mock data |
-| `src/types.ts` | `Message`, `ToolDefinition`, `Room`, `Reservation` interfaces |
-| `src/eval-utils.ts` | `extractToolCallNames`, `extractToolCalls`, `lastAssistantMessage` |
+| `src/react/index.ts` | readline CLI loop, maintains `history: Message[]` across turns |
+| `src/react/agent.ts` | ReAct loop, Ollama calls, tool orchestration, `SYSTEM_PROMPT` |
+| `src/react/tools.ts` | Hotel tool definitions + implementations + mock data |
+| `src/react/types.ts` | `Message`, `ToolDefinition`, `Room`, `Reservation` interfaces |
+| `src/react/eval-utils.ts` | `extractToolCallNames`, `extractToolCalls`, `lastAssistantMessage` |
 | `src/plan-execute/agent.ts` | `createPlan()`, `runPlanExecuteAgent()`, prompts |
 | `src/plan-execute/tools.ts` | Trip planner tool definitions + implementations + mock data |
 | `src/plan-execute/index.ts` | readline CLI loop for the trip planner |

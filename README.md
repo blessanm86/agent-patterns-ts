@@ -136,11 +136,12 @@ pnpm dev:plan-execute   # Trip planner — Plan+Execute pattern
 
 ```
 src/
-├── index.ts          # CLI loop — handles user input and conversation history
-├── agent.ts          # The ReAct loop
-├── tools.ts          # Hotel reservation tools + mock data
-├── types.ts          # Shared TypeScript types
-├── eval-utils.ts     # Helpers for inspecting agent history in evals
+├── react/
+│   ├── index.ts      # CLI loop — handles user input and conversation history
+│   ├── agent.ts      # The ReAct loop
+│   ├── tools.ts      # Hotel reservation tools + mock data
+│   ├── types.ts      # Shared TypeScript types
+│   └── eval-utils.ts # Helpers for inspecting agent history in evals
 └── plan-execute/
     ├── index.ts      # CLI entry — Plan+Execute trip planner
     ├── agent.ts      # createPlan() + runPlanExecuteAgent()
