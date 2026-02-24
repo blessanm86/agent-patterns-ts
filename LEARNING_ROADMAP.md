@@ -84,7 +84,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 4. Guardrails & Circuit Breakers
+### [x] 4. Guardrails & Circuit Breakers
 
 **What it is:** Hard limits that prevent runaway agents — max iterations, token budgets, timeout enforcement, and input validation.
 
@@ -530,7 +530,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 1 | Multi-Turn Conversation Memory | 1 | Done |
 | 2 | Structured Output (JSON Mode) | 1 | Not started |
 | 3 | Reasoning Tool Pattern | 1 | Done |
-| 4 | Guardrails & Circuit Breakers | 1 | Not started |
+| 4 | Guardrails & Circuit Breakers | 1 | Done |
 | 5 | State Graph | 2 | Not started |
 | 6 | Context Window Management | 2 | Not started |
 | 7 | Multi-Agent Routing | 2 | Not started |
