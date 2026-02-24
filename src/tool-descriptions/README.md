@@ -228,6 +228,43 @@ The evals run each of the 4 failure scenarios against both tool sets. Look for t
 
 ---
 
+## In Production Frameworks: Zod
+
+In this repo we define tools as raw JSON Schema objects. In production TypeScript projects you'll often see Zod instead — it's a schema validation library that lets you write the same definition with type inference built in.
+
+The strong `get_order_details` tool from this demo, written with Zod:
+
+```ts
+import { z } from "zod";
+import { tool } from "ai"; // Vercel AI SDK
+
+const getOrderDetails = tool({
+  description:
+    "Fetches full details for a specific order by its ID. " +
+    "Always call this BEFORE issue_refund or escalate_to_human.",
+  parameters: z.object({
+    order_id: z.string().describe("The order ID, e.g. ORD-001. Must start with 'ORD-'."),
+  }),
+  execute: async ({ order_id }) => {
+    // order_id is typed as `string` — no casting needed
+    return getOrder(order_id);
+  },
+});
+```
+
+The AI SDK converts the Zod schema to JSON Schema before sending it to the model — the model sees exactly the same thing either way. Zod's advantages are TypeScript type inference in `execute` (no `args as Record<string, string>`) and runtime validation of the model's arguments before your function runs.
+
+This repo uses raw JSON Schema to keep the structure visible — you can see exactly what gets sent to the model. If you're building with the Vercel AI SDK, Zod is the idiomatic choice and all the description engineering techniques here apply identically: parameter names, when-not-to-use clauses, inline format examples. Just write them in `.describe()` calls instead of `description:` fields.
+
+One gotcha: `.describe()` must be the **last** method in a Zod chain or the description is silently dropped from the emitted JSON Schema:
+
+```ts
+z.string().min(1).describe("Order ID"); // ✅ description included
+z.string().describe("Order ID").min(1); // ❌ description dropped silently
+```
+
+---
+
 ## What NOT to Do
 
 Some anti-patterns that compound rather than solve description problems:
