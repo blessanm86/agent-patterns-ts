@@ -12,6 +12,7 @@
     "dev:memory": "tsx src/conversation-memory/index.ts",
     "dev:memory-broken": "tsx src/conversation-memory/broken.ts",
     "dev:guardrails": "tsx src/guardrails/index.ts",
+    "dev:error-recovery": "tsx src/error-recovery/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

@@ -318,7 +318,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 13. LLM Error Recovery (Retry with Corrective Prompting)
+### [x] 13. LLM Error Recovery (Retry with Corrective Prompting)
 
 **What it is:** When a tool call fails or returns an error, feeding the error message back to the LLM with guidance on how to fix it, rather than crashing or retrying blindly.
 
@@ -539,7 +539,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 10 | RAG | 3 | Not started |
 | 11 | Prompt Caching | 3 | Not started |
 | 12 | Evaluation with Mocked Tools | 3 | Not started |
-| 13 | LLM Error Recovery | 3 | Not started |
+| 13 | LLM Error Recovery | 3 | Done |
 | 14 | Tool Description Engineering | 4 | Done |
 | 15 | Dual Return Pattern | 4 | Not started |
 | 16 | Query Builder Pattern | 4 | Not started |

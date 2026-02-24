@@ -6,8 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Development (run directly with tsx, no build step needed)
-pnpm dev:react          # Hotel reservation — ReAct pattern
-pnpm dev:plan-execute   # Trip planner — Plan+Execute pattern
+# Run `pnpm dev:<concept-name>` — see package.json for all available scripts
 
 # Build to dist/
 pnpm build
@@ -30,10 +29,9 @@ pnpm fmt:check    # check formatting without writing
 
 ## Architecture
 
-This repo contains two agents demonstrating two different agentic patterns:
+This repo contains self-contained demos of agentic patterns — see `LEARNING_ROADMAP.md` for the full list and status.
 
-1. **ReAct (Reason+Act)** — hotel reservation assistant (`src/react/`)
-2. **Plan+Execute** — trip planner (`src/plan-execute/`)
+The two foundational patterns are:
 
 ### The ReAct Loop (`src/react/agent.ts`)
 
@@ -64,22 +62,18 @@ Every tool has two distinct parts — a pattern to preserve when adding new tool
 
 ### File Responsibilities
 
-| File | Role |
-|------|------|
-| `src/shared/types.ts` | `Message`, `ToolCall`, `ToolDefinition` — shared across all agents |
-| `src/shared/eval-utils.ts` | `lastAssistantMessage` — shared eval helper |
-| `src/react/README.md` | Concept explainer — ReAct pattern, evals, LLM-as-judge |
-| `src/react/index.ts` | readline CLI loop, maintains `history: Message[]` across turns |
-| `src/react/agent.ts` | ReAct loop, Ollama calls, tool orchestration, `SYSTEM_PROMPT` |
-| `src/react/tools.ts` | Hotel tool definitions + implementations + mock data |
-| `src/react/types.ts` | Hotel domain types (`Room`, `Reservation`); re-exports shared types |
-| `src/react/eval-utils.ts` | `extractToolCallNames`, `extractToolCalls` — ReAct-specific eval helpers |
-| `src/react/evals/` | Phase 1 (trajectory) + Phase 2 (LLM-as-judge) evals |
-| `src/plan-execute/README.md` | Concept explainer — Plan+Execute pattern, plan-level evals |
-| `src/plan-execute/agent.ts` | `createPlan()`, `runPlanExecuteAgent()`, prompts |
-| `src/plan-execute/tools.ts` | Trip planner tool definitions + implementations + mock data |
-| `src/plan-execute/index.ts` | readline CLI loop for the trip planner |
-| `src/plan-execute/evals/` | Phase 3 evals for the Plan+Execute agent |
+Each concept folder follows the same structure:
+
+```
+src/<concept>/
+├── README.md   — blog post / concept explainer
+├── index.ts    — readline CLI entry point
+├── agent.ts    — agent loop and LLM calls
+└── tools.ts    — tool definitions + implementations
+```
+
+Shared types (`Message`, `ToolDefinition`, etc.) live in `src/shared/types.ts`.
+Shared eval helpers live in `src/shared/eval-utils.ts`.
 
 ## Repo Philosophy
 

@@ -16,6 +16,7 @@ Minimal TypeScript implementations of common agentic patterns, using a local mod
 | [Reasoning Tool](src/reasoning-tool/README.md) | Refund decision agent | `pnpm dev:reasoning-tool` |
 | [Tool Description Engineering](src/tool-descriptions/README.md) | Customer support agent (weak vs strong descriptions) | `pnpm dev:tool-descriptions` |
 | [Guardrails & Circuit Breakers](src/guardrails/README.md) | Hotel agent with max-iterations, token budget, tool timeout, and input validation | `pnpm dev:guardrails` |
+| [LLM Error Recovery](src/error-recovery/README.md) | Hotel agent with crash / blind / corrective retry strategies | `pnpm dev:error-recovery` |
 
 ---
 
