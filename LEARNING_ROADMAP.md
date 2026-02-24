@@ -12,7 +12,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 > Extend the patterns already in this repo. These are the building blocks everything else depends on.
 
-### [ ] 1. Multi-Turn Conversation Memory
+### [x] 1. Multi-Turn Conversation Memory
 
 **What it is:** Maintaining a message history array across multiple user turns so the LLM remembers what was already discussed and discovered.
 
@@ -527,7 +527,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 | # | Concept | Tier | Status |
 |---|---------|------|--------|
-| 1 | Multi-Turn Conversation Memory | 1 | Not started |
+| 1 | Multi-Turn Conversation Memory | 1 | Done |
 | 2 | Structured Output (JSON Mode) | 1 | Not started |
 | 3 | Reasoning Tool Pattern | 1 | Done |
 | 4 | Guardrails & Circuit Breakers | 1 | Not started |

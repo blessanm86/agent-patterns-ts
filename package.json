@@ -9,6 +9,8 @@
     "dev:reasoning-tool": "tsx src/reasoning-tool/index.ts",
     "dev:tool-descriptions": "tsx src/tool-descriptions/index.ts",
     "dev:tool-descriptions:weak": "tsx src/tool-descriptions/index.ts --weak",
+    "dev:memory": "tsx src/conversation-memory/index.ts",
+    "dev:memory-broken": "tsx src/conversation-memory/broken.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
