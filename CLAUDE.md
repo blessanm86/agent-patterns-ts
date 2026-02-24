@@ -89,6 +89,29 @@ This repo is a series of self-contained demos, one per concept from `LEARNING_RO
 
 Follow these steps when implementing a concept from the learning roadmap:
 
+**0. Research the concept first**
+
+Before writing any code or forming an implementation plan, do a research pass across multiple sources. The goal is to understand the concept deeply — including real-world tradeoffs, provider differences, and measured results — so the implementation and README reflect the best current thinking, not just one vendor's perspective.
+
+**Always research across:**
+- **LLM providers** — Anthropic, OpenAI, Google/Gemini, Mistral — each has engineering blog posts and API docs that often disagree in useful ways
+- **Frameworks** — Vercel AI SDK, LangChain, LlamaIndex — practical guidance from teams that have implemented the pattern at scale
+- **Academic papers** — the LEARNING_ROADMAP.md lists the key papers per concept; read the abstracts and results sections for benchmarks and formal definitions
+- **General web** — practitioner blog posts, engineering write-ups, and community discussion often surface failure modes and gotchas that official docs omit
+
+**Use parallel agent spawning for research.** Spawn multiple Task agents simultaneously — one per source or topic area — so research completes faster. For example:
+```
+Agent 1: Fetch and summarize Anthropic's engineering post on the concept
+Agent 2: Fetch OpenAI + Vercel AI SDK docs on the concept
+Agent 3: Web search for practitioner experience and measured results
+```
+
+Synthesize findings before starting implementation. Key things to extract:
+- Concrete before/after examples (weak vs. strong implementations)
+- Measured impact (accuracy numbers, benchmark results, latency data)
+- Where providers/frameworks disagree — these disagreements are worth surfacing in the README
+- Failure modes and anti-patterns practitioners have encountered in production
+
 **1. Decide: extend an existing demo or create a new one**
 
 - **Extend** if the concept is a small additive change that doesn't obscure how the original works (e.g. adding a guardrail to the ReAct loop)

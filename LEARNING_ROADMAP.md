@@ -346,7 +346,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 > Advanced patterns that emerge at production scale. These are refinements and optimizations, not prerequisites.
 
-### [ ] 14. Tool Description Engineering
+### [x] 14. Tool Description Engineering
 
 **What it is:** Writing tool descriptions not just as documentation but as behavioral instructions that coach the LLM on when, why, and how to use each tool. Including constraints, anti-patterns, and usage guidance directly in the schema.
 
@@ -540,7 +540,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 11 | Prompt Caching | 3 | Not started |
 | 12 | Evaluation with Mocked Tools | 3 | Not started |
 | 13 | LLM Error Recovery | 3 | Not started |
-| 14 | Tool Description Engineering | 4 | Not started |
+| 14 | Tool Description Engineering | 4 | Done |
 | 15 | Dual Return Pattern | 4 | Not started |
 | 16 | Query Builder Pattern | 4 | Not started |
 | 17 | Structured Entity Tags | 4 | Not started |
