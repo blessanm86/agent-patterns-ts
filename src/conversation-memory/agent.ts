@@ -1,4 +1,5 @@
 import ollama from "ollama";
+import { MODEL } from "../shared/config.js";
 import type { Message } from "../shared/types.js";
 
 // ─── System Prompt ────────────────────────────────────────────────────────────
@@ -15,8 +16,6 @@ Reference them naturally in future responses (e.g., "since you mentioned you're 
 Keep responses concise and helpful.`;
 
 // ─── Agent ────────────────────────────────────────────────────────────────────
-
-const MODEL = process.env.MODEL ?? "qwen2.5:7b";
 
 export async function runAgent(userMessage: string, history: Message[]): Promise<Message[]> {
   // Build the full message list: all prior messages + the new user message

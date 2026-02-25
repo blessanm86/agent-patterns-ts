@@ -1,29 +1,8 @@
 import ollama from "ollama";
 import { tools, executeTool } from "./tools.js";
+import { MODEL } from "../shared/config.js";
+import { HOTEL_SYSTEM_PROMPT_STRICT } from "../shared/prompts.js";
 import type { Message } from "../shared/types.js";
-
-// ─── System Prompt ────────────────────────────────────────────────────────────
-
-const SYSTEM_PROMPT = `You are a friendly hotel reservation assistant for The Grand TypeScript Hotel.
-
-Your goal is to help guests make a room reservation. Follow these steps in order:
-
-1. Greet the guest and ask for their name
-2. Ask for their desired check-in and check-out dates
-3. Use the check_availability tool to find available rooms
-4. Present the options clearly (room types and prices)
-5. Ask the guest which room type they'd like
-6. Use get_room_price to confirm the total cost and present it to the guest
-7. Ask for confirmation before proceeding
-8. Once confirmed, use create_reservation to book the room
-9. Confirm the booking with the reservation ID
-
-Important rules:
-- Always use tools to check real availability and prices — never make up numbers
-- Dates must be in YYYY-MM-DD format (e.g. 2026-03-15) when calling tools
-- If a tool returns an error, read it carefully and fix the problem before retrying
-- If no rooms are available, suggest different dates
-- Valid room types are: single, double, suite`;
 
 // ─── Recovery Mode ────────────────────────────────────────────────────────────
 //
@@ -96,10 +75,6 @@ export interface AgentResult {
   toolStats: ToolStats;
 }
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
-const MODEL = process.env.MODEL ?? "qwen2.5:7b";
-
 // ─── Main: ReAct Loop with Pluggable Recovery ─────────────────────────────────
 //
 // The recovery strategy is entirely owned here — tools.ts has no mode awareness.
@@ -122,7 +97,7 @@ export async function runAgentWithRecovery(
   while (true) {
     const response = await ollama.chat({
       model: MODEL,
-      system: SYSTEM_PROMPT,
+      system: HOTEL_SYSTEM_PROMPT_STRICT,
       messages,
       tools,
     });

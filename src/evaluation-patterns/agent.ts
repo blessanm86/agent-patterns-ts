@@ -1,5 +1,6 @@
 import ollama from "ollama";
 import { tools, executeTool } from "../react/tools.js";
+import { MODEL } from "../shared/config.js";
 import type { Message } from "../shared/types.js";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -30,8 +31,6 @@ Rules:
 - Always use tools — never invent availability or prices
 - Pass dates as YYYY-MM-DD when calling tools
 - If a tool returns an error, report it clearly to the guest`;
-
-const MODEL = process.env.MODEL ?? "qwen2.5:7b";
 
 // ─── Agent ────────────────────────────────────────────────────────────────────
 //

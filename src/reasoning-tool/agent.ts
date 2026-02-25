@@ -1,5 +1,6 @@
 import ollama from "ollama";
 import { tools, executeTool } from "./tools.js";
+import { MODEL } from "../shared/config.js";
 import type { Message } from "./types.js";
 
 // ─── System Prompt ────────────────────────────────────────────────────────────
@@ -30,8 +31,6 @@ Refund workflow:
 Never skip the think step. Never guess at order details — always look them up first.`;
 
 // ─── Agent ────────────────────────────────────────────────────────────────────
-
-const MODEL = process.env.MODEL ?? "qwen2.5:7b";
 
 export async function runAgent(userMessage: string, history: Message[]): Promise<Message[]> {
   const messages: Message[] = [...history, { role: "user", content: userMessage }];

@@ -1,6 +1,8 @@
 import ollama from "ollama";
 import { tools, executeTool } from "./tools.js";
 import { estimateMessageTokens } from "./token-counter.js";
+import { MODEL } from "../shared/config.js";
+import { logToolCall } from "../shared/logging.js";
 import type { Message } from "../shared/types.js";
 import type { ContextStrategy, ContextStats } from "./strategies/types.js";
 
@@ -35,7 +37,6 @@ export interface AgentResult {
 // ReAct loop with context management strategy middleware.
 // Before each LLM call, strategy.prepare() trims the messages to fit the budget.
 
-const MODEL = process.env.MODEL ?? "qwen2.5:7b";
 const MAX_ITERATIONS = 10;
 
 export async function runAgent(
@@ -85,13 +86,8 @@ export async function runAgent(
     for (const toolCall of assistantMessage.tool_calls) {
       const { name, arguments: args } = toolCall.function;
 
-      console.log(`\n  🔧 Tool call: ${name}`);
-      console.log(`     Args: ${JSON.stringify(args, null, 2).replace(/\n/g, "\n     ")}`);
-
       const result = executeTool(name, args as Record<string, string>);
-
-      const preview = result.length > 120 ? `${result.slice(0, 120)}...` : result;
-      console.log(`     Result: ${preview}`);
+      logToolCall(name, args as Record<string, string>, result, { maxResultLength: 120 });
 
       messages.push({ role: "tool", content: result });
     }

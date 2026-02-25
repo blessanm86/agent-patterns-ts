@@ -1,4 +1,6 @@
 import ollama from "ollama";
+import { MODEL } from "../shared/config.js";
+import { logToolCall } from "../shared/logging.js";
 import type { Message, ToolDefinition } from "./types.js";
 import { executeTool } from "./tools.js";
 
@@ -21,8 +23,6 @@ Always use tools to verify information — never assume order details.`;
 // Identical ReAct loop to src/react/agent.ts, but accepts tools as a parameter.
 // This lets the caller swap between weakTools and strongTools without any
 // change to the agent logic — the only variable is the tool descriptions.
-
-const MODEL = process.env.MODEL ?? "qwen2.5:7b";
 
 export async function runAgent(
   userMessage: string,
@@ -49,12 +49,8 @@ export async function runAgent(
     for (const toolCall of assistantMessage.tool_calls) {
       const { name, arguments: args } = toolCall.function;
 
-      console.log(`\n  🔧 Tool call: ${name}`);
-      console.log(`     Args: ${JSON.stringify(args, null, 2).replace(/\n/g, "\n     ")}`);
-
       const result = executeTool(name, args as Record<string, string>);
-
-      console.log(`     Result: ${result}`);
+      logToolCall(name, args as Record<string, string>, result);
 
       messages.push({ role: "tool", content: result });
     }

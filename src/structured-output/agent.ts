@@ -1,9 +1,7 @@
 import { z } from "zod";
 import ollama from "ollama";
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
-const MODEL = process.env.MODEL ?? "qwen2.5:7b";
+import { MODEL } from "../shared/config.js";
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 //

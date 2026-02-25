@@ -1,11 +1,11 @@
 import "dotenv/config";
-import * as readline from "readline";
 import { runAgent } from "./agent.js";
 import { resetNotes } from "./tools.js";
 import { estimateMessageTokens, formatTokenCount } from "./token-counter.js";
 import { createSlidingWindowStrategy } from "./strategies/sliding-window.js";
 import { createSummaryBufferStrategy } from "./strategies/summary-buffer.js";
 import { createObservationMaskingStrategy } from "./strategies/observation-masking.js";
+import { createCLI } from "../shared/cli.js";
 import type { Message } from "../shared/types.js";
 import type { ContextStrategy } from "./strategies/types.js";
 
@@ -26,41 +26,10 @@ const STRATEGIES: Record<string, ContextStrategy> = {
 };
 
 let currentStrategy: ContextStrategy | null = STRATEGIES["observation-masking"];
-let history: Message[] = [];
 
 // ─── CLI ─────────────────────────────────────────────────────────────────────
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-function printDivider() {
-  console.log("\n" + "-".repeat(60));
-}
-
-function printWelcome() {
-  const model = process.env.MODEL ?? "qwen2.5:7b";
-  console.log("\n📚  Tech Research Assistant — Context Window Management Demo");
-  console.log(`    Powered by Ollama + ${model}`);
-  console.log(`    Token budget: ${formatTokenCount(CONFIG.tokenBudget)}`);
-  console.log(`    Strategy: ${currentStrategy?.name ?? "none"}`);
-  console.log('\n    Type "exit" to quit');
-  console.log("");
-  console.log("    Slash commands:");
-  console.log(
-    "      /strategy <name>  — switch strategy (none, sliding-window, summary-buffer, observation-masking)",
-  );
-  console.log("      /stats            — show token usage breakdown");
-  console.log("      /reset            — clear conversation history");
-  console.log("");
-  console.log("    Sample prompts:");
-  console.log('      "What articles do you have about AI agents?"');
-  console.log('      "Read the article about context windows"');
-  console.log('      "Compare testing strategies with error handling patterns"');
-}
-
-function printStats() {
+function printInlineStats(history: Message[]) {
   const tokens = estimateMessageTokens(history);
   const messageCount = history.length;
   const toolMessages = history.filter((m) => m.role === "tool").length;
@@ -76,122 +45,74 @@ function printStats() {
   console.log(`    Usage: ${Math.round((tokens / CONFIG.tokenBudget) * 100)}% of budget`);
 }
 
-function printStatsFooter(
-  tokensNow: number,
-  strategyName: string,
-  triggered: boolean,
-  tokensSaved: number,
-) {
-  const parts = [
-    `Tokens: ~${formatTokenCount(tokensNow)}/${formatTokenCount(CONFIG.tokenBudget)}`,
-    `Strategy: ${strategyName}`,
-  ];
-  if (triggered) {
-    parts.push(`Managed: yes (-${formatTokenCount(tokensSaved)} tokens)`);
-  }
-  console.log(`\n📊  ${parts.join(" | ")}`);
-}
+createCLI({
+  title: "Tech Research Assistant — Context Window Management Demo",
+  emoji: "📚",
+  goodbye: "Goodbye! 📚",
+  agentLabel: "Assistant",
+  dividerWidth: 60,
+  welcomeLines: [
+    `    Token budget: ${formatTokenCount(CONFIG.tokenBudget)}`,
+    `    Strategy: ${currentStrategy?.name ?? "none"}`,
+    "",
+    "    Slash commands:",
+    "      /strategy <name>  — switch strategy (none, sliding-window, summary-buffer, observation-masking)",
+    "      /stats            — show token usage breakdown",
+    "      /reset            — clear conversation history",
+    "",
+    "    Sample prompts:",
+    '      "What articles do you have about AI agents?"',
+    '      "Read the article about context windows"',
+    '      "Compare testing strategies with error handling patterns"',
+  ],
+  async onMessage(input, history) {
+    const result = await runAgent(input, history, currentStrategy, CONFIG.tokenBudget);
+    const { contextStats } = result;
+    const tokensSaved = contextStats.triggered
+      ? contextStats.tokensBefore - contextStats.tokensAfter
+      : 0;
 
-function handleSlashCommand(input: string): boolean {
-  if (input === "/stats") {
-    printStats();
-    return true;
-  }
-
-  if (input === "/reset") {
-    history = [];
-    resetNotes();
-    console.log("\n🗑️  History cleared.");
-    return true;
-  }
-
-  if (input.startsWith("/strategy")) {
-    const name = input.slice("/strategy".length).trim();
-    if (name === "none") {
-      currentStrategy = null;
-      console.log("\n⚙️  Strategy: none (no context management)");
-    } else if (STRATEGIES[name]) {
-      currentStrategy = STRATEGIES[name];
-      console.log(`\n⚙️  Strategy: ${name} — ${currentStrategy.description}`);
-    } else {
-      console.log(
-        `\n❌  Unknown strategy: "${name}". Options: none, ${Object.keys(STRATEGIES).join(", ")}`,
-      );
+    const parts = [
+      `Tokens: ~${formatTokenCount(contextStats.tokensBefore)}/${formatTokenCount(CONFIG.tokenBudget)}`,
+      `Strategy: ${contextStats.strategyName}`,
+    ];
+    if (contextStats.triggered) {
+      parts.push(`Managed: yes (-${formatTokenCount(tokensSaved)} tokens)`);
     }
-    return true;
-  }
 
-  return false;
-}
+    return {
+      messages: result.messages,
+      stats: [`\n📊  ${parts.join(" | ")}`],
+    };
+  },
+  onCommand(cmd, history) {
+    if (cmd === "/stats") {
+      printInlineStats(history);
+      return true;
+    }
 
-function printResponse(messages: Message[]) {
-  const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
-  if (lastAssistant) {
-    printDivider();
-    console.log(`\nAssistant: ${lastAssistant.content}`);
-  }
-}
+    if (cmd === "/reset") {
+      resetNotes();
+      console.log("\n🗑️  History cleared.");
+      return { handled: true, newHistory: [] };
+    }
 
-function handleError(err: unknown): boolean {
-  const error = err as Error;
-  if (error.message?.includes("ECONNREFUSED")) {
-    console.error("\n❌ Could not connect to Ollama.");
-    console.error("   Make sure Ollama is running: ollama serve");
-    console.error(
-      `   And that you have the model pulled: ollama pull ${process.env.MODEL ?? "qwen2.5:7b"}\n`,
-    );
-    rl.close();
+    if (cmd.startsWith("/strategy")) {
+      const name = cmd.slice("/strategy".length).trim();
+      if (name === "none") {
+        currentStrategy = null;
+        console.log("\n⚙️  Strategy: none (no context management)");
+      } else if (STRATEGIES[name]) {
+        currentStrategy = STRATEGIES[name];
+        console.log(`\n⚙️  Strategy: ${name} — ${currentStrategy.description}`);
+      } else {
+        console.log(
+          `\n❌  Unknown strategy: "${name}". Options: none, ${Object.keys(STRATEGIES).join(", ")}`,
+        );
+      }
+      return true;
+    }
+
     return false;
-  }
-  console.error("\n❌ Error:", error.message);
-  return true;
-}
-
-function quit() {
-  console.log("\nGoodbye! 📚\n");
-  rl.close();
-}
-
-async function chat() {
-  printDivider();
-  process.stdout.write("You: ");
-
-  rl.once("line", async (input) => {
-    const trimmed = input.trim();
-    if (!trimmed) return chat();
-    if (trimmed.toLowerCase() === "exit") return quit();
-
-    // Handle slash commands
-    if (trimmed.startsWith("/")) {
-      handleSlashCommand(trimmed);
-      return chat();
-    }
-
-    try {
-      const result = await runAgent(trimmed, history, currentStrategy, CONFIG.tokenBudget);
-      history = result.messages;
-      printResponse(history);
-
-      // Stats footer
-      const { contextStats } = result;
-      const tokensSaved = contextStats.triggered
-        ? contextStats.tokensBefore - contextStats.tokensAfter
-        : 0;
-      printStatsFooter(
-        contextStats.tokensBefore,
-        contextStats.strategyName,
-        contextStats.triggered,
-        tokensSaved,
-      );
-    } catch (err) {
-      if (!handleError(err)) return;
-    }
-
-    chat();
-  });
-}
-
-// ─── Start ───────────────────────────────────────────────────────────────────
-
-printWelcome();
-chat();
+  },
+}).start();

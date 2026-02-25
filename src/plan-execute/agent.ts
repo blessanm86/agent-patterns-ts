@@ -1,5 +1,7 @@
 import ollama from "ollama";
 import { tripTools, executeTripTool } from "./tools.js";
+import { MODEL } from "../shared/config.js";
+import { logToolCall } from "../shared/logging.js";
 import type { Message } from "../shared/types.js";
 
 // ─── Plan Types ───────────────────────────────────────────────────────────────
@@ -16,8 +18,6 @@ export interface Plan {
 }
 
 // ─── Prompts ──────────────────────────────────────────────────────────────────
-
-const MODEL = process.env.MODEL ?? "qwen2.5:7b";
 
 // Lists available tools so the planner knows what to call.
 // The key constraint: the model must commit to ALL tool calls upfront
@@ -124,11 +124,8 @@ export async function runPlanExecuteAgent(
 
   console.log("\n  ⚡ Executing plan...");
   for (const step of plan.steps) {
-    console.log(`\n  🔧 Tool call: ${step.tool}`);
-    console.log(`     Args: ${JSON.stringify(step.args, null, 2).replace(/\n/g, "\n     ")}`);
-
     const result = executeTripTool(step.tool, step.args);
-    console.log(`     Result: ${result}`);
+    logToolCall(step.tool, step.args, result);
 
     messages.push({ role: "tool", content: result });
   }

@@ -1,36 +1,11 @@
 import ollama from "ollama";
 import { tools, executeTool } from "./tools.js";
+import { MODEL } from "../shared/config.js";
+import { logToolCall } from "../shared/logging.js";
+import { HOTEL_SYSTEM_PROMPT } from "../shared/prompts.js";
 import type { Message } from "./types.js";
 
-// ─── System Prompt ────────────────────────────────────────────────────────────
-//
-// This shapes how the agent behaves throughout the conversation.
-// A clear, specific system prompt is one of the most important parts
-// of building a reliable agent.
-
-const SYSTEM_PROMPT = `You are a friendly hotel reservation assistant for The Grand TypeScript Hotel.
-
-Your goal is to help guests make a room reservation. Follow these steps in order:
-
-1. Greet the guest and ask for their name
-2. Ask for their desired check-in and check-out dates
-3. Use the check_availability tool to find available rooms
-4. Present the options clearly (room types and prices)
-5. Ask the guest which room type they'd like
-6. Use get_room_price to confirm the total cost and present it to the guest
-7. Ask for confirmation before proceeding
-8. Once confirmed, use create_reservation to book the room
-9. Confirm the booking with the reservation ID
-
-Important rules:
-- Always use tools to check real availability and prices — never make up numbers
-- If no rooms are available, suggest different dates
-- Be concise and friendly
-- Dates should be in YYYY-MM-DD format when calling tools`;
-
 // ─── Agent ────────────────────────────────────────────────────────────────────
-
-const MODEL = process.env.MODEL ?? "qwen2.5:7b";
 
 export async function runAgent(userMessage: string, history: Message[]): Promise<Message[]> {
   // Build the full message history including the new user message
@@ -51,7 +26,7 @@ export async function runAgent(userMessage: string, history: Message[]): Promise
   while (true) {
     const response = await ollama.chat({
       model: MODEL,
-      system: SYSTEM_PROMPT,
+      system: HOTEL_SYSTEM_PROMPT,
       messages,
       tools,
     });
@@ -70,12 +45,8 @@ export async function runAgent(userMessage: string, history: Message[]): Promise
     for (const toolCall of assistantMessage.tool_calls) {
       const { name, arguments: args } = toolCall.function;
 
-      console.log(`\n  🔧 Tool call: ${name}`);
-      console.log(`     Args: ${JSON.stringify(args, null, 2).replace(/\n/g, "\n     ")}`);
-
       const result = executeTool(name, args as Record<string, string>);
-
-      console.log(`     Result: ${result}`);
+      logToolCall(name, args as Record<string, string>, result);
 
       // Tool results go back into the message history
       // The model will see these on the next iteration and reason about them
