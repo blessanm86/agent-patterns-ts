@@ -113,7 +113,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 > The leap from loop-based agents to graph-based architectures. These concepts define how production agents are structured internally.
 
-### [ ] 5. State Graph (Node-Based Agent Architecture)
+### [x] 5. State Graph (Node-Based Agent Architecture)
 
 **What it is:** Replacing a simple while-loop agent with a directed graph where each node is a distinct processing step, edges are conditional routing decisions, and state flows through a shared annotation.
 
@@ -531,7 +531,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 2 | Structured Output (JSON Mode) | 1 | Done |
 | 3 | Reasoning Tool Pattern | 1 | Done |
 | 4 | Guardrails & Circuit Breakers | 1 | Done |
-| 5 | State Graph | 2 | Not started |
+| 5 | State Graph | 2 | Done |
 | 6 | Context Window Management | 2 | Done |
 | 7 | Multi-Agent Routing | 2 | Not started |
 | 8 | Sub-Agent Delegation | 2 | Not started |
