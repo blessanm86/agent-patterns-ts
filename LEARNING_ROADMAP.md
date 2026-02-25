@@ -188,7 +188,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 8. Sub-Agent Delegation (Recursive Task Spawning)
+### [x] 8. Sub-Agent Delegation (Recursive Task Spawning)
 
 **What it is:** An agent spawning child agents to handle subtasks, with results flowing back to the parent. Includes depth control to prevent infinite recursion.
 
@@ -525,28 +525,28 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ## Progress Tracking
 
-| # | Concept | Tier | Status |
-|---|---------|------|--------|
-| 1 | Multi-Turn Conversation Memory | 1 | Done |
-| 2 | Structured Output (JSON Mode) | 1 | Done |
-| 3 | Reasoning Tool Pattern | 1 | Done |
-| 4 | Guardrails & Circuit Breakers | 1 | Done |
-| 5 | State Graph | 2 | Done |
-| 6 | Context Window Management | 2 | Done |
-| 7 | Multi-Agent Routing | 2 | Done |
-| 8 | Sub-Agent Delegation | 2 | Not started |
-| 9 | Streaming Responses (SSE) | 3 | Not started |
-| 10 | RAG | 3 | Not started |
-| 11 | Prompt Caching | 3 | Not started |
-| 12 | Evaluation with Mocked Tools | 3 | Done |
-| 13 | LLM Error Recovery | 3 | Done |
-| 14 | Tool Description Engineering | 4 | Done |
-| 15 | Dual Return Pattern | 4 | Not started |
-| 16 | Query Builder Pattern | 4 | Not started |
-| 17 | Structured Entity Tags | 4 | Not started |
-| 18 | Prompt Injection Detection | 4 | Not started |
-| 19 | Self-Instrumentation | 4 | Not started |
-| 20 | Cost Tracking & Model Selection | 4 | Not started |
+| #  | Concept                         | Tier | Status      |
+|----|---------------------------------|------|-------------|
+| 1  | Multi-Turn Conversation Memory  | 1    | Done        |
+| 2  | Structured Output (JSON Mode)   | 1    | Done        |
+| 3  | Reasoning Tool Pattern          | 1    | Done        |
+| 4  | Guardrails & Circuit Breakers   | 1    | Done        |
+| 5  | State Graph                     | 2    | Done        |
+| 6  | Context Window Management       | 2    | Done        |
+| 7  | Multi-Agent Routing             | 2    | Done        |
+| 8  | Sub-Agent Delegation            | 2    | Done        |
+| 9  | Streaming Responses (SSE)       | 3    | Not started |
+| 10 | RAG                             | 3    | Not started |
+| 11 | Prompt Caching                  | 3    | Not started |
+| 12 | Evaluation with Mocked Tools    | 3    | Done        |
+| 13 | LLM Error Recovery              | 3    | Done        |
+| 14 | Tool Description Engineering    | 4    | Done        |
+| 15 | Dual Return Pattern             | 4    | Not started |
+| 16 | Query Builder Pattern           | 4    | Not started |
+| 17 | Structured Entity Tags          | 4    | Not started |
+| 18 | Prompt Injection Detection      | 4    | Not started |
+| 19 | Self-Instrumentation            | 4    | Not started |
+| 20 | Cost Tracking & Model Selection | 4    | Not started |
 
 ---
 

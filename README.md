@@ -22,6 +22,7 @@ Minimal TypeScript implementations of common agentic patterns, using a local mod
 | [Context Window Management](src/context-management/README.md) | Research assistant with 4 context strategies (sliding window, summary buffer, observation masking) | `pnpm dev:context-management` |
 | [State Graph (Node-Based Architecture)](src/state-graph/README.md) | Hotel agent refactored from while loop to 3-node state graph with generic runtime | `pnpm dev:state-graph` |
 | [Multi-Agent Routing](src/multi-agent-routing/README.md) | Travel assistant with 3 specialist agents + LLM router vs single-agent baseline | `pnpm dev:multi-agent-routing` |
+| [Sub-Agent Delegation](src/sub-agent-delegation/README.md) | Parent agent spawns parallel child agents for multi-domain trip planning | `pnpm dev:sub-agent-delegation` |
 
 ---
 
