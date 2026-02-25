@@ -1,0 +1,327 @@
+# Context Window Management
+
+_Part of [Agent Patterns — TypeScript](../../README.md). Builds on [Multi-Turn Conversation Memory](../conversation-memory/README.md)._
+
+---
+
+Your agent remembers everything — until it doesn't.
+
+Turn 47 of a coding session, the agent "forgets" the architecture decision from turn 3. It's not a bug in the model. Your context window is full, and everything in the middle is fading.
+
+This isn't a theoretical concern. Every LLM API is stateless — each request sends the **full conversation history**. As conversations grow, three things break:
+
+1. **Token limits** — exceed the window and the request fails outright
+2. **Context rot** — even within limits, accuracy degrades as context grows
+3. **Cost and latency** — more tokens = more money = slower responses
+
+Context management is the discipline of deciding **what stays in the window and what gets cut** — without losing the information the agent needs to do its job.
+
+## The Problem: Linear Growth, Fixed Window
+
+```
+Tokens
+  ▲
+  │                                    ╱ ← Context limit
+  │                                  ╱
+  │                               ╱
+  │                            ╱     ← Quality degrades here
+  │                         ╱           (context rot)
+  │                      ╱
+  │                   ╱
+  │                ╱
+  │             ╱
+  │          ╱
+  │       ╱
+  │    ╱
+  │ ╱
+  └──────────────────────────────────────► Turns
+```
+
+Every turn adds tokens: the user's message, the assistant's reasoning, tool calls, and tool results. A research agent reading 3-4 articles easily generates 5,000+ tokens per turn. At that rate, an 8K budget fills in 2 turns. A 128K budget fills in ~25 turns.
+
+But the problem starts **before** you hit the limit. The "Lost in the Middle" research (Liu et al., 2023) showed that LLMs exhibit a **U-shaped performance curve**: best recall at the beginning and end of context, worst in the middle. Performance degrades >30% when critical information sits in the middle.
+
+More context is not always better.
+
+## The Full Taxonomy: 10 Strategies
+
+Context management strategies exist on a spectrum from simple to sophisticated:
+
+| #   | Strategy                       | Token Savings |   Quality    |  Latency Cost  | Complexity |
+| --- | ------------------------------ | :-----------: | :----------: | :------------: | :--------: |
+| 1   | Naive truncation               |     High      |     Bad      |      None      |  Trivial   |
+| 2   | **Sliding window**             |     High      |   Moderate   |      None      |    Low     |
+| 3   | Progressive summarization      |    Medium     |    Mixed     |  +1 LLM call   |   Medium   |
+| 4   | **Summary + buffer hybrid**    |    Medium     |     Good     |  +1 LLM call   |   Medium   |
+| 5   | **Observation masking**        |  High (50%+)  |     Good     |      None      |    Low     |
+| 6   | Prompt compression (LLMLingua) |   Very high   | Minimal loss |  Small model   |    High    |
+| 7   | Server-side compaction         |     High      |     Good     |  +1 LLM call   |   Medium   |
+| 8   | External memory / notes        |     High      |     Good     |    File I/O    |   Medium   |
+| 9   | Sub-agent delegation           |  N/A (fresh)  |     Good     | Agent overhead |    High    |
+| 10  | Just-in-time retrieval (RAG)   |     High      |     Good     |   Tool call    |   Medium   |
+
+This demo implements strategies **2, 4, and 5** (bolded above) — the three most practical for agent builders. They cover three different tradeoff points: zero-cost simplicity, quality-preserving compression, and the research-backed surprise winner.
+
+## The Core Abstraction
+
+Every strategy implements one interface:
+
+```ts
+interface ContextStrategy {
+  name: string;
+  description: string;
+  prepare(messages: Message[], tokenBudget: number): Promise<Message[]>;
+}
+```
+
+Take messages + budget, return trimmed messages. The agent loop calls `strategy.prepare()` before each LLM call:
+
+```ts
+while (true) {
+  // Apply context management before each LLM call
+  const prepared = strategy ? await strategy.prepare(messages, tokenBudget) : messages;
+
+  const response = await ollama.chat({
+    model: MODEL,
+    messages: prepared,
+    tools,
+  });
+  // ... standard ReAct loop
+}
+```
+
+This is the entire integration point. Strategies are pluggable message transformers — swap them at runtime without touching the agent logic.
+
+## Strategy 1: Sliding Window
+
+The simplest approach. Keep only the most recent messages that fit within the token budget.
+
+```ts
+async prepare(messages: Message[], tokenBudget: number): Promise<Message[]> {
+  if (estimateMessageTokens(messages) <= tokenBudget) return messages;
+
+  // Keep the first message (often sets context)
+  const first = messages[0];
+  const remainingBudget = tokenBudget - estimateMessageTokens([first]);
+
+  // Walk backwards, adding messages until we hit the budget
+  const recent: Message[] = [];
+  let usedTokens = 0;
+
+  for (let i = messages.length - 1; i >= 1; i--) {
+    const msgTokens = estimateMessageTokens([messages[i]]);
+    if (usedTokens + msgTokens > remainingBudget) break;
+    recent.unshift(messages[i]);
+    usedTokens += msgTokens;
+  }
+
+  return [first, ...recent];
+}
+```
+
+**When to use**: Short task conversations where older context doesn't matter. Chatbots, quick Q&A, stateless interactions.
+
+**Tradeoff**: Total amnesia beyond the window. The agent has no memory of earlier decisions, discoveries, or user preferences.
+
+## Strategy 2: Summary + Buffer
+
+Keep recent messages verbatim. Summarize older messages into a single compressed message.
+
+```ts
+async prepare(messages: Message[], tokenBudget: number): Promise<Message[]> {
+  if (estimateMessageTokens(messages) <= tokenBudget) return messages;
+
+  // Split: older messages to summarize, recent to keep
+  const bufferStart = Math.max(0, messages.length - bufferSize);
+  const older = messages.slice(0, bufferStart);
+  const recent = messages.slice(bufferStart);
+
+  // Call LLM to summarize older messages
+  const summary = await summarize(older);
+
+  return [
+    { role: "user", content: `[Summary of earlier conversation]:\n${summary}` },
+    ...recent,
+  ];
+}
+```
+
+The summarization prompt asks the LLM to preserve: key facts discovered, user preferences, decisions made, and unresolved questions.
+
+**When to use**: Long conversations where older context still matters — research sessions, multi-step planning, iterative debugging.
+
+**Tradeoff**: The summarization call costs tokens and adds latency. More subtly, summaries can introduce hallucinations and smooth over failure signals that the agent should have noticed.
+
+## Strategy 3: Observation Masking
+
+The surprise winner. Keep ALL user and assistant messages. For tool results: keep the N most recent verbatim, replace older ones with a placeholder.
+
+```ts
+async prepare(messages: Message[], tokenBudget: number): Promise<Message[]> {
+  if (estimateMessageTokens(messages) <= tokenBudget) return messages;
+
+  // Find all tool result indices
+  const toolIndices = messages
+    .map((m, i) => m.role === "tool" ? i : -1)
+    .filter((i) => i >= 0);
+
+  // Mask older tool results, keep most recent N
+  const toMask = new Set(toolIndices.slice(0, -observationWindow));
+
+  return messages.map((msg, i) =>
+    toMask.has(i)
+      ? { ...msg, content: "[Previous tool result cleared]" }
+      : msg,
+  );
+}
+```
+
+**Why this works**: In an agent loop, the assistant's reasoning about tool results is compact and contains the key findings. The raw tool outputs are bulky (file contents, API responses, search results). Masking the bulk preserves the reasoning chain while dramatically reducing tokens.
+
+**When to use**: Agentic loops with tool-heavy work — code agents, research agents, data exploration.
+
+**Tradeoff**: If the agent needs to re-read a tool result it already processed, the data is gone. In practice this rarely matters because the agent's own reasoning captured the important parts.
+
+## The Surprise Finding: Simple Beats Complex
+
+The JetBrains Research / NeurIPS 2025 paper "The Complexity Trap" (Lindenbauer et al.) tested context management strategies on SWE-bench Verified (500 real GitHub issues):
+
+| Strategy                 | Cost Reduction | Solve Rate Impact |
+| ------------------------ | :------------: | :---------------: |
+| No management (baseline) |       —        |         —         |
+| LLM summarization        |      ~45%      |  -0.4% to +1.2%   |
+| **Observation masking**  |    **52%**     |     **+2.6%**     |
+
+Observation masking — the simplest strategy with zero LLM calls — outperformed LLM summarization in 4 of 5 tested settings. Two reasons:
+
+1. **Summaries smooth over failure signals.** When an agent hits an error, the raw tool output contains the error message. A summary might compress this into "the operation encountered an issue" — losing the specific error that would help the agent self-correct.
+
+2. **Summarization causes trajectory elongation.** Agents using summarization took 13-15% more turns to complete tasks. The compression overhead (generating summaries) plus the quality loss (vague summaries) created a net negative.
+
+The lesson: for agentic workloads, preserve the reasoning chain and clear the raw data. Don't add complexity (and cost) unless you've measured that it helps.
+
+## The "Lost in the Middle" Problem
+
+Even with context management, **where** you place information matters. Liu et al. (2023) demonstrated that LLMs recall information best at the beginning and end of context, worst in the middle.
+
+```
+Recall
+  ▲
+  │ █                               █
+  │ █ █                           █ █
+  │ █ █ █                       █ █ █
+  │ █ █ █ █                   █ █ █ █
+  │ █ █ █ █ █ █           █ █ █ █ █ █
+  │ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █
+  └───────────────────────────────────► Position
+    Start        Middle          End
+```
+
+This affects strategy design: sliding window preserves the end (recent messages), summary buffer preserves both ends (summary at start, recent at end), and observation masking preserves reasoning throughout while clearing the bulky middle.
+
+## How Production Tools Do It
+
+**Claude Code** (Anthropic): Uses compaction — summarizes the full conversation when approaching limits, preserving architecture decisions and unresolved bugs. Supports just-in-time retrieval via glob/grep/read tools. CLAUDE.md files are loaded upfront as critical context.
+
+**Cursor**: Defaults to ~20K token limit per chat. Uses RAG-style semantic search to retrieve relevant code context. "Max Mode" unlocks the full context window at higher cost.
+
+**Aider**: Builds a repository map using Tree-sitter + PageRank to identify the most relevant code structures. Dynamically adjusts what's included based on a configurable token budget. The agent can request more files on demand.
+
+The common thread: all production tools use **multiple strategies in combination**. No single strategy covers all cases.
+
+## Running the Demo
+
+```bash
+# Prerequisites: Ollama running with model pulled
+ollama serve
+ollama pull qwen2.5:7b
+
+# Run the demo
+pnpm dev:context-management
+```
+
+The demo runs a tech research assistant with a deliberately low 8K token budget. This makes context management trigger within a few turns.
+
+**Try these prompts to see strategies in action:**
+
+```
+You: What articles do you have about AI agents?
+You: Read the article about context windows
+You: Now read the article about testing LLM applications
+You: Compare what you've learned about context management and testing
+```
+
+**Switch strategies mid-session:**
+
+```
+/strategy none               # No management — watch tokens grow
+/strategy sliding-window     # Simple — drops old messages
+/strategy summary-buffer     # Summarizes old messages
+/strategy observation-masking # Masks old tool results (default)
+/stats                       # See current token usage
+/reset                       # Clear history and start fresh
+```
+
+After each turn, a stats footer shows the token usage and whether management triggered:
+
+```
+📊  Tokens: ~3.4K/8.0K | Strategy: observation-masking | Managed: yes (-1.2K tokens)
+```
+
+## Token Estimation
+
+This demo uses the chars/4 approximation for token counting:
+
+```ts
+function estimateTokens(text: string): number {
+  return Math.ceil(text.length / 4);
+}
+```
+
+This is ~90% accurate for English text — good enough for threshold checks in an agent loop. For production accuracy, use:
+
+- **tiktoken** (OpenAI) — exact BPE tokenization, client-side, fast
+- **Anthropic countTokens API** — exact for Claude, requires API call
+- **tiktoken p50k_base** — reasonable approximation for most models
+
+## Key Takeaways
+
+1. **Context management is not optional** — even with 200K+ token windows, unmanaged context degrades quality, increases cost, and adds latency.
+
+2. **The `ContextStrategy` interface is the entire abstraction** — `prepare(messages, budget) → messages`. Strategies are pluggable message transformers.
+
+3. **Observation masking is the best default for agents** — zero cost, zero latency, preserves the reasoning chain, and outperforms LLM summarization in research.
+
+4. **Summary + buffer is the best default for conversations** — preserves both recent detail and compressed history.
+
+5. **More context is not always better** — the "Lost in the Middle" effect means placing information matters as much as including it.
+
+6. **Start without management, add it when needed** — when conversations hit ~50% of the window, add a strategy. Don't over-engineer early.
+
+7. **Production tools combine multiple strategies** — Claude Code uses compaction + just-in-time retrieval + upfront context. No single strategy covers all cases.
+
+8. **Measure before choosing** — the JetBrains research surprised everyone by showing simple > complex. Run evals on your specific workload before committing to a strategy.
+
+## Sources / Further Reading
+
+**Research Papers**
+
+- [Liu et al. — "Lost in the Middle" (2023)](https://arxiv.org/abs/2307.03172) — U-shaped recall curve; >30% degradation in middle context positions
+- [Lindenbauer et al. — "The Complexity Trap" (NeurIPS 2025)](https://arxiv.org/abs/2508.21433) — Observation masking outperforms summarization; 52% cheaper, +2.6% solve rate
+- [Wang et al. — "Recursively Summarizing Enables Long-Term Dialogue Memory" (2023)](https://arxiv.org/abs/2308.15022) — Recursive summaries for long conversations
+- [Jiang et al. — LLMLingua (2023)](https://arxiv.org/abs/2310.05736) — 20x prompt compression with 1.5% performance loss
+- [Li et al. — Ms-PoE: "Found in the Middle" (2024)](https://arxiv.org/abs/2403.04797) — Multi-scale positional encoding fix for lost-in-the-middle
+
+**Provider Documentation**
+
+- [Anthropic — Context Windows](https://platform.claude.com/docs/en/docs/build-with-claude/context-windows) — Official context limit docs
+- [Anthropic — Effective Context Engineering for AI Agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — Compaction, memory tools, just-in-time retrieval
+- [Anthropic — Long Context Prompting Tips](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/long-context-tips) — Information placement guidance
+- [Google — Gemini Long Context](https://ai.google.dev/gemini-api/docs/long-context) — 2M token window with near-perfect single-needle recall
+- [OpenAI — Conversation State](https://platform.openai.com/docs/guides/conversation-state) — Stateless API, history management
+
+**Frameworks & Tools**
+
+- [LangChain Conversational Memory](https://www.pinecone.io/learn/series/langchain/langchain-conversational-memory/) — BufferWindow, Summary, SummaryBuffer, Entity memory types
+- [Aider — Repository Map](https://aider.chat/docs/repomap.html) — Tree-sitter + PageRank for code context selection
+- [JetBrains Research — Cutting Through the Noise](https://blog.jetbrains.com/research/2025/12/efficient-context-management/) — Practical guide to observation masking for agents

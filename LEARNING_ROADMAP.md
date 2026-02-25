@@ -138,7 +138,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 6. Context Window Management & Summarization
+### [x] 6. Context Window Management & Summarization
 
 **What it is:** When conversation history grows beyond the LLM's context window, using an LLM call to summarize older messages into a compact representation while preserving key facts.
 
@@ -532,7 +532,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 3 | Reasoning Tool Pattern | 1 | Done |
 | 4 | Guardrails & Circuit Breakers | 1 | Done |
 | 5 | State Graph | 2 | Not started |
-| 6 | Context Window Management | 2 | Not started |
+| 6 | Context Window Management | 2 | Done |
 | 7 | Multi-Agent Routing | 2 | Not started |
 | 8 | Sub-Agent Delegation | 2 | Not started |
 | 9 | Streaming Responses (SSE) | 3 | Not started |

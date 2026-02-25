@@ -19,6 +19,7 @@ Minimal TypeScript implementations of common agentic patterns, using a local mod
 | [LLM Error Recovery](src/error-recovery/README.md) | Hotel agent with crash / blind / corrective retry strategies | `pnpm dev:error-recovery` |
 | [Structured Output (JSON Mode)](src/structured-output/README.md) | Booking intent extractor: prompt-only vs json-mode vs schema (constrained decoding) | `pnpm dev:structured-output` |
 | [Evaluation Patterns](src/evaluation-patterns/README.md) | 8 eval patterns: trajectory, dataset-driven, LLM judge, error injection, multi-turn, adversarial, semantic similarity, pass^k | `pnpm dev:evaluation-patterns` |
+| [Context Window Management](src/context-management/README.md) | Research assistant with 4 context strategies (sliding window, summary buffer, observation masking) | `pnpm dev:context-management` |
 
 ---
 

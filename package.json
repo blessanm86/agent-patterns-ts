@@ -15,6 +15,7 @@
     "dev:error-recovery": "tsx src/error-recovery/index.ts",
     "dev:structured-output": "tsx src/structured-output/index.ts",
     "dev:evaluation-patterns": "tsx src/evaluation-patterns/index.ts",
+    "dev:context-management": "tsx src/context-management/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

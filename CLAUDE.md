@@ -87,11 +87,12 @@ Follow these steps when implementing a concept from the learning roadmap:
 
 Before writing any code or forming an implementation plan, do a research pass across multiple sources. The goal is to understand the concept deeply — including real-world tradeoffs, provider differences, and measured results — so the implementation and README reflect the best current thinking, not just one vendor's perspective.
 
-**Always research across:**
-- **LLM providers** — Anthropic, OpenAI, Google/Gemini, Mistral — each has engineering blog posts and API docs that often disagree in useful ways
-- **Frameworks** — Vercel AI SDK, LangChain, LlamaIndex — practical guidance from teams that have implemented the pattern at scale
-- **Academic papers** — the LEARNING_ROADMAP.md lists the key papers per concept; read the abstracts and results sections for benchmarks and formal definitions
-- **General web** — practitioner blog posts, engineering write-ups, and community discussion often surface failure modes and gotchas that official docs omit
+**Always research across these 5 areas:**
+- **The web** — broad web search to discover what's out there; surface blog posts, tutorials, discussions, and framework docs (Vercel AI SDK, LangChain, LlamaIndex) that cover the concept
+- **LLM makers** — Anthropic, OpenAI, Google/Gemini, Mistral — their engineering blog posts, API docs, and official guides on how they implement or recommend the pattern
+- **Providers** — cloud platforms, tooling companies, and framework authors that offer the pattern as a product or feature — how they package it for real users
+- **Researchers** — academic papers (the LEARNING_ROADMAP.md lists key papers per concept); read abstracts and results sections for benchmarks, formal definitions, and measured outcomes. Also search https://arxiv.org/ directly for recent preprints on the topic
+- **Practitioners** — engineers who've built with the pattern in production; their blog posts, write-ups, and community discussions surface failure modes, gotchas, and real-world tradeoffs that official docs omit
 
 **Use parallel agent spawning for research.** Spawn multiple Task agents simultaneously — one per source or topic area — so research completes faster. For example:
 ```
@@ -99,6 +100,10 @@ Agent 1: Fetch and summarize Anthropic's engineering post on the concept
 Agent 2: Fetch OpenAI + Vercel AI SDK docs on the concept
 Agent 3: Web search for practitioner experience and measured results
 ```
+
+> **Note:** Sub-agents need `WebSearch` and `WebFetch` pre-approved in `.claude/settings.json` for background web research to work. If permissions aren't configured, do web research directly from the main agent.
+
+**Save research artifacts** to `.research/<topic>.md` so they're available during implementation. The `.research/` directory is gitignored.
 
 Synthesize findings before starting implementation. Key things to extract:
 - Concrete before/after examples (weak vs. strong implementations)
@@ -167,3 +172,7 @@ OLLAMA_HOST=http://localhost:11434
 ```
 
 Models with good tool-call support: `qwen2.5:7b`, `qwen2.5:14b`, `llama3.1:8b`, `mistral:7b`.
+
+### Concept Kickoff
+
+When the user names a concept from the roadmap (e.g. "Context Window Management"), trigger the full process automatically: research (step 0) → plan → implement. No extra prompting needed.
