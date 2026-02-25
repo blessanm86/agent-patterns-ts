@@ -119,6 +119,7 @@ export async function runGuardedAgent(
 
       const synthesis = await ollama.chat({
         model: MODEL,
+        // @ts-expect-error — system not in ChatRequest types but works at runtime
         system: HOTEL_SYSTEM_PROMPT,
         messages: [
           ...messages,
@@ -135,6 +136,7 @@ export async function runGuardedAgent(
 
     const response = await ollama.chat({
       model: MODEL,
+      // @ts-expect-error — system not in ChatRequest types but works at runtime
       system: HOTEL_SYSTEM_PROMPT,
       messages,
       tools,

@@ -84,18 +84,20 @@ async function safeSimilarity(textA: string, textB: string): Promise<number> {
 evalite("Semantic similarity — availability response", {
   data: async () => [
     {
-      input: "What rooms do you have available from 2026-06-10 to 2026-06-13?",
-      expected:
-        "We have suite rooms available for your dates at $350 per night, totaling $1050 for 3 nights.",
+      input: {
+        query: "What rooms do you have available from 2026-06-10 to 2026-06-13?",
+        expected:
+          "We have suite rooms available for your dates at $350 per night, totaling $1050 for 3 nights.",
+      },
     },
   ],
   task: async (input) => {
     const executor = createMockExecutor(scenarios.onlySuiteAvailable);
-    const history = await runHotelAgent(input.input, [], { executorFn: executor });
+    const history = await runHotelAgent(input.query, [], { executorFn: executor });
     return lastAssistantMessage(history);
   },
   scorers: [
-    createScorer({
+    createScorer<{ query: string; expected: string }, string>({
       name: `Semantic similarity ≥ ${SIMILARITY_THRESHOLD}`,
       scorer: async ({ input, output }) => safeSimilarity(output, input.expected),
     }),
@@ -110,18 +112,20 @@ evalite("Semantic similarity — availability response", {
 evalite("Semantic similarity — paraphrase consistency", {
   data: async () => [
     {
-      input: "How much for a suite for 2 nights?",
-      // Agent might say "$700", "700 dollars", "two nights at $350 comes to $700"
-      expected: "A suite costs $350 per night. For 2 nights, the total is $700.",
+      input: {
+        query: "How much for a suite for 2 nights?",
+        // Agent might say "$700", "700 dollars", "two nights at $350 comes to $700"
+        expected: "A suite costs $350 per night. For 2 nights, the total is $700.",
+      },
     },
   ],
   task: async (input) => {
     const executor = createMockExecutor({});
-    const history = await runHotelAgent(input.input, [], { executorFn: executor });
+    const history = await runHotelAgent(input.query, [], { executorFn: executor });
     return lastAssistantMessage(history);
   },
   scorers: [
-    createScorer({
+    createScorer<{ query: string; expected: string }, string>({
       name: `Semantic similarity ≥ ${SIMILARITY_THRESHOLD}`,
       scorer: async ({ input, output }) => safeSimilarity(output, input.expected),
     }),
@@ -138,19 +142,21 @@ evalite("Semantic similarity — paraphrase consistency", {
 evalite("Semantic similarity — sanity check (low score expected)", {
   data: async () => [
     {
-      input: "What rooms do you have available from 2026-06-10 to 2026-06-13?",
-      // Completely unrelated — similarity should be low
-      unrelated:
-        "The mitochondria is the powerhouse of the cell. ATP synthesis drives cellular energy production.",
+      input: {
+        query: "What rooms do you have available from 2026-06-10 to 2026-06-13?",
+        // Completely unrelated — similarity should be low
+        unrelated:
+          "The mitochondria is the powerhouse of the cell. ATP synthesis drives cellular energy production.",
+      },
     },
   ],
   task: async (input) => {
     const executor = createMockExecutor(scenarios.onlySuiteAvailable);
-    const history = await runHotelAgent(input.input, [], { executorFn: executor });
+    const history = await runHotelAgent(input.query, [], { executorFn: executor });
     return lastAssistantMessage(history);
   },
   scorers: [
-    createScorer({
+    createScorer<{ query: string; unrelated: string }, string>({
       name: "Low similarity to unrelated topic (scorer calibration)",
       scorer: async ({ input, output }) => {
         const sim = await safeSimilarity(output, input.unrelated);

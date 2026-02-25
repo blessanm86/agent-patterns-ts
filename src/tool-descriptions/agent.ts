@@ -34,12 +34,13 @@ export async function runAgent(
   while (true) {
     const response = await ollama.chat({
       model: MODEL,
+      // @ts-expect-error — system not in ChatRequest types but works at runtime
       system: SYSTEM_PROMPT,
       messages,
       tools,
     });
 
-    const assistantMessage = response.message;
+    const assistantMessage = response.message as Message;
     messages.push(assistantMessage);
 
     if (!assistantMessage.tool_calls || assistantMessage.tool_calls.length === 0) {

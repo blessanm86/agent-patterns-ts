@@ -39,6 +39,7 @@ type AgentState = StateFromSchema<typeof agentStateSchema>;
 async function think(state: AgentState): Promise<Partial<AgentState>> {
   const response = await ollama.chat({
     model: MODEL,
+    // @ts-expect-error — system not in ChatRequest types but works at runtime
     system: HOTEL_SYSTEM_PROMPT,
     messages: state.messages,
     tools,

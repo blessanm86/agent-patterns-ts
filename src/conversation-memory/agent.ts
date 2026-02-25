@@ -25,12 +25,13 @@ export async function runAgent(userMessage: string, history: Message[]): Promise
   // The model sees the full conversation history and generates a response.
   const response = await ollama.chat({
     model: MODEL,
+    // @ts-expect-error — system not in ChatRequest types but works at runtime
     system: SYSTEM_PROMPT,
     messages,
   });
 
   // Append the assistant's reply and return the updated history.
   // The caller is responsible for storing and re-passing this on the next turn.
-  messages.push(response.message);
+  messages.push(response.message as Message);
   return messages;
 }

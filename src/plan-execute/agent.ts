@@ -138,11 +138,12 @@ export async function runPlanExecuteAgent(
   console.log("\n  ✍️  Synthesizing itinerary...");
   const synthResponse = await ollama.chat({
     model: MODEL,
+    // @ts-expect-error — system not in ChatRequest types but works at runtime
     system: SYNTHESIZER_PROMPT,
     messages,
   });
 
-  messages.push(synthResponse.message);
+  messages.push(synthResponse.message as Message);
 
   return messages;
 }

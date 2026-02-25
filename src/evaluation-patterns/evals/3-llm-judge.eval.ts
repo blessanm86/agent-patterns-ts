@@ -46,17 +46,17 @@ const MODEL = process.env.MODEL ?? "qwen2.5:7b";
 //   - Chain-of-thought: judge explains reasoning in "reason" field before scoring
 
 function makeJudge(name: string, criteria: string) {
-  return createScorer<{ response: string; toolContext?: string }, string>({
+  return createScorer<string, { response: string; toolContext?: string }>({
     name,
-    scorer: async ({ input }) => {
-      const contextBlock = input.toolContext
-        ? `\nTool results the agent received:\n"""\n${input.toolContext}\n"""\n`
+    scorer: async ({ output }) => {
+      const contextBlock = output.toolContext
+        ? `\nTool results the agent received:\n"""\n${output.toolContext}\n"""\n`
         : "";
 
       const prompt = `You are evaluating a hotel reservation assistant's response.${contextBlock}
 Assistant's response:
 """
-${input.response}
+${output.response}
 """
 
 Evaluation criteria: ${criteria}

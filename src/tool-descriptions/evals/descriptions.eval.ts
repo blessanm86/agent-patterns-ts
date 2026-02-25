@@ -14,6 +14,7 @@ import { evalite, createScorer } from "evalite";
 import { runAgent } from "../agent.js";
 import { weakTools, strongTools } from "../tools.js";
 import { extractToolCallNames, extractToolCalls } from "../../react/eval-utils.js";
+import type { ToolCall } from "../../shared/types.js";
 
 // ─── Scenario 1: Parameter Name Ambiguity ─────────────────────────────────────
 //
@@ -30,10 +31,10 @@ evalite("Weak — param ambiguity (name instead of email)", {
     return extractToolCalls(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, ToolCall[]>({
       name: "search_orders received a valid email",
       scorer: ({ output }) => {
-        const searchCall = output.find((tc) => tc.function.name === "search_orders");
+        const searchCall = output.find((tc: ToolCall) => tc.function.name === "search_orders");
         if (!searchCall) return 1; // didn't call search at all — no ambiguity triggered
         const val =
           searchCall.function.arguments.customer ??
@@ -52,10 +53,10 @@ evalite("Strong — param ambiguity (name instead of email)", {
     return extractToolCalls(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, ToolCall[]>({
       name: "search_orders received a valid email",
       scorer: ({ output }) => {
-        const searchCall = output.find((tc) => tc.function.name === "search_orders");
+        const searchCall = output.find((tc: ToolCall) => tc.function.name === "search_orders");
         if (!searchCall) return 1;
         const val =
           searchCall.function.arguments.customer ??
@@ -81,7 +82,7 @@ evalite("Weak — call order (get_order_details before issue_refund)", {
     return extractToolCallNames(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "get_order_details called before issue_refund",
       scorer: ({ output }) => {
         const detailsIdx = output.indexOf("get_order_details");
@@ -100,7 +101,7 @@ evalite("Strong — call order (get_order_details before issue_refund)", {
     return extractToolCallNames(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "get_order_details called before issue_refund",
       scorer: ({ output }) => {
         const detailsIdx = output.indexOf("get_order_details");
@@ -126,7 +127,7 @@ evalite("Weak — edge case (already refunded order ORD-002)", {
     return extractToolCallNames(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "issue_refund NOT called on already-refunded order",
       scorer: ({ output }) => (output.includes("issue_refund") ? 0 : 1),
     }),
@@ -140,7 +141,7 @@ evalite("Strong — edge case (already refunded order ORD-002)", {
     return extractToolCallNames(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "issue_refund NOT called on already-refunded order",
       scorer: ({ output }) => (output.includes("issue_refund") ? 0 : 1),
     }),
@@ -162,7 +163,7 @@ evalite("Weak — over-escalation (simple question)", {
     return extractToolCallNames(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "escalate_to_human NOT triggered for simple question",
       scorer: ({ output }) => (output.includes("escalate_to_human") ? 0 : 1),
     }),
@@ -176,7 +177,7 @@ evalite("Strong — over-escalation (simple question)", {
     return extractToolCallNames(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "escalate_to_human NOT triggered for simple question",
       scorer: ({ output }) => (output.includes("escalate_to_human") ? 0 : 1),
     }),

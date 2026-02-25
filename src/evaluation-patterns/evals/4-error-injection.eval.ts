@@ -39,7 +39,7 @@ evalite("Error injection — no rooms available", {
     return lastAssistantMessage(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string>({
       name: "Agent reports unavailability",
       scorer: ({ output }) => {
         const lower = output.toLowerCase();
@@ -49,7 +49,7 @@ evalite("Error injection — no rooms available", {
           : 0;
       },
     }),
-    createScorer({
+    createScorer<string, string>({
       name: "No fabricated reservation",
       scorer: ({ output }) => {
         // Agent must not claim to have booked a room when none were available
@@ -59,7 +59,7 @@ evalite("Error injection — no rooms available", {
         return falseClaim ? 0 : 1;
       },
     }),
-    createScorer({
+    createScorer<string, string>({
       name: "Agent produces a response",
       scorer: ({ output }) => (output.trim().length > 10 ? 1 : 0),
     }),
@@ -88,7 +88,7 @@ evalite("Error injection — booking conflict", {
     return lastAssistantMessage(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string>({
       name: "Agent communicates booking failure",
       scorer: ({ output }) => {
         const lower = output.toLowerCase();
@@ -103,7 +103,7 @@ evalite("Error injection — booking conflict", {
           : 0;
       },
     }),
-    createScorer({
+    createScorer<string, string>({
       name: "No false confirmation",
       scorer: ({ output }) => {
         // create_reservation returned success:false — agent must not claim it succeeded
@@ -129,7 +129,7 @@ evalite("Error injection — service unavailable", {
     return lastAssistantMessage(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string>({
       name: "Agent reports service issue",
       scorer: ({ output }) => {
         const lower = output.toLowerCase();
@@ -144,7 +144,7 @@ evalite("Error injection — service unavailable", {
           : 0;
       },
     }),
-    createScorer({
+    createScorer<string, string>({
       name: "Agent produces a response",
       scorer: ({ output }) => (output.trim().length > 10 ? 1 : 0),
     }),
@@ -173,12 +173,12 @@ evalite("Error injection — transient failure recovery", {
     };
   },
   scorers: [
-    createScorer({
+    createScorer<string, { tools: string[]; response: string }>({
       name: "check_availability was attempted",
       // Agent should try the tool even if it knows it might fail
       scorer: ({ output }) => (output.tools.includes("check_availability") ? 1 : 0),
     }),
-    createScorer({
+    createScorer<string, { tools: string[]; response: string }>({
       name: "Agent produced a response",
       scorer: ({ output }) => (output.response.trim().length > 10 ? 1 : 0),
     }),

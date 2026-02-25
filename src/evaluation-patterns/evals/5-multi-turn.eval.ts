@@ -18,7 +18,7 @@ import { evalite, createScorer } from "evalite";
 import { runHotelAgent } from "../agent.js";
 import { extractToolCalls } from "../../react/eval-utils.js";
 import { createMockExecutor } from "../fixtures/mock-tools.js";
-import type { Message } from "../../shared/types.js";
+import type { Message, ToolCall } from "../../shared/types.js";
 
 // ─── Helper: run N turns sequentially ────────────────────────────────────────
 
@@ -77,19 +77,19 @@ evalite("Multi-turn — guest name preserved across turns", {
     return extractToolCalls(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, ToolCall[]>({
       name: "Guest name in reservation",
       scorer: ({ output }) => {
-        const call = output.find((tc) => tc.function.name === "create_reservation");
+        const call = output.find((tc: ToolCall) => tc.function.name === "create_reservation");
         if (!call) return 0;
         const name = (call.function.arguments.guest_name ?? "").toLowerCase();
         return name.includes("grace") || name.includes("hopper") ? 1 : 0;
       },
     }),
-    createScorer({
+    createScorer<string, ToolCall[]>({
       name: "Reservation was created",
       scorer: ({ output }) =>
-        output.some((tc) => tc.function.name === "create_reservation") ? 1 : 0,
+        output.some((tc: ToolCall) => tc.function.name === "create_reservation") ? 1 : 0,
     }),
   ],
 });
@@ -137,18 +137,18 @@ evalite("Multi-turn — dates preserved across turns", {
     return extractToolCalls(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, ToolCall[]>({
       name: "Check-in date preserved",
       scorer: ({ output }) => {
-        const call = output.find((tc) => tc.function.name === "create_reservation");
+        const call = output.find((tc: ToolCall) => tc.function.name === "create_reservation");
         if (!call) return 0;
         return call.function.arguments.check_in === "2026-08-05" ? 1 : 0;
       },
     }),
-    createScorer({
+    createScorer<string, ToolCall[]>({
       name: "Check-out date preserved",
       scorer: ({ output }) => {
-        const call = output.find((tc) => tc.function.name === "create_reservation");
+        const call = output.find((tc: ToolCall) => tc.function.name === "create_reservation");
         if (!call) return 0;
         return call.function.arguments.check_out === "2026-08-09" ? 1 : 0;
       },

@@ -17,12 +17,16 @@ import { evalite, createScorer } from "evalite";
 import { runHotelAgent } from "../agent.js";
 import { extractToolCallNames } from "../../react/eval-utils.js";
 import { createMockExecutor, scenarios } from "../fixtures/mock-tools.js";
-import { evalDataset } from "../fixtures/dataset.js";
+import { evalDataset, type EvalCase } from "../fixtures/dataset.js";
+
+// Reshape dataset so evalite's `input` field carries the full EvalCase.
+// evalite auto-extracts `.input` from data items and passes it to task + scorers.
+const data = evalDataset.map((c) => ({ input: c }));
 
 evalite("Dataset-driven — tool call coverage", {
   // The entire dataset is passed to evalite. Each row becomes a separate
   // test run in the UI — you see per-case results, not just an aggregate.
-  data: async () => evalDataset,
+  data: async () => data,
 
   task: async (evalCase) => {
     // Deterministic mock: available rooms + always-succeeds create_reservation.
@@ -47,18 +51,19 @@ evalite("Dataset-driven — tool call coverage", {
   },
 
   scorers: [
-    createScorer({
+    createScorer<EvalCase, string[]>({
       name: "Expected tools called",
       // All tools in expectedTools must appear in the agent's trajectory
-      scorer: ({ input, output }) => (input.expectedTools.every((t) => output.includes(t)) ? 1 : 0),
+      scorer: ({ input, output }) =>
+        input.expectedTools.every((t: string) => output.includes(t)) ? 1 : 0,
     }),
-    createScorer({
+    createScorer<EvalCase, string[]>({
       name: "Forbidden tools not called",
       // Tools in expectedNotTools must NOT appear in the trajectory
       scorer: ({ input, output }) => {
         const forbidden = input.expectedNotTools ?? [];
         if (forbidden.length === 0) return 1;
-        return forbidden.some((t) => output.includes(t)) ? 0 : 1;
+        return forbidden.some((t: string) => output.includes(t)) ? 0 : 1;
       },
     }),
   ],

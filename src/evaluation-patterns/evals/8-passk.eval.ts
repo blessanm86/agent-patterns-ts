@@ -84,12 +84,12 @@ evalite(`Pass^k — full booking consistency (k=${K})`, {
     );
   },
   scorers: [
-    createScorer({
+    createScorer<string, PassKResult>({
       name: `Pass rate (k=${K})`,
       // Continuous score: 3/3 = 1.0, 2/3 ≈ 0.67, 1/3 ≈ 0.33
       scorer: ({ output }) => output.passRate,
     }),
-    createScorer({
+    createScorer<string, PassKResult>({
       name: "All runs passed",
       // Binary: did it pass every single run? More demanding than pass rate.
       scorer: ({ output }) => (output.passed === output.total ? 1 : 0),
@@ -115,11 +115,11 @@ evalite(`Pass^k — browse-only consistency (k=${K})`, {
     );
   },
   scorers: [
-    createScorer({
+    createScorer<string, PassKResult>({
       name: `Pass rate (k=${K})`,
       scorer: ({ output }) => output.passRate,
     }),
-    createScorer({
+    createScorer<string, PassKResult>({
       name: "All runs passed",
       scorer: ({ output }) => (output.passed === output.total ? 1 : 0),
     }),

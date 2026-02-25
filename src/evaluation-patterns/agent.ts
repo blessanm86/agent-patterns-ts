@@ -61,7 +61,7 @@ export async function runHotelAgent(
       tools,
     });
 
-    const assistantMessage = response.message;
+    const assistantMessage = response.message as Message;
     messages.push(assistantMessage);
 
     if (!assistantMessage.tool_calls || assistantMessage.tool_calls.length === 0) {

@@ -81,7 +81,7 @@ evalite("Plan covers required tools", {
     return plan.steps.map((s) => s.tool);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "All 4 tools included",
       scorer: ({ output }) => {
         const required = [
@@ -93,7 +93,7 @@ evalite("Plan covers required tools", {
         return required.every((t) => output.includes(t)) ? 1 : 0;
       },
     }),
-    createScorer({
+    createScorer<string, string[]>({
       name: "Flights before hotels",
       scorer: ({ output }) => {
         const flightIdx = output.indexOf("search_flights");
@@ -124,7 +124,7 @@ evalite("Plan argument fidelity", {
     return plan.steps;
   },
   scorers: [
-    createScorer({
+    createScorer<string, { tool: string; args: Record<string, string> }[]>({
       name: "search_flights destination is Tokyo",
       scorer: ({ output }) => {
         const flightStep = output.find((s) => s.tool === "search_flights");
@@ -133,7 +133,7 @@ evalite("Plan argument fidelity", {
         return dest.toLowerCase().includes("tokyo") ? 1 : 0;
       },
     }),
-    createScorer({
+    createScorer<string, { tool: string; args: Record<string, string> }[]>({
       name: "search_hotels city is Tokyo",
       scorer: ({ output }) => {
         const hotelStep = output.find((s) => s.tool === "search_hotels");

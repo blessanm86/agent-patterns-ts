@@ -20,6 +20,7 @@ import { evalite, createScorer } from "evalite";
 import { runHotelAgent } from "../agent.js";
 import { extractToolCallNames, extractToolCalls } from "../../react/eval-utils.js";
 import { createMockExecutor, scenarios } from "../fixtures/mock-tools.js";
+import type { ToolCall } from "../../shared/types.js";
 
 // ─── Test 1: Full Booking Trajectory ──────────────────────────────────────────
 //
@@ -52,7 +53,7 @@ evalite("Trajectory — happy path (mocked tools)", {
     return extractToolCallNames(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "All tools called",
       scorer: ({ output }) =>
         ["check_availability", "get_room_price", "create_reservation"].every((t) =>
@@ -61,7 +62,7 @@ evalite("Trajectory — happy path (mocked tools)", {
           ? 1
           : 0,
     }),
-    createScorer({
+    createScorer<string, string[]>({
       name: "Correct order",
       scorer: ({ output }) => {
         const i1 = output.indexOf("check_availability");
@@ -91,11 +92,11 @@ evalite("Trajectory — browse only, no booking", {
     return extractToolCallNames(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "Availability was checked",
       scorer: ({ output }) => (output.includes("check_availability") ? 1 : 0),
     }),
-    createScorer({
+    createScorer<string, string[]>({
       name: "No reservation created",
       scorer: ({ output }) => (output.includes("create_reservation") ? 0 : 1),
     }),
@@ -129,10 +130,10 @@ evalite("Trajectory — argument fidelity (guest name + dates)", {
     return extractToolCalls(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, ToolCall[]>({
       name: "Guest name preserved",
       scorer: ({ output }) => {
-        const call = output.find((tc) => tc.function.name === "create_reservation");
+        const call = output.find((tc: ToolCall) => tc.function.name === "create_reservation");
         if (!call) return 0;
         const name = call.function.arguments.guest_name ?? "";
         return name.toLowerCase().includes("alice") && name.toLowerCase().includes("johnson")
@@ -140,18 +141,18 @@ evalite("Trajectory — argument fidelity (guest name + dates)", {
           : 0;
       },
     }),
-    createScorer({
+    createScorer<string, ToolCall[]>({
       name: "Check-in date preserved",
       scorer: ({ output }) => {
-        const call = output.find((tc) => tc.function.name === "create_reservation");
+        const call = output.find((tc: ToolCall) => tc.function.name === "create_reservation");
         if (!call) return 0;
         return call.function.arguments.check_in === "2026-05-10" ? 1 : 0;
       },
     }),
-    createScorer({
+    createScorer<string, ToolCall[]>({
       name: "Check-out date preserved",
       scorer: ({ output }) => {
-        const call = output.find((tc) => tc.function.name === "create_reservation");
+        const call = output.find((tc: ToolCall) => tc.function.name === "create_reservation");
         if (!call) return 0;
         return call.function.arguments.check_out === "2026-05-15" ? 1 : 0;
       },

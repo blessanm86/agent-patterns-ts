@@ -12,6 +12,7 @@
 import { evalite, createScorer } from "evalite";
 import { runAgent } from "../agent.js";
 import { extractToolCallNames, extractToolCalls } from "../eval-utils.js";
+import type { ToolCall } from "../../shared/types.js";
 
 // ─── Test 1: Happy Path Trajectory ────────────────────────────────────────────
 //
@@ -34,7 +35,7 @@ evalite("Tool call trajectory — happy path", {
     return extractToolCallNames(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "All tools called",
       // All three tools must appear somewhere in the trajectory
       scorer: ({ output }) =>
@@ -44,7 +45,7 @@ evalite("Tool call trajectory — happy path", {
           ? 1
           : 0,
     }),
-    createScorer({
+    createScorer<string, string[]>({
       name: "Correct order",
       // Availability must be checked before pricing, pricing before booking
       scorer: ({ output }) => {
@@ -75,11 +76,11 @@ evalite("Tool call trajectory — availability check only", {
     return extractToolCallNames(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "Availability was checked",
       scorer: ({ output }) => (output.includes("check_availability") ? 1 : 0),
     }),
-    createScorer({
+    createScorer<string, string[]>({
       name: "No reservation created",
       // The agent should NOT call create_reservation when user is just browsing
       scorer: ({ output }) => (output.includes("create_reservation") ? 0 : 1),
@@ -105,10 +106,12 @@ evalite("Argument fidelity — guest name and dates", {
     return extractToolCalls(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, ToolCall[]>({
       name: "Guest name preserved",
       scorer: ({ output }) => {
-        const reservationCall = output.find((tc) => tc.function.name === "create_reservation");
+        const reservationCall = output.find(
+          (tc: ToolCall) => tc.function.name === "create_reservation",
+        );
         if (!reservationCall) return 0;
         const name = reservationCall.function.arguments.guest_name ?? "";
         // Accept any reasonable casing/spacing of the name
@@ -117,18 +120,22 @@ evalite("Argument fidelity — guest name and dates", {
           : 0;
       },
     }),
-    createScorer({
+    createScorer<string, ToolCall[]>({
       name: "Check-in date preserved",
       scorer: ({ output }) => {
-        const reservationCall = output.find((tc) => tc.function.name === "create_reservation");
+        const reservationCall = output.find(
+          (tc: ToolCall) => tc.function.name === "create_reservation",
+        );
         if (!reservationCall) return 0;
         return reservationCall.function.arguments.check_in === "2026-05-10" ? 1 : 0;
       },
     }),
-    createScorer({
+    createScorer<string, ToolCall[]>({
       name: "Check-out date preserved",
       scorer: ({ output }) => {
-        const reservationCall = output.find((tc) => tc.function.name === "create_reservation");
+        const reservationCall = output.find(
+          (tc: ToolCall) => tc.function.name === "create_reservation",
+        );
         if (!reservationCall) return 0;
         return reservationCall.function.arguments.check_out === "2026-05-15" ? 1 : 0;
       },

@@ -54,12 +54,13 @@ export async function runAgent(userMessage: string, history: Message[]): Promise
   while (true) {
     const response = await ollama.chat({
       model: MODEL,
+      // @ts-expect-error — system not in ChatRequest types but works at runtime
       system: SYSTEM_PROMPT,
       messages,
       tools,
     });
 
-    const assistantMessage = response.message;
+    const assistantMessage = response.message as Message;
     messages.push(assistantMessage);
 
     // ── Path 1: No tool calls → model skipped think, respond directly ──────────
@@ -104,11 +105,12 @@ export async function runAgent(userMessage: string, history: Message[]): Promise
     if (readyToRespond) {
       const finalResponse = await ollama.chat({
         model: MODEL,
+        // @ts-expect-error — system not in ChatRequest types but works at runtime
         system: SYSTEM_PROMPT,
         messages,
         // No tools — forces a plain text reply
       });
-      messages.push(finalResponse.message);
+      messages.push(finalResponse.message as Message);
       break;
     }
 

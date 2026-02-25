@@ -41,11 +41,11 @@ evalite("Eligible refund — think called and refund processed (ORD-001)", {
     return extractToolCallNames(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "Think tool called",
       scorer: ({ output }) => (output.includes("think") ? 1 : 0),
     }),
-    createScorer({
+    createScorer<string, string[]>({
       name: "Think called before process_refund",
       scorer: ({ output }) => {
         const thinkIdx = output.indexOf("think");
@@ -53,7 +53,7 @@ evalite("Eligible refund — think called and refund processed (ORD-001)", {
         return thinkIdx !== -1 && refundIdx !== -1 && thinkIdx < refundIdx ? 1 : 0;
       },
     }),
-    createScorer({
+    createScorer<string, string[]>({
       name: "Process refund called",
       scorer: ({ output }) => (output.includes("process_refund") ? 1 : 0),
     }),
@@ -78,15 +78,15 @@ evalite("Ineligible refund — denial recorded via process_refund (ORD-002)", {
     return extractToolCallNames(history);
   },
   scorers: [
-    createScorer({
+    createScorer<string, string[]>({
       name: "Think tool called",
       scorer: ({ output }) => (output.includes("think") ? 1 : 0),
     }),
-    createScorer({
+    createScorer<string, string[]>({
       name: "Lookup order called",
       scorer: ({ output }) => (output.includes("lookup_order") ? 1 : 0),
     }),
-    createScorer({
+    createScorer<string, string[]>({
       name: "Process refund called",
       scorer: ({ output }) => (output.includes("process_refund") ? 1 : 0),
     }),

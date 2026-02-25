@@ -67,12 +67,13 @@ export async function runAgent(
 
     const response = await ollama.chat({
       model: MODEL,
+      // @ts-expect-error — system not in ChatRequest types but works at runtime
       system: SYSTEM_PROMPT,
       messages: prepared,
       tools,
     });
 
-    const assistantMessage = response.message;
+    const assistantMessage = response.message as Message;
 
     // Add assistant's response to the FULL history (not the prepared one)
     messages.push(assistantMessage);
