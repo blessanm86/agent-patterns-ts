@@ -17,6 +17,7 @@
     "dev:evaluation-patterns": "tsx src/evaluation-patterns/index.ts",
     "dev:context-management": "tsx src/context-management/index.ts",
     "dev:state-graph": "tsx src/state-graph/index.ts",
+    "dev:multi-agent-routing": "tsx src/multi-agent-routing/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

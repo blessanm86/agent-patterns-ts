@@ -163,7 +163,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 7. Multi-Agent Routing (Specialized Profiles)
+### [x] 7. Multi-Agent Routing (Specialized Profiles)
 
 **What it is:** Having multiple specialized agent configurations (different system prompts, different tool sets) and an LLM-powered router that selects the right one based on the user's question.
 
@@ -533,7 +533,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 4 | Guardrails & Circuit Breakers | 1 | Done |
 | 5 | State Graph | 2 | Done |
 | 6 | Context Window Management | 2 | Done |
-| 7 | Multi-Agent Routing | 2 | Not started |
+| 7 | Multi-Agent Routing | 2 | Done |
 | 8 | Sub-Agent Delegation | 2 | Not started |
 | 9 | Streaming Responses (SSE) | 3 | Not started |
 | 10 | RAG | 3 | Not started |
