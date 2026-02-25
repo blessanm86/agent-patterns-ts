@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Streaming Agent — The Grand TypeScript Hotel</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #0f0f0f;
+        color: #e0e0e0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── Header ────────────────────────────────────────────────── */
+      header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #2a2a2a;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #151515;
+      }
+
+      header h1 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #ffffff;
+      }
+
+      header h1 span {
+        opacity: 0.5;
+        font-weight: 400;
+      }
+
+      /* ── Mode Toggle ───────────────────────────────────────────── */
+      .toggle-group {
+        display: flex;
+        background: #222;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #333;
+      }
+
+      .toggle-btn {
+        padding: 6px 16px;
+        border: none;
+        background: transparent;
+        color: #888;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .toggle-btn.active {
+        background: #2d6ee6;
+        color: #fff;
+      }
+
+      /* ── Chat Area ─────────────────────────────────────────────── */
+      #chat {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .message {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .message-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+
+      .user-msg .message-label {
+        color: #6ea8fe;
+      }
+      .assistant-msg .message-label {
+        color: #75b798;
+      }
+
+      .message-body {
+        padding: 12px 16px;
+        border-radius: 10px;
+        line-height: 1.6;
+        font-size: 14px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .user-msg .message-body {
+        background: #1a2744;
+        border: 1px solid #2a3f66;
+      }
+
+      .assistant-msg .message-body {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+      }
+
+      /* Blinking cursor for streaming */
+      .cursor::after {
+        content: "\2588";
+        animation: blink 0.8s step-end infinite;
+        color: #75b798;
+      }
+
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      /* ── Tool Cards ────────────────────────────────────────────── */
+      .tool-card {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        background: #1a1a2e;
+        border: 1px solid #2a2a44;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 13px;
+      }
+
+      .tool-card-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+        color: #c4a7e7;
+        margin-bottom: 4px;
+      }
+
+      .tool-args {
+        color: #888;
+        font-family: "SF Mono", Monaco, Consolas, monospace;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .tool-result {
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid #2a2a44;
+        color: #aaa;
+        font-family: "SF Mono", Monaco, Consolas, monospace;
+        font-size: 12px;
+        max-height: 120px;
+        overflow-y: auto;
+      }
+
+      .tool-duration {
+        display: inline-block;
+        background: #2a2a44;
+        color: #c4a7e7;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        margin-left: 8px;
+      }
+
+      /* ── Error Banner ──────────────────────────────────────────── */
+      .error-banner {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        background: #2d1515;
+        border: 1px solid #5a2020;
+        border-radius: 8px;
+        padding: 10px 14px;
+        color: #ff6b6b;
+        font-size: 13px;
+      }
+
+      /* ── Metrics Bar ───────────────────────────────────────────── */
+      .metrics-bar {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        gap: 16px;
+        padding: 8px 14px;
+        background: #111;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #888;
+      }
+
+      .metric {
+        display: flex;
+        gap: 4px;
+      }
+      .metric-label {
+        color: #666;
+      }
+      .metric-value {
+        color: #aaa;
+        font-weight: 600;
+      }
+      .metric-value.highlight {
+        color: #6ea8fe;
+      }
+
+      /* ── Input Bar ─────────────────────────────────────────────── */
+      #input-area {
+        padding: 16px 24px;
+        border-top: 1px solid #2a2a2a;
+        background: #151515;
+      }
+
+      #input-form {
+        max-width: 720px;
+        margin: 0 auto;
+        display: flex;
+        gap: 8px;
+      }
+
+      #input-field {
+        flex: 1;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      #input-field:focus {
+        border-color: #2d6ee6;
+      }
+
+      #input-field:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      #send-btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        background: #2d6ee6;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      #send-btn:hover {
+        background: #3d7ef6;
+      }
+      #send-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* ── Welcome ───────────────────────────────────────────────── */
+      .welcome {
+        max-width: 720px;
+        width: 100%;
+        margin: 40px auto 0;
+        text-align: center;
+        color: #666;
+      }
+
+      .welcome h2 {
+        font-size: 20px;
+        color: #aaa;
+        margin-bottom: 8px;
+      }
+
+      .welcome p {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .welcome code {
+        background: #1a1a1a;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 13px;
+        color: #6ea8fe;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>The Grand TypeScript Hotel <span>— Streaming Agent</span></h1>
+      <div class="toggle-group">
+        <button class="toggle-btn active" data-mode="streaming" onclick="setMode('streaming')">
+          Streaming
+        </button>
+        <button class="toggle-btn" data-mode="blocked" onclick="setMode('blocked')">Blocked</button>
+      </div>
+    </header>
+
+    <div id="chat">
+      <div class="welcome">
+        <h2>Welcome to the Streaming Demo</h2>
+        <p>
+          Ask about hotel rooms and watch tokens arrive in real-time.<br />
+          Toggle <strong>Blocked</strong> to see the difference without streaming.<br /><br />
+          Try: <code>Do you have any double rooms for March 1-5?</code>
+        </p>
+      </div>
+    </div>
+
+    <div id="input-area">
+      <form id="input-form" onsubmit="handleSubmit(event)">
+        <input
+          id="input-field"
+          type="text"
+          placeholder="Ask about rooms, prices, or make a reservation..."
+          autofocus
+        />
+        <button id="send-btn" type="submit">Send</button>
+      </form>
+    </div>
+
+    <script>
+      // ── State ──────────────────────────────────────────────────
+      let conversationHistory = [];
+      let streamMode = true; // true = streaming, false = blocked
+      let isGenerating = false;
+
+      // ── Mode Toggle ───────────────────────────────────────────
+      function setMode(mode) {
+        streamMode = mode === "streaming";
+        document.querySelectorAll(".toggle-btn").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.mode === mode);
+        });
+      }
+
+      // ── Submit Handler ────────────────────────────────────────
+      async function handleSubmit(e) {
+        e.preventDefault();
+        const input = document.getElementById("input-field");
+        const message = input.value.trim();
+        if (!message || isGenerating) return;
+
+        isGenerating = true;
+        input.value = "";
+        input.disabled = true;
+        document.getElementById("send-btn").disabled = true;
+
+        // Remove welcome message
+        const welcome = document.querySelector(".welcome");
+        if (welcome) welcome.remove();
+
+        // Add user message
+        addMessage("user", message);
+
+        // Create assistant bubble
+        const assistantEl = addMessage("assistant", "");
+        const bodyEl = assistantEl.querySelector(".message-body");
+        bodyEl.classList.add("cursor");
+
+        try {
+          await streamChat(message, bodyEl);
+        } catch (err) {
+          addError("Connection error: " + err.message);
+        }
+
+        bodyEl.classList.remove("cursor");
+        isGenerating = false;
+        input.disabled = false;
+        document.getElementById("send-btn").disabled = false;
+        input.focus();
+      }
+
+      // ── SSE Stream via fetch + getReader ───────────────────────
+      // We can't use EventSource because it only supports GET.
+      // fetch() with a ReadableStream reader gives us POST + SSE.
+
+      async function streamChat(message, bodyEl) {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message,
+            history: conversationHistory,
+            stream: streamMode,
+          }),
+        });
+
+        if (!res.ok) {
+          addError("Server returned " + res.status);
+          return;
+        }
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+
+          // Parse SSE frames: split on double newline
+          const frames = buffer.split("\n\n");
+          // Keep the last (potentially incomplete) frame in the buffer
+          buffer = frames.pop() || "";
+
+          for (const frame of frames) {
+            if (!frame.trim()) continue;
+            const parsed = parseSSEFrame(frame);
+            if (!parsed) continue;
+            handleEvent(parsed.event, parsed.data, bodyEl);
+          }
+        }
+
+        // Process any remaining buffer
+        if (buffer.trim()) {
+          const parsed = parseSSEFrame(buffer);
+          if (parsed) handleEvent(parsed.event, parsed.data, bodyEl);
+        }
+      }
+
+      function parseSSEFrame(frame) {
+        let event = "message";
+        let data = "";
+
+        for (const line of frame.split("\n")) {
+          if (line.startsWith("event: ")) {
+            event = line.slice(7).trim();
+          } else if (line.startsWith("data: ")) {
+            data = line.slice(6);
+          }
+        }
+
+        if (!data) return null;
+        try {
+          return { event, data: JSON.parse(data) };
+        } catch {
+          return null;
+        }
+      }
+
+      // ── Event Handlers ────────────────────────────────────────
+
+      function handleEvent(event, data, bodyEl) {
+        switch (event) {
+          case "text":
+            bodyEl.textContent += data.content;
+            scrollToBottom();
+            break;
+
+          case "tool_call":
+            addToolCall(data.name, data.arguments);
+            scrollToBottom();
+            break;
+
+          case "tool_result":
+            addToolResult(data.name, data.result, data.durationMs);
+            scrollToBottom();
+            break;
+
+          case "done":
+            addMetrics(data.metrics);
+            scrollToBottom();
+            break;
+
+          case "error":
+            addError(data.message);
+            scrollToBottom();
+            break;
+
+          case "history":
+            conversationHistory = data;
+            break;
+        }
+      }
+
+      // ── DOM Helpers ───────────────────────────────────────────
+
+      function addMessage(role, content) {
+        const chat = document.getElementById("chat");
+        const div = document.createElement("div");
+        div.className = `message ${role === "user" ? "user-msg" : "assistant-msg"}`;
+        div.innerHTML = `
+        <div class="message-label">${role === "user" ? "You" : "Assistant"}</div>
+        <div class="message-body">${escapeHTML(content)}</div>
+      `;
+        chat.appendChild(div);
+        scrollToBottom();
+        return div;
+      }
+
+      function addToolCall(name, args) {
+        const chat = document.getElementById("chat");
+        const div = document.createElement("div");
+        div.className = "tool-card";
+        div.id = "tool-" + name + "-" + Date.now();
+        div.innerHTML = `
+        <div class="tool-card-header">
+          <span>&#x1f527;</span>
+          <span>${escapeHTML(name)}</span>
+        </div>
+        <div class="tool-args">${escapeHTML(formatArgs(args))}</div>
+      `;
+        chat.appendChild(div);
+      }
+
+      function addToolResult(name, result, durationMs) {
+        // Find the most recent tool card for this tool
+        const cards = document.querySelectorAll(".tool-card");
+        const card = cards[cards.length - 1];
+        if (!card) return;
+
+        const resultDiv = document.createElement("div");
+        resultDiv.className = "tool-result";
+        resultDiv.innerHTML = `
+        ${escapeHTML(formatResult(result))}
+        <span class="tool-duration">${durationMs}ms</span>
+      `;
+        card.appendChild(resultDiv);
+      }
+
+      function addMetrics(metrics) {
+        const chat = document.getElementById("chat");
+        const div = document.createElement("div");
+        div.className = "metrics-bar";
+
+        const ttftClass = metrics.ttftMs < 1000 ? "highlight" : "";
+
+        div.innerHTML = `
+        <div class="metric">
+          <span class="metric-label">TTFT:</span>
+          <span class="metric-value ${ttftClass}">${formatMs(metrics.ttftMs)}</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Total:</span>
+          <span class="metric-value">${formatMs(metrics.totalDurationMs)}</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Tokens:</span>
+          <span class="metric-value">${metrics.tokenCount}</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Speed:</span>
+          <span class="metric-value">${metrics.tokensPerSecond} tok/s</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Tools:</span>
+          <span class="metric-value">${metrics.toolCallCount}</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Iterations:</span>
+          <span class="metric-value">${metrics.iterationCount}</span>
+        </div>
+      `;
+        chat.appendChild(div);
+      }
+
+      function addError(message) {
+        const chat = document.getElementById("chat");
+        const div = document.createElement("div");
+        div.className = "error-banner";
+        div.textContent = "Error: " + message;
+        chat.appendChild(div);
+      }
+
+      // ── Utilities ─────────────────────────────────────────────
+
+      function escapeHTML(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function formatArgs(args) {
+        return Object.entries(args)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join("  |  ");
+      }
+
+      function formatResult(result) {
+        try {
+          const parsed = JSON.parse(result);
+          return JSON.stringify(parsed, null, 2);
+        } catch {
+          return result;
+        }
+      }
+
+      function formatMs(ms) {
+        if (ms < 1000) return ms + "ms";
+        return (ms / 1000).toFixed(1) + "s";
+      }
+
+      function scrollToBottom() {
+        const chat = document.getElementById("chat");
+        chat.scrollTop = chat.scrollHeight;
+      }
+    </script>
+  </body>
+</html>

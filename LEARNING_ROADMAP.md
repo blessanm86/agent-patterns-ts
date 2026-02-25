@@ -217,7 +217,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 > Making agents reliable, fast, and testable for real users.
 
-### [ ] 9. Streaming Responses (Server-Sent Events)
+### [x] 9. Streaming Responses (Server-Sent Events)
 
 **What it is:** Sending LLM output to the client token-by-token as it's generated, rather than waiting for the complete response. Using typed message events, not just raw text.
 
@@ -535,7 +535,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 6  | Context Window Management       | 2    | Done        |
 | 7  | Multi-Agent Routing             | 2    | Done        |
 | 8  | Sub-Agent Delegation            | 2    | Done        |
-| 9  | Streaming Responses (SSE)       | 3    | Not started |
+| 9  | Streaming Responses (SSE)       | 3    | Done        |
 | 10 | RAG                             | 3    | Not started |
 | 11 | Prompt Caching                  | 3    | Not started |
 | 12 | Evaluation with Mocked Tools    | 3    | Done        |

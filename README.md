@@ -23,6 +23,7 @@ Minimal TypeScript implementations of common agentic patterns, using a local mod
 | [State Graph (Node-Based Architecture)](src/state-graph/README.md) | Hotel agent refactored from while loop to 3-node state graph with generic runtime | `pnpm dev:state-graph` |
 | [Multi-Agent Routing](src/multi-agent-routing/README.md) | Travel assistant with 3 specialist agents + LLM router vs single-agent baseline | `pnpm dev:multi-agent-routing` |
 | [Sub-Agent Delegation](src/sub-agent-delegation/README.md) | Parent agent spawns parallel child agents for multi-domain trip planning | `pnpm dev:sub-agent-delegation` |
+| [Streaming Responses (SSE)](src/streaming/README.md) | Hotel agent with HTTP server, browser UI, 4 typed SSE events, streaming vs blocked comparison | `pnpm dev:streaming` |
 
 ---
 
