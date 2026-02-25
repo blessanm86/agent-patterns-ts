@@ -36,7 +36,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 2. Structured Output (JSON Mode)
+### [x] 2. Structured Output (JSON Mode)
 
 **What it is:** Constraining LLM output to valid JSON matching a specific schema, rather than hoping the model returns parseable text.
 
@@ -293,7 +293,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 12. Evaluation with Mocked Tools
+### [x] 12. Evaluation with Mocked Tools
 
 **What it is:** Testing agent behavior by replacing real tool implementations with deterministic mocks that return fixed data, then checking the agent's decisions (which tools it called, in what order, with what parameters).
 
@@ -528,7 +528,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | # | Concept | Tier | Status |
 |---|---------|------|--------|
 | 1 | Multi-Turn Conversation Memory | 1 | Done |
-| 2 | Structured Output (JSON Mode) | 1 | Not started |
+| 2 | Structured Output (JSON Mode) | 1 | Done |
 | 3 | Reasoning Tool Pattern | 1 | Done |
 | 4 | Guardrails & Circuit Breakers | 1 | Done |
 | 5 | State Graph | 2 | Not started |
@@ -538,7 +538,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 9 | Streaming Responses (SSE) | 3 | Not started |
 | 10 | RAG | 3 | Not started |
 | 11 | Prompt Caching | 3 | Not started |
-| 12 | Evaluation with Mocked Tools | 3 | Not started |
+| 12 | Evaluation with Mocked Tools | 3 | Done |
 | 13 | LLM Error Recovery | 3 | Done |
 | 14 | Tool Description Engineering | 4 | Done |
 | 15 | Dual Return Pattern | 4 | Not started |

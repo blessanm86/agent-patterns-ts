@@ -17,6 +17,8 @@ Minimal TypeScript implementations of common agentic patterns, using a local mod
 | [Tool Description Engineering](src/tool-descriptions/README.md) | Customer support agent (weak vs strong descriptions) | `pnpm dev:tool-descriptions` |
 | [Guardrails & Circuit Breakers](src/guardrails/README.md) | Hotel agent with max-iterations, token budget, tool timeout, and input validation | `pnpm dev:guardrails` |
 | [LLM Error Recovery](src/error-recovery/README.md) | Hotel agent with crash / blind / corrective retry strategies | `pnpm dev:error-recovery` |
+| [Structured Output (JSON Mode)](src/structured-output/README.md) | Booking intent extractor: prompt-only vs json-mode vs schema (constrained decoding) | `pnpm dev:structured-output` |
+| [Evaluation Patterns](src/evaluation-patterns/README.md) | 8 eval patterns: trajectory, dataset-driven, LLM judge, error injection, multi-turn, adversarial, semantic similarity, pass^k | `pnpm dev:evaluation-patterns` |
 
 ---
 

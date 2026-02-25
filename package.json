@@ -13,6 +13,8 @@
     "dev:memory-broken": "tsx src/conversation-memory/broken.ts",
     "dev:guardrails": "tsx src/guardrails/index.ts",
     "dev:error-recovery": "tsx src/error-recovery/index.ts",
+    "dev:structured-output": "tsx src/structured-output/index.ts",
+    "dev:evaluation-patterns": "tsx src/evaluation-patterns/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
@@ -30,7 +32,8 @@
     "autoevals": "^0.0.132",
     "dotenv": "^17.3.1",
     "evalite": "^0.19.0",
-    "ollama": "^0.5.9"
+    "ollama": "^0.5.9",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
