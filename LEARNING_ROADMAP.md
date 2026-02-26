@@ -421,7 +421,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 17. Structured Entity Tags in LLM Output
+### [x] 17. Structured Entity Tags in LLM Output
 
 **What it is:** Instructing the LLM to wrap entity references in XML/JSX-like tags within its natural language response. The UI parses these and renders them as interactive, clickable elements.
 
@@ -543,7 +543,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 14 | Tool Description Engineering    | 4    | Done        |
 | 15 | Dual Return Pattern             | 4    | Done        |
 | 16 | Query Builder Pattern           | 4    | Done        |
-| 17 | Structured Entity Tags          | 4    | Not started |
+| 17 | Structured Entity Tags          | 4    | Done        |
 | 18 | Prompt Injection Detection      | 4    | Not started |
 | 19 | Self-Instrumentation            | 4    | Not started |
 | 20 | Cost Tracking & Model Selection | 4    | Not started |

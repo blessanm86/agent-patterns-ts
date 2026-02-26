@@ -28,6 +28,7 @@ Minimal TypeScript implementations of common agentic patterns, using a local mod
 | [Prompt Caching](src/prompt-caching/README.md) | Benchmark measuring KV-cache prefix reuse with stable vs rotating system prompts + cloud provider cost comparison | `pnpm dev:prompt-caching` |
 | [Dual Return Pattern](src/dual-return/README.md) | Service monitor with content + artifact split — concise summaries for LLM, full data for UI | `pnpm dev:dual-return` |
 | [Query Builder Pattern](src/query-builder/README.md) | Metrics monitor comparing raw LLM query strings vs structured parameter builder — A/B error rate comparison | `pnpm dev:query-builder` |
+| [Structured Entity Tags](src/entity-tags/README.md) | E-commerce agent with XML entity tags in LLM output — parsed and rendered as colored terminal badges | `pnpm dev:entity-tags` |
 
 ---
 
