@@ -27,6 +27,7 @@ Minimal TypeScript implementations of common agentic patterns, using a local mod
 | [RAG (Retrieval-Augmented Generation)](src/rag/README.md) | NexusDB docs assistant with BM25, semantic, and hybrid search — toggle RAG on/off to compare | `pnpm dev:rag` |
 | [Prompt Caching](src/prompt-caching/README.md) | Benchmark measuring KV-cache prefix reuse with stable vs rotating system prompts + cloud provider cost comparison | `pnpm dev:prompt-caching` |
 | [Dual Return Pattern](src/dual-return/README.md) | Service monitor with content + artifact split — concise summaries for LLM, full data for UI | `pnpm dev:dual-return` |
+| [Query Builder Pattern](src/query-builder/README.md) | Metrics monitor comparing raw LLM query strings vs structured parameter builder — A/B error rate comparison | `pnpm dev:query-builder` |
 
 ---
 

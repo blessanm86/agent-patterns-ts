@@ -24,6 +24,8 @@
     "dev:prompt-caching": "tsx src/prompt-caching/index.ts",
     "dev:dual-return": "tsx src/dual-return/index.ts",
     "dev:dual-return:simple": "tsx src/dual-return/index.ts --simple",
+    "dev:query-builder": "tsx src/query-builder/index.ts",
+    "dev:query-builder:raw": "tsx src/query-builder/index.ts --raw",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

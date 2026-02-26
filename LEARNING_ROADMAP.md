@@ -396,7 +396,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 16. Query Builder Pattern (Structured Input → Safe Query)
+### [x] 16. Query Builder Pattern (Structured Input → Safe Query)
 
 **What it is:** Instead of letting the LLM write raw queries (SQL, PromQL, etc.), providing a tool that accepts structured parameters and constructs the query server-side.
 
@@ -542,7 +542,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 13 | LLM Error Recovery              | 3    | Done        |
 | 14 | Tool Description Engineering    | 4    | Done        |
 | 15 | Dual Return Pattern             | 4    | Done        |
-| 16 | Query Builder Pattern           | 4    | Not started |
+| 16 | Query Builder Pattern           | 4    | Done        |
 | 17 | Structured Entity Tags          | 4    | Not started |
 | 18 | Prompt Injection Detection      | 4    | Not started |
 | 19 | Self-Instrumentation            | 4    | Not started |
