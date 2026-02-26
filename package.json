@@ -28,6 +28,8 @@
     "dev:query-builder:raw": "tsx src/query-builder/index.ts --raw",
     "dev:entity-tags": "tsx src/entity-tags/index.ts",
     "dev:entity-tags:plain": "tsx src/entity-tags/index.ts --plain",
+    "dev:prompt-injection": "tsx src/prompt-injection/index.ts",
+    "dev:prompt-injection:unprotected": "tsx src/prompt-injection/index.ts --unprotected",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

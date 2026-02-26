@@ -445,7 +445,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 18. Prompt Injection Detection
+### [x] 18. Prompt Injection Detection
 
 **What it is:** Checking user input for attempts to manipulate the LLM's behavior through injected instructions, before passing the input to the agent.
 
@@ -544,7 +544,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 15 | Dual Return Pattern             | 4    | Done        |
 | 16 | Query Builder Pattern           | 4    | Done        |
 | 17 | Structured Entity Tags          | 4    | Done        |
-| 18 | Prompt Injection Detection      | 4    | Not started |
+| 18 | Prompt Injection Detection      | 4    | Done        |
 | 19 | Self-Instrumentation            | 4    | Not started |
 | 20 | Cost Tracking & Model Selection | 4    | Not started |
 
