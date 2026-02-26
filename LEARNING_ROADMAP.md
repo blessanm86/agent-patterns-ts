@@ -372,7 +372,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 15. Dual Return Pattern (Content + Artifact)
+### [x] 15. Dual Return Pattern (Content + Artifact)
 
 **What it is:** A tool returning two separate things: a concise text summary for the LLM (saves tokens), and a full structured data object for the UI to render directly (tables, charts, cards).
 
@@ -541,7 +541,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 12 | Evaluation with Mocked Tools    | 3    | Done        |
 | 13 | LLM Error Recovery              | 3    | Done        |
 | 14 | Tool Description Engineering    | 4    | Done        |
-| 15 | Dual Return Pattern             | 4    | Not started |
+| 15 | Dual Return Pattern             | 4    | Done        |
 | 16 | Query Builder Pattern           | 4    | Not started |
 | 17 | Structured Entity Tags          | 4    | Not started |
 | 18 | Prompt Injection Detection      | 4    | Not started |

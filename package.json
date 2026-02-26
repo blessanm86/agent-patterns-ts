@@ -22,6 +22,8 @@
     "dev:streaming": "tsx src/streaming/index.ts",
     "dev:rag": "tsx src/rag/index.ts",
     "dev:prompt-caching": "tsx src/prompt-caching/index.ts",
+    "dev:dual-return": "tsx src/dual-return/index.ts",
+    "dev:dual-return:simple": "tsx src/dual-return/index.ts --simple",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
