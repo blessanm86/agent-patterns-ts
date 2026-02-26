@@ -309,6 +309,14 @@ Anthropic's cache TTL is 5 minutes, refreshed on each hit. OpenAI's is 5-10 minu
 
 5. **The biggest risk is accidental invalidation.** Timestamps in system prompts, non-deterministic JSON serialization, and unnecessary prompt mutations all silently break caching. Monitor `cache_read_input_tokens` (Anthropic) or `cached_tokens` (OpenAI) to verify it's working.
 
+## Sources & Further Reading
+
+- [Anthropic Prompt Caching](https://www.anthropic.com/news/prompt-caching) — announcement describing `cache_control`, TTL tiers, and pricing (reads at 0.1x cost)
+- [Anthropic Prompt Caching API docs](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) — implementation reference
+- [OpenAI Prompt Caching](https://platform.openai.com/docs/guides/prompt-caching) — automatic caching for prompts >= 1024 tokens
+- [Google Gemini Context Caching](https://ai.google.dev/gemini-api/docs/caching) — configurable TTL, 90% discount on cache hits
+- [Efficient Memory Management for LLM Serving with PagedAttention](https://arxiv.org/abs/2309.06180) — Kwon et al. (UC Berkeley), SOSP 2023 — foundational paper on KV-cache sharing that underlies all prompt caching
+
 ---
 
 [Agent Patterns — TypeScript](../../README.md) · [Next: Evaluation with Mocked Tools →](../evaluation-patterns/README.md)

@@ -218,3 +218,10 @@ Commands:
 4. **The system prompt is the control lever.** "Always search before answering" and "cite specific details from documentation" are simple instructions that dramatically improve grounding.
 
 5. **Fictional knowledge bases make hallucination obvious.** If your test knowledge is entirely invented, any "fact" the LLM produces without searching is provably hallucinated.
+
+## Sources & Further Reading
+
+- [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401) — Lewis et al. (Facebook AI Research), NeurIPS 2020 — the paper that coined "RAG" and defined the paradigm
+- [REALM: Retrieval-Augmented Language Model Pre-Training](https://arxiv.org/abs/2002.08909) — Guu et al. (Google Research), ICML 2020 — co-originator of retrieval-augmented approach
+- [LlamaIndex — Introduction to RAG](https://docs.llamaindex.ai/en/stable/understanding/rag/) — practical guide covering the full RAG pipeline
+- [LangChain Retrieval](https://python.langchain.com/docs/how_to/#retrievers) — covers 2-step RAG and agentic RAG patterns

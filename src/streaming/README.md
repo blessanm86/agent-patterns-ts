@@ -223,3 +223,10 @@ open http://localhost:3007
 5. **fetch + getReader > EventSource for POST.** The browser's EventSource API is GET-only. Since chat endpoints need POST bodies, use `fetch()` with a `ReadableStream` reader for manual SSE parsing.
 
 6. **Errors become events in streams.** Once SSE headers are sent (200 OK), you can't change the status code. Errors are emitted as typed events that the client renders as banners.
+
+## Sources & Further Reading
+
+- [Server-sent events — MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) — authoritative SSE web standard reference
+- [OpenAI Streaming API](https://platform.openai.com/docs/guides/streaming-responses) — streaming with typed event types (`response.output_text.delta`, etc.)
+- [Anthropic Streaming Messages](https://docs.anthropic.com/en/api/messages-streaming) — SSE protocol for Claude (`message_start`, `content_block_delta`, `message_stop`)
+- [Vercel AI SDK — Streaming](https://ai-sdk.dev/docs/foundations/streaming) — practical framework for building streaming AI UIs

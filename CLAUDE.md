@@ -136,6 +136,7 @@ Every concept folder gets a `README.md` that reads as a well-written blog post a
 - Walk through the implementation with annotated examples
 - Explain the tradeoffs: when to use this pattern vs. alternatives
 - Close with concrete key takeaways
+- Include a "Sources & Further Reading" section with links to key papers, docs, and blog posts from the research phase
 - Link back to the root README with `[Agent Patterns — TypeScript](../../README.md)`
 - Reference the previous concept post if this one builds on it
 

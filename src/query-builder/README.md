@@ -275,6 +275,13 @@ This matters less for monitoring queries and more for SQL, GraphQL, or any query
 
 5. **Injection prevention is free.** When the LLM never writes raw query strings, injection attacks become structurally impossible.
 
+## Sources & Further Reading
+
+- [Seq2SQL: Generating Structured Queries from Natural Language using Reinforcement Learning](https://arxiv.org/abs/1709.00103) — Zhong et al. (Salesforce), 2017 — foundational NL-to-SQL paper
+- [Spider: A Large-Scale Human-Labeled Dataset for Text-to-SQL](https://arxiv.org/abs/1809.08887) — Yu et al. (Yale), EMNLP 2018 — benchmark dataset that drove the field
+- [dbt Semantic Layer](https://docs.getdbt.com/docs/use-dbt-semantic-layer/dbt-sl) — practical implementation of the structured query layer pattern
+- [NL to SQL Architecture Alternatives](https://techcommunity.microsoft.com/blog/azurearchitectureblog/nl-to-sql-architecture-alternatives/4136387) — Microsoft, 2024 — parameterized-query safety guidance for LLM-to-database patterns
+
 ---
 
 _Next up: [Structured Entity Tags](../entity-tags/README.md) — making LLM output interactive by embedding clickable entity references._
