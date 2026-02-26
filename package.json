@@ -21,6 +21,7 @@
     "dev:sub-agent-delegation": "tsx src/sub-agent-delegation/index.ts",
     "dev:streaming": "tsx src/streaming/index.ts",
     "dev:rag": "tsx src/rag/index.ts",
+    "dev:prompt-caching": "tsx src/prompt-caching/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

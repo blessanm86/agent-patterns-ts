@@ -267,7 +267,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 11. Prompt Caching
+### [x] 11. Prompt Caching
 
 **What it is:** Marking stable parts of the prompt (system prompt, tool definitions) as cacheable so the LLM provider reuses computed representations across requests, reducing latency and cost.
 
@@ -537,7 +537,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 8  | Sub-Agent Delegation            | 2    | Done        |
 | 9  | Streaming Responses (SSE)       | 3    | Done        |
 | 10 | RAG                             | 3    | Done        |
-| 11 | Prompt Caching                  | 3    | Not started |
+| 11 | Prompt Caching                  | 3    | Done        |
 | 12 | Evaluation with Mocked Tools    | 3    | Done        |
 | 13 | LLM Error Recovery              | 3    | Done        |
 | 14 | Tool Description Engineering    | 4    | Done        |
