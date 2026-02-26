@@ -17,6 +17,9 @@ importers:
       evalite:
         specifier: ^0.19.0
         version: 0.19.0
+      okapibm25:
+        specifier: ^1.4.1
+        version: 1.4.1
       ollama:
         specifier: ^0.5.9
         version: 0.5.18
@@ -1037,6 +1040,9 @@ packages:
 
   obug@2.1.1:
     resolution: {integrity: sha512-uTqF9MuPraAQ+IsnPf366RG4cP9RtUi7MLO1N3KEc+wb0a6yKpeL0lmk2IB1jY5KHPAlTc6T/JRdC/YqxHNwkQ==}
+
+  okapibm25@1.4.1:
+    resolution: {integrity: sha512-UHmeH4MAtZXGFVncwbY7pfFvDVNxpsyM3W66aGPU0SHj1+ld59ty+9lJ0ifcrcnPUl1XdYoDgb06ObyCnpTs3g==}
 
   ollama@0.5.18:
     resolution: {integrity: sha512-lTFqTf9bo7Cd3hpF6CviBe/DEhewjoZYd9N/uCe7O20qYTvGqrNOFOBDj3lbZgFWHUgDv5EeyusYxsZSLS8nvg==}
@@ -2266,6 +2272,8 @@ snapshots:
       semver: 7.7.4
 
   obug@2.1.1: {}
+
+  okapibm25@1.4.1: {}
 
   ollama@0.5.18:
     dependencies:

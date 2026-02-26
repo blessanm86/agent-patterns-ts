@@ -242,7 +242,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 10. RAG (Retrieval-Augmented Generation)
+### [x] 10. RAG (Retrieval-Augmented Generation)
 
 **What it is:** Before answering a question, searching a knowledge base for relevant documents and injecting them into the LLM's context to ground its response in facts.
 
@@ -536,7 +536,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 7  | Multi-Agent Routing             | 2    | Done        |
 | 8  | Sub-Agent Delegation            | 2    | Done        |
 | 9  | Streaming Responses (SSE)       | 3    | Done        |
-| 10 | RAG                             | 3    | Not started |
+| 10 | RAG                             | 3    | Done        |
 | 11 | Prompt Caching                  | 3    | Not started |
 | 12 | Evaluation with Mocked Tools    | 3    | Done        |
 | 13 | LLM Error Recovery              | 3    | Done        |

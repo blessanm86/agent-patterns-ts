@@ -20,6 +20,7 @@
     "dev:multi-agent-routing": "tsx src/multi-agent-routing/index.ts",
     "dev:sub-agent-delegation": "tsx src/sub-agent-delegation/index.ts",
     "dev:streaming": "tsx src/streaming/index.ts",
+    "dev:rag": "tsx src/rag/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
@@ -37,6 +38,7 @@
     "autoevals": "^0.0.132",
     "dotenv": "^17.3.1",
     "evalite": "^0.19.0",
+    "okapibm25": "^1.4.1",
     "ollama": "^0.5.9",
     "zod": "^4.3.6"
   },

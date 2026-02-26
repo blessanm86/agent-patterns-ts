@@ -24,6 +24,7 @@ Minimal TypeScript implementations of common agentic patterns, using a local mod
 | [Multi-Agent Routing](src/multi-agent-routing/README.md) | Travel assistant with 3 specialist agents + LLM router vs single-agent baseline | `pnpm dev:multi-agent-routing` |
 | [Sub-Agent Delegation](src/sub-agent-delegation/README.md) | Parent agent spawns parallel child agents for multi-domain trip planning | `pnpm dev:sub-agent-delegation` |
 | [Streaming Responses (SSE)](src/streaming/README.md) | Hotel agent with HTTP server, browser UI, 4 typed SSE events, streaming vs blocked comparison | `pnpm dev:streaming` |
+| [RAG (Retrieval-Augmented Generation)](src/rag/README.md) | NexusDB docs assistant with BM25, semantic, and hybrid search — toggle RAG on/off to compare | `pnpm dev:rag` |
 
 ---
 
