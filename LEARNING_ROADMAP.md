@@ -1,6 +1,6 @@
 # Learning Roadmap — Agentic AI Patterns
 
-A structured list of 20 concepts for building production-grade AI agents, organized into 4 tiers from foundational to advanced. Each concept is a self-contained learning session: build a small example, write a blog post, check it off.
+A structured list of 30 concepts for building production-grade AI agents, organized into 5 tiers from foundational to advanced. Each concept is a self-contained learning session: build a small example, write a blog post, check it off.
 
 **How to use this:** Pick any unchecked concept. Open a Claude session (or your preferred AI assistant) and say: _"Let's work on [concept name]. Read the LEARNING_ROADMAP.md for context, then let's build the example and write the blog post."_ The session brief for each concept gives enough context to start cold.
 
@@ -563,30 +563,321 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
+## Tier 5 — Advanced Production
+
+> Patterns that emerge when agents move from single-user chat into production infrastructure: multi-platform deployment, sandboxed execution, dynamic integrations, and autonomous workflows.
+
+### [ ] 21. Declarative Plan Execution Tool
+
+**What it is:** A "meta-tool" where the LLM specifies a multi-step plan declaratively in a single tool call — a step list with tool names, arguments, and `$ref`-style cross-step data references. A deterministic runtime executor resolves references between steps, runs them sequentially, and returns all results at once. The LLM plans; the runtime executes.
+
+**Why it matters:** Individual tool calls force a round-trip to the LLM between every step. When the agent already knows the full sequence it needs (e.g., "get metric catalog, then query the first metric"), a declarative plan eliminates intermediate LLM calls entirely. This cuts latency and cost for discover-then-query chains while keeping the LLM in control of what runs.
+
+**Session brief:** Build a `executePlan` tool that accepts `{ steps: [{ tool, args, description }] }` where `args` can contain `{ "$ref": "steps[0].result.items[0].name" }` references to prior step outputs. Implement a `PlanExecutor` class that resolves references at runtime using JSONPath-like access. Validate tool names against the allowed set using Zod `.refine()`. Return both a human-readable summary and a structured artifact with per-step inputs, outputs, and timing.
+
+**Key ideas to cover:**
+
+- Declarative step list with inter-step `$ref` data passing
+- JSONPath-like reference resolution at runtime
+- Schema validation with `.refine()` to enforce tool name allowlists
+- When plan execution is better than individual tool calls (deterministic chains) vs. when it's not (judgment needed between steps)
+- Dual return: concise summary for LLM + full step-by-step artifact for UI
+
+**Blog angle:** "One Tool Call to Rule Them All — Declarative Plan Execution for AI Agents"
+
+**Sources:**
+
+- [ReWOO: Decoupling Reasoning from Observations for Efficient Augmented Language Models](https://arxiv.org/abs/2305.18323) — Xu et al., 2023 — formalized the "single declarative plan + runtime reference resolution" pattern with `#E1`/`#E2` placeholders
+- [An LLM Compiler for Parallel Function Calling](https://arxiv.org/abs/2312.04511) — Kim et al., ICML 2024 — DAG of tasks with `$node_id` placeholder variables resolved by a Task Fetching Unit
+- [Plan-and-Execute Agents](https://blog.langchain.com/planning-agents/) — LangChain, 2024 — official framework documentation of the Planner/Executor split
+- [Plan-and-Solve Prompting](https://arxiv.org/abs/2305.04091) — Wang et al., ACL 2023 — academic origin of the plan-then-execute paradigm
+
+---
+
+### [ ] 22. On-Demand Skill Injection
+
+**What it is:** Instead of putting all workflow instructions in static tool descriptions, the agent has a `getSkill` tool it calls at runtime to retrieve step-by-step instructions for complex multi-tool procedures. Skills are named bundles of `{ instructions, tools[] }`, dynamically filtered to only include skills whose required tools are present in the current session.
+
+**Why it matters:** Static tool descriptions bloat the system prompt with instructions the agent rarely needs. Skill injection is progressive disclosure for agents — metadata-only at startup (a few dozen tokens per skill), full instructions loaded only when the task requires them. This scales to dozens of workflows without context window pressure.
+
+**Session brief:** Define 3-5 named skills as `{ name, requiredTools: string[], instructions: string[] }` records. Build a `getSkill` tool whose enum schema is dynamically generated from skills whose `requiredTools` are all present. When called, return numbered step-by-step instructions. Show the agent requesting a skill playbook before executing a multi-tool workflow, then following the steps.
+
+**Key ideas to cover:**
+
+- Skill records: name → (tool prerequisites + ordered instructions)
+- Dynamic enum generation from compatible skills only
+- Progressive disclosure: metadata in system prompt, full instructions on demand
+- Why this is more scalable than embedding all instructions in tool descriptions
+- Skill composition: one skill referencing another
+
+**Blog angle:** "Don't Put Everything in the System Prompt — On-Demand Skill Injection for Agents"
+
+**Sources:**
+
+- [Equipping Agents for the Real World with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) — Anthropic Engineering, 2025 — the authoritative description of progressive disclosure for agent capabilities
+- [Introducing Agent Skills](https://www.anthropic.com/news/skills) — Anthropic, 2025 — public announcement of skills as an open standard
+- [Agent Skills: A First Principles Deep Dive](https://leehanchung.github.io/blogs/2025/10/26/claude-skills-deep-dive/) — Lee Hanchung, 2025 — practitioner analysis of the three-tier loading model
+- [Agent Skills: Anthropic's Next Bid to Define AI Standards](https://thenewstack.io/agent-skills-anthropics-next-bid-to-define-ai-standards/) — The New Stack, 2025 — industry adoption analysis
+
+---
+
+### [ ] 23. Self-Validation Tool (Agent QA Gate)
+
+**What it is:** A dedicated validation tool the agent calls to check artifacts it produced before delivering them to the user. The tool takes the generated content (e.g., a YAML dashboard definition), validates it against a schema, and returns `{ valid, message, errors[] }`. This creates a self-imposed QA gate within the reasoning loop — the agent checks its own work.
+
+**Why it matters:** LLMs generate plausible but often structurally invalid artifacts. Rather than having the user discover errors, the agent can validate its own output and self-correct before delivery. This is distinct from error recovery (concept #13): there, a tool failed externally. Here, the agent proactively checks its own generation.
+
+**Session brief:** Build an agent that generates structured configuration (e.g., a JSON dashboard spec). Add a `validate` tool that parses the generated content and runs it through a Zod schema. Return structured pass/fail with error details. Instruct the agent (via tool description) to always validate before delivering. Show the agent catching its own mistakes and self-correcting.
+
+**Key ideas to cover:**
+
+- Validation tool: takes agent-generated content, returns structured pass/fail + error list
+- Two-layer validation: syntax parsing first, then semantic schema validation
+- Tool description instructs the agent to call validate after generate
+- The generate-validate-fix loop vs. one-shot generation
+- When self-validation is worth the extra tool call vs. when it's overkill
+
+**Blog angle:** "Trust But Verify — Teaching Your Agent to Check Its Own Work"
+
+**Sources:**
+
+- [Reflexion: Language Agents with Verbal Reinforcement Learning](https://arxiv.org/abs/2303.11366) — Shinn et al., NeurIPS 2023 — the Actor/Evaluator/Self-Reflection triad, foundational paper for agent self-evaluation
+- [Evaluator Reflect-Refine Loop Patterns](https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-patterns/evaluator-reflect-refine-loop-patterns.html) — AWS Prescriptive Guidance, 2024 — named reusable agentic pattern for self-validation
+- [Reflection Agents](https://blog.langchain.com/reflection-agents/) — LangChain, 2024 — practical implementation with Pydantic-based critique schemas
+- [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — Anthropic, 2024 — the "Evaluator-Optimizer" workflow as one of five core agentic patterns
+
+---
+
+### [ ] 24. Post-Conversation Metadata Generation
+
+**What it is:** After the main agent response, a separate lightweight LLM call produces typed metadata: thread name, follow-up suggestions, request classification, and security flags. This runs as a parallel post-processing node using a cheaper model. Results are stored as typed metadata messages that don't appear in the conversation but are used by the UI (suggestions as clickable chips) and observability (security flags as OTel attributes).
+
+**Why it matters:** Thread naming, follow-up suggestions, and behavioral classification are valuable but shouldn't burden the main reasoning model. A cheap secondary call handles all three, running in parallel with the response delivery. The security classification provides population-level misuse analytics without blocking the user.
+
+**Session brief:** After your agent's main response, run a secondary LLM call (using a cheaper model) with `withStructuredOutput` that takes only human+assistant messages (filter out tool messages) and returns `{ threadName, suggestions: [{ label, prompt }], category, securityFlag }`. Store the result as a separate message type. Render suggestions as clickable chips. Show how filtering tool messages from the secondary call's input improves its output quality.
+
+**Key ideas to cover:**
+
+- Parallel post-processing node: runs after (not during) the main response
+- Message filtering: only human+assistant messages, no tool messages
+- Structured output schema for multi-purpose metadata
+- Cheaper model tier for the secondary call
+- Suggestions rendered as interactive UI elements
+- Security classification emitted as OTel span attributes
+
+**Blog angle:** "The Hidden Second LLM Call — Post-Conversation Metadata for Agent UX"
+
+**Sources:**
+
+- [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — Anthropic, 2024 — the "Parallelization" and "Sectioning" sub-patterns for running specialized parallel nodes
+- [OpenAI Realtime API — Out-of-Band Responses](https://platform.openai.com/docs/guides/realtime) — OpenAI — setting `response.conversation` to `"none"` for metadata calls that don't enter conversation state
+- [LLM Guardrails: Best Practices for Deploying LLM Apps Securely](https://www.datadoghq.com/blog/llm-guardrails-best-practices/) — Datadog, 2024 — post-response classification as a named output guardrail pattern
+- [Top AI Agentic Workflow Patterns](https://blog.bytebytego.com/p/top-ai-agentic-workflow-patterns) — ByteByteGo — the Parallelization pattern with security screening as a parallel node
+
+---
+
+### [ ] 25. Agent-Authored TODO Lists (Persistent Reasoning Scaffold)
+
+**What it is:** A `todoWrite` tool lets the agent create and update a structured TODO list during multi-step reasoning. Unlike the one-shot Reasoning Tool pattern (concept #3), this persists across many tool calls as a running work-breakdown tracker. The TODO list renders as a live progress indicator in the UI, is excluded from conversation summarization, and is depth-gated (sub-agents don't get their own lists).
+
+**Why it matters:** Complex agent tasks involve 5-15 tool calls. Without external scaffolding, the agent's plan exists only in its implicit reasoning — invisible to the user and vulnerable to context window compression. A TODO list externalizes the plan, gives the user real-time progress visibility, and survives context summarization.
+
+**Session brief:** Build a `todoWrite` tool that accepts `[{ content, status, activeForm }]` where `status` is `pending | in_progress | completed`. Return empty string as LLM content (the tool exists purely for UI communication). Store the list as a typed message. In the system prompt, instruct the agent to create/update the TODO before any other tool call. Render the list as a live progress tracker. Show how the TODO persists across summarization by excluding it from the summarizer's input.
+
+**Key ideas to cover:**
+
+- Tool that returns empty content (exists only for structured state communication)
+- Status lifecycle: pending → in_progress → completed
+- `activeForm` field for present-continuous UX ("Querying metrics...")
+- Exclusion from summarization to avoid context pollution
+- Depth-gating: sub-agents don't create their own TODO lists
+- The difference from one-shot reasoning tools (persistent vs. ephemeral)
+
+**Blog angle:** "Show Your Work — How TODO Lists Make AI Agents Transparent"
+
+**Sources:**
+
+- [Todo Lists — Claude Agent SDK Documentation](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) — Anthropic — documents the `TodoWrite` tool lifecycle and rendering
+- [Claude Code's Tasks Update Lets Agents Work Longer and Coordinate](https://venturebeat.com/ai/anthropic-claude-code-updates/) — VentureBeat, 2026 — evolution from flat TODO to persistent task system with DAG dependencies
+- [Advanced Tool Use](https://www.anthropic.com/engineering/advanced-tool-use) — Anthropic Engineering, 2025 — design philosophy behind externalizing agent plans to structured artifacts
+- [Agent Design Lessons from Claude Code](https://jannesklaas.github.io/ai/2025/07/20/claude-code-agent-design.html) — Jannes Klaas, 2025 — practitioner analysis of TODO as a live progress scaffold
+
+---
+
+### [ ] 26. Ambient Context Store (UI-Driven Context Injection)
+
+**What it is:** Any UI component that displays domain data (a service sidebar, a chart, a trace explorer) can register contextual data that gets automatically included in the agent's next prompt. Uses reference counting: mounting a component adds context, unmounting removes it. Active contexts appear as chips the user can individually exclude. When the user submits a prompt, accumulated contexts are serialized as structured tags injected into the message.
+
+**Why it matters:** Users shouldn't have to manually paste data into the chat to give the agent context about what they're looking at. Ambient context injection means the agent automatically knows the user is viewing "service checkout, last 30 minutes, filtered by region=us-east" — without the user typing any of that.
+
+**Session brief:** Build a Zustand store that tracks active contexts as `{ type, data, refCount }` entries. Create a `useRegisterContext(type, data)` hook that increments refCount on mount, decrements on unmount, and removes at zero. Render active contexts as removable chips above the chat input. On submit, serialize contexts into XML tags (`<Service name="checkout" />`, `<TimeRange from="..." to="..." />`). Show how navigating between pages automatically updates what the agent knows.
+
+**Key ideas to cover:**
+
+- Reference-counted context registration (mount/unmount lifecycle)
+- Typed context union: service, metric, span, log, time-range, filter, etc.
+- User-visible context chips with exclude/include toggle
+- Serialization to structured tags appended to the user prompt
+- localStorage persistence for cross-navigation survival
+- Temporary flag: restored contexts marked temporary until a component reclaims them
+
+**Blog angle:** "Your Agent Already Knows What You're Looking At — Ambient Context Injection"
+
+**Sources:**
+
+- [Effective Context Engineering for AI Agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — Anthropic Engineering, 2025 — defines context engineering as curating optimal token sets during inference
+- [Context Engineering for Personalization — OpenAI Agents SDK](https://cookbook.openai.com/examples/agents_sdk/context_personalization/) — OpenAI, 2025 — `RunContextWrapper` for structured state injection per turn
+- [AG-UI: A Lightweight Protocol for Agent-User Interaction](https://www.datacamp.com/tutorial/ag-ui) — CopilotKit/Microsoft, 2025 — open protocol for synchronizing UI state into agent context in real time
+- [Advancing Multi-Agent Systems Through Model Context Protocol](https://arxiv.org/abs/2504.21030) — 2025 — MCP's model of dynamic context registration as the server-level equivalent
+
+---
+
+### [ ] 27. Cross-Platform Response Rendering
+
+**What it is:** The agent produces output containing structured tags (MDX/JSX like `<Service name="checkout" />`). Different platforms (web UI, Slack, Linear) need different renderings. An AST-based converter parses the output, walks the tree, and dispatches tag-specific handlers to produce platform-appropriate formats — Slack Block Kit, markdown links, or interactive React components.
+
+**Why it matters:** Once your agent is accessible from Slack, Linear, or other platforms (not just your web UI), you can't send raw JSX tags. You need a single canonical output format that adapts to each target. The AST-based approach means adding a new platform requires only a new set of tag handlers, not changing the agent's output.
+
+**Session brief:** Define 3-4 custom tags your agent produces (`<Service>`, `<Metric>`, `<Document>`). Build two renderers: (1) a web renderer using React components, (2) a markdown renderer that converts tags to plain-text equivalents. Use a typed dispatch table keyed by tag name so adding a new tag causes a TypeScript error if any renderer is missing its handler. Show the same agent response rendered in both formats.
+
+**Key ideas to cover:**
+
+- Single canonical output format (MDX/JSX tags in markdown)
+- AST parsing with mdast/unified
+- Per-platform renderer with typed tag dispatch table
+- Exhaustive handling: TypeScript enforces all tags are handled
+- Slack Block Kit as a concrete target format
+- Graceful degradation: unknown tags rendered as plain text
+
+**Blog angle:** "Write Once, Render Everywhere — Cross-Platform AI Agent Output"
+
+**Sources:**
+
+- [unified](https://github.com/unifiedjs/unified) — unifiedjs collective — canonical AST-based content transformation pipeline (parse → transform → serialize)
+- [remark](https://remark.js.org/) — remarkjs — Markdown-to-AST (mdast) layer with plugin-based visitors
+- [@tryfabric/mack](https://github.com/tryfabric/mack) — TryFabric — production library converting Markdown AST to Slack Block Kit
+- [Vercel Chat SDK](https://vercel.com/changelog/chat-sdk) — Vercel, 2025 — unified JSX authoring model with native rendering to Slack, Teams, Discord, GitHub, and Linear
+
+---
+
+### [ ] 28. External Event-Triggered Agent (Webhook-Driven)
+
+**What it is:** The agent is triggered not by a human typing in a UI but by webhooks from external platforms (Slack, Linear, etc.). This involves: HMAC signature verification of the raw request body, immediate ACK within the platform's timeout window (Slack: 3s, Linear: 5s), async background processing, user identity resolution from the webhook payload, response posting back to the platform, and per-session promise queue serialization for concurrent events. Includes live progress broadcasting with throttled heartbeats to keep external platforms from timing out.
+
+**Why it matters:** Chat UIs are just one entry point for agents. Production agents also need to respond to events from issue trackers, incident managers, and collaboration tools. The engineering challenges are fundamentally different from web UI integration: strict timeout contracts, webhook security, concurrent event serialization, and keep-alive heartbeats.
+
+**Session brief:** Build a webhook receiver for a mock external platform. Implement: (1) HMAC signature verification on the raw body before JSON parsing, (2) immediate 200/204 response within 3 seconds, (3) async background processing with `waitUntil` or a promise queue, (4) per-session serialization (concurrent webhooks for the same thread processed sequentially), (5) response posting back to the platform. Add a keep-alive timer that sends "Thinking..." if no real progress arrives within 10 seconds.
+
+**Key ideas to cover:**
+
+- HMAC signature verification on raw bytes (before JSON parsing)
+- Fire-and-forget with immediate ACK (platform timeout contracts)
+- Per-session promise queue for concurrent event serialization
+- User identity resolution from webhook payload (email → auth session)
+- Throttled activity poster: real progress preferred over synthetic keepalive
+- Response posting back to originating platform
+
+**Blog angle:** "Your Agent Has a New Boss — Handling Webhooks from Slack and Linear"
+
+**Sources:**
+
+- [Ack & Latency — Vercel Academy (Slack Agents)](https://vercel.com/academy/slack-agents/acknowledgment-and-latency) — Vercel, 2025 — official documentation of the ACK-first pattern for Slack's 3-second timeout
+- [Slackbot Agent Guide — Vercel AI SDK Cookbook](https://ai-sdk.dev/cookbook/guides/slackbot) — Vercel, 2025 — complete webhook → ACK → async agent → response pattern
+- [Event-Driven Architecture for Agentic AI](https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-serverless/event-driven-architecture.html) — AWS Prescriptive Guidance, 2025 — idempotency, dead-letter queues, HMAC security
+- [Ambient Agent Webhook Triggers](https://www.moveworks.com/us/en/resources/blog/webhooks-triggers-for-ambient-agents) — Moveworks, 2024 — enterprise documentation of webhook-triggered agent patterns
+
+---
+
+### [ ] 29. Sandboxed Code Execution with Worker Pool
+
+**What it is:** Running AI agent code inside isolated cloud sandbox VMs. Includes: a pre-warmed pool of ready sandboxes (pop in O(1), replenish in background), thread-bound affinity (same sandbox reused for same conversation), a token-scoped API proxy (revocable short-lived tokens instead of real credentials inside the sandbox), and a CLI bridge for tool invocation across process boundaries (CLI subprocess → WebSocket → orchestrator).
+
+**Why it matters:** Agents that write and execute code need isolation — you can't let LLM-generated code access production credentials or other users' data. The worker pool amortizes expensive VM boot time across requests. Thread affinity preserves in-process state across conversation turns without replaying history. The proxy pattern ensures credentials never exist inside the sandbox.
+
+**Session brief:** Build a simplified version: (1) a pool of 3 pre-warmed sandbox processes (Node.js child processes as stand-ins for VMs), (2) thread-to-sandbox assignment map with idle timeout, (3) a proxy endpoint that validates short-lived tokens and injects real credentials before forwarding requests, (4) a CLI tool inside the sandbox that sends tool calls over a local WebSocket to the orchestrator. Show a conversation reusing the same sandbox across turns, then show pool replenishment when a sandbox dies.
+
+**Key ideas to cover:**
+
+- Pre-warmed pool: create N sandboxes at startup, pop on acquire, replenish in background
+- Thread affinity: map thread ID to running sandbox, auto-invalidate on death
+- Token-scoped proxy: generate per-sandbox revocable token, inject real credentials at proxy
+- CLI bridge: expose tools as CLI subprocess → WebSocket → orchestrator execution
+- Dead worker eviction and exponential backoff on replenishment failures
+- Provider abstraction: `SandboxProvider` interface for vendor portability
+
+**Blog angle:** "Running Untrusted Code Safely — Sandboxed Execution for AI Agents"
+
+**Sources:**
+
+- [Open-Source Agent Sandbox for Kubernetes](https://opensource.googleblog.com/2025/11/unleashing-autonomous-ai-agents-why-kubernetes-needs-a-new-standard-for-agent-execution.html) — Google, 2025 — `SandboxWarmPool` CRD, the formal open-source pre-warmed sandbox pool
+- [Isolate AI Code Execution with Agent Sandbox](https://cloud.google.com/kubernetes-engine/docs/how-to/agent-sandbox) — Google Cloud/GKE, 2025 — gVisor isolation, Pod Snapshots for warm pools, Workload Identity for scoped credentials
+- [Practical Security Guidance for Sandboxing Agentic Workflows](https://developer.nvidia.com/blog/practical-security-guidance-for-sandboxing-agentic-workflows-and-managing-execution-risk/) — NVIDIA, 2025 — token-scoped proxy and credential broker patterns
+- [E2B — The Enterprise AI Agent Cloud](https://e2b.dev/) — E2B, 2024 — open-source Firecracker microVM sandbox for AI agents with proxy-based credential isolation
+
+---
+
+### [ ] 30. Tool Bundle System (Dynamic Tool Availability)
+
+**What it is:** Tool sets that are conditionally available based on per-user/per-org OAuth integrations. Three-layer architecture: global bundle config (static code/YAML), org-level enablement (database flag), and session-specific credentials (per-request lazy-loaded OAuth tokens). The agent's available tool set changes at runtime based on what integrations the user has configured — without changing the graph code.
+
+**Why it matters:** Production agents serve multiple organizations with different integrations. One org has Linear connected, another has Jira, a third has neither. Tool bundles make integration tools available only to users who have configured them, with credentials loaded lazily (only when the tool is actually called, not at session startup).
+
+**Session brief:** Define a `BundleRegistry` with 2 bundles (e.g., `github` and `slack`), each with: `tools[]`, `availabilityChecker(orgId)`, and `sessionConfigLoader(userId)`. At request time, check which bundles the org has enabled, include only those tools. Inject session config into `RunnableConfig` so tools can read their credentials at execution time. Show how one user sees 5 tools while another sees 8, depending on their org's configured integrations.
+
+**Key ideas to cover:**
+
+- Three-layer config: global static → org enablement → session credentials
+- Bundle registry: `Record<BundleName, { tools, checker, loader }>`
+- Lazy credential loading: OAuth token fetched only when a tool is actually called
+- Namespace prefixing: `integration.toolName` to avoid naming collisions
+- Session-frozen tool set: load once at init, don't change mid-conversation
+- How this differs from multi-agent routing (tool availability, not agent selection)
+
+**Blog angle:** "Not Every User Gets Every Tool — Dynamic Tool Bundles for Multi-Tenant Agents"
+
+**Sources:**
+
+- [Introducing the Model Context Protocol](https://www.anthropic.com/news/model-context-protocol) — Anthropic, 2024 — MCP as the industry standard for dynamic tool discovery per session
+- [Dynamic Tool Calling in LangGraph Agents](https://changelog.langchain.com/announcements/dynamic-tool-calling-in-langgraph-agents) — LangChain, 2024 — middleware pattern for per-request tool filtering based on user/org identity
+- [Secure Third-Party Tool Calling](https://auth0.com/blog/secure-third-party-tool-calling-python-fastapi-auth0-langchain-langgraph/) — Auth0, 2024 — per-session credential injection via `RunnableConfig` with OAuth token retrieval
+- [Authenticated Delegation and Authorized AI Agents](https://arxiv.org/abs/2501.09674) — arXiv, 2025 — academic treatment of scoped authority delegation for agent tool access
+
+---
+
 ## Progress Tracking
 
-| #   | Concept                         | Tier | Status |
-| --- | ------------------------------- | ---- | ------ |
-| 1   | Multi-Turn Conversation Memory  | 1    | Done   |
-| 2   | Structured Output (JSON Mode)   | 1    | Done   |
-| 3   | Reasoning Tool Pattern          | 1    | Done   |
-| 4   | Guardrails & Circuit Breakers   | 1    | Done   |
-| 5   | State Graph                     | 2    | Done   |
-| 6   | Context Window Management       | 2    | Done   |
-| 7   | Multi-Agent Routing             | 2    | Done   |
-| 8   | Sub-Agent Delegation            | 2    | Done   |
-| 9   | Streaming Responses (SSE)       | 3    | Done   |
-| 10  | RAG                             | 3    | Done   |
-| 11  | Prompt Caching                  | 3    | Done   |
-| 12  | Evaluation with Mocked Tools    | 3    | Done   |
-| 13  | LLM Error Recovery              | 3    | Done   |
-| 14  | Tool Description Engineering    | 4    | Done   |
-| 15  | Dual Return Pattern             | 4    | Done   |
-| 16  | Query Builder Pattern           | 4    | Done   |
-| 17  | Structured Entity Tags          | 4    | Done   |
-| 18  | Prompt Injection Detection      | 4    | Done   |
-| 19  | Self-Instrumentation            | 4    | Done   |
-| 20  | Cost Tracking & Model Selection | 4    | Done   |
+| #   | Concept                           | Tier | Status  |
+| --- | --------------------------------- | ---- | ------- |
+| 1   | Multi-Turn Conversation Memory    | 1    | Done    |
+| 2   | Structured Output (JSON Mode)     | 1    | Done    |
+| 3   | Reasoning Tool Pattern            | 1    | Done    |
+| 4   | Guardrails & Circuit Breakers     | 1    | Done    |
+| 5   | State Graph                       | 2    | Done    |
+| 6   | Context Window Management         | 2    | Done    |
+| 7   | Multi-Agent Routing               | 2    | Done    |
+| 8   | Sub-Agent Delegation              | 2    | Done    |
+| 9   | Streaming Responses (SSE)         | 3    | Done    |
+| 10  | RAG                               | 3    | Done    |
+| 11  | Prompt Caching                    | 3    | Done    |
+| 12  | Evaluation with Mocked Tools      | 3    | Done    |
+| 13  | LLM Error Recovery                | 3    | Done    |
+| 14  | Tool Description Engineering      | 4    | Done    |
+| 15  | Dual Return Pattern               | 4    | Done    |
+| 16  | Query Builder Pattern             | 4    | Done    |
+| 17  | Structured Entity Tags            | 4    | Done    |
+| 18  | Prompt Injection Detection        | 4    | Done    |
+| 19  | Self-Instrumentation              | 4    | Done    |
+| 20  | Cost Tracking & Model Selection   | 4    | Done    |
+| 21  | Declarative Plan Execution Tool   | 5    | Pending |
+| 22  | On-Demand Skill Injection         | 5    | Pending |
+| 23  | Self-Validation Tool (QA Gate)    | 5    | Pending |
+| 24  | Post-Conversation Metadata        | 5    | Pending |
+| 25  | Agent TODO Lists (Scaffold)       | 5    | Pending |
+| 26  | Ambient Context Store             | 5    | Pending |
+| 27  | Cross-Platform Response Rendering | 5    | Pending |
+| 28  | External Event-Triggered Agent    | 5    | Pending |
+| 29  | Sandboxed Code Execution          | 5    | Pending |
+| 30  | Tool Bundle System                | 5    | Pending |
 
 ---
 
@@ -599,5 +890,6 @@ The tier order works, but within tiers you can jump around based on interest. On
 3. **Tier 2** (5 → 6 → 7 → 8) — the architectural leap
 4. **Concepts 9 → 10 → 11** (streaming, RAG, caching) — production infrastructure
 5. **Tier 4** (any order) — pick what interests you
+6. **Tier 5** — recommended order: 21 → 23 → 25 → 22 → 24 → 26 → 30 → 27 → 28 → 29 (agent-side patterns first, then UI/platform, then infrastructure)
 
 Each concept is designed to be completable in a single focused session: build the example, run it, write the blog post.
