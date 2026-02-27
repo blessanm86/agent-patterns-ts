@@ -497,7 +497,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 20. Cost Tracking & Model Tier Selection
+### [x] 20. Cost Tracking & Model Tier Selection
 
 **What it is:** Using different LLM models for different tasks within the same agent, based on task complexity, and tracking per-request costs.
 
@@ -546,7 +546,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 17 | Structured Entity Tags          | 4    | Done        |
 | 18 | Prompt Injection Detection      | 4    | Done        |
 | 19 | Self-Instrumentation            | 4    | Done        |
-| 20 | Cost Tracking & Model Selection | 4    | Not started |
+| 20 | Cost Tracking & Model Selection | 4    | Done        |
 
 ---
 

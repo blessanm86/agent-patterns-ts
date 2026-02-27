@@ -31,6 +31,7 @@ Minimal TypeScript implementations of common agentic patterns, using a local mod
 | [Structured Entity Tags](src/entity-tags/README.md) | E-commerce agent with XML entity tags in LLM output — parsed and rendered as colored terminal badges | `pnpm dev:entity-tags` |
 | [Prompt Injection Detection](src/prompt-injection/README.md) | Hotel agent with 3-layer defense: heuristic patterns, LLM classifier, canary tokens — run protected vs unprotected | `pnpm dev:prompt-injection` |
 | [Self-Instrumentation (Observability)](src/self-instrumentation/README.md) | Hotel agent with OpenTelemetry tracing — span hierarchy, token counts, cost estimation, trace summaries | `pnpm dev:self-instrumentation` |
+| [Cost Tracking & Model Tier Selection](src/cost-tracking/README.md) | Hotel agent with 3-tier model routing — fast classifier, per-call cost tracking, savings vs all-capable baseline | `pnpm dev:cost-tracking` |
 
 ---
 
