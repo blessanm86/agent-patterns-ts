@@ -30,6 +30,7 @@
     "dev:entity-tags:plain": "tsx src/entity-tags/index.ts --plain",
     "dev:prompt-injection": "tsx src/prompt-injection/index.ts",
     "dev:prompt-injection:unprotected": "tsx src/prompt-injection/index.ts --unprotected",
+    "dev:self-instrumentation": "tsx src/self-instrumentation/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
@@ -44,6 +45,11 @@
     "pre-commit": "pnpm fmt:check && pnpm lint"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/core": "^2.5.1",
+    "@opentelemetry/resources": "^2.5.1",
+    "@opentelemetry/sdk-trace-base": "^2.5.1",
+    "@opentelemetry/sdk-trace-node": "^2.5.1",
     "autoevals": "^0.0.132",
     "dotenv": "^17.3.1",
     "evalite": "^0.19.0",

@@ -471,7 +471,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 19. Self-Instrumentation (Agent Observability)
+### [x] 19. Self-Instrumentation (Agent Observability)
 
 **What it is:** The agent emitting traces, metrics, and logs about its own execution — which nodes ran, how long each took, which tools were called, token counts, error rates.
 
@@ -545,7 +545,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 | 16 | Query Builder Pattern           | 4    | Done        |
 | 17 | Structured Entity Tags          | 4    | Done        |
 | 18 | Prompt Injection Detection      | 4    | Done        |
-| 19 | Self-Instrumentation            | 4    | Not started |
+| 19 | Self-Instrumentation            | 4    | Done        |
 | 20 | Cost Tracking & Model Selection | 4    | Not started |
 
 ---

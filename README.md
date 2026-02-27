@@ -30,6 +30,7 @@ Minimal TypeScript implementations of common agentic patterns, using a local mod
 | [Query Builder Pattern](src/query-builder/README.md) | Metrics monitor comparing raw LLM query strings vs structured parameter builder — A/B error rate comparison | `pnpm dev:query-builder` |
 | [Structured Entity Tags](src/entity-tags/README.md) | E-commerce agent with XML entity tags in LLM output — parsed and rendered as colored terminal badges | `pnpm dev:entity-tags` |
 | [Prompt Injection Detection](src/prompt-injection/README.md) | Hotel agent with 3-layer defense: heuristic patterns, LLM classifier, canary tokens — run protected vs unprotected | `pnpm dev:prompt-injection` |
+| [Self-Instrumentation (Observability)](src/self-instrumentation/README.md) | Hotel agent with OpenTelemetry tracing — span hierarchy, token counts, cost estimation, trace summaries | `pnpm dev:self-instrumentation` |
 
 ---
 
