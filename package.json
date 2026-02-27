@@ -38,12 +38,9 @@
     "eval:watch": "evalite watch",
     "lint": "oxlint src/",
     "lint:fix": "oxlint --fix src/",
-    "fmt": "oxfmt src/",
-    "fmt:check": "oxfmt --check src/",
+    "fmt": "oxfmt .",
+    "fmt:check": "oxfmt --check .",
     "prepare": "simple-git-hooks"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm fmt:check && pnpm lint"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
@@ -66,5 +63,8 @@
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
     "vitest": "^4.0.18"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm fmt:check && pnpm lint && tsc --noEmit"
   }
 }

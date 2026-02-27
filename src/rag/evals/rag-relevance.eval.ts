@@ -46,18 +46,18 @@ evalite("RAG — search returns relevant chunks", {
     return results;
   },
   scorers: [
-    createScorer<{ input: string; expected: string }, SearchResult[]>({
+    createScorer<string, SearchResult[], string>({
       name: "Expected doc in top 3",
       scorer: ({ output, expected }) => {
         const top3Sources = output.slice(0, 3).map((r) => r.chunk.source);
-        return top3Sources.includes(expected) ? 1 : 0;
+        return top3Sources.includes(expected ?? "") ? 1 : 0;
       },
     }),
-    createScorer<{ input: string; expected: string }, SearchResult[]>({
+    createScorer<string, SearchResult[], string>({
       name: "Expected doc in top 5",
       scorer: ({ output, expected }) => {
         const top5Sources = output.slice(0, 5).map((r) => r.chunk.source);
-        return top5Sources.includes(expected) ? 1 : 0;
+        return top5Sources.includes(expected ?? "") ? 1 : 0;
       },
     }),
   ],

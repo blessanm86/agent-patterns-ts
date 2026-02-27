@@ -2,7 +2,7 @@
 
 A structured list of 20 concepts for building production-grade AI agents, organized into 4 tiers from foundational to advanced. Each concept is a self-contained learning session: build a small example, write a blog post, check it off.
 
-**How to use this:** Pick any unchecked concept. Open a Claude session (or your preferred AI assistant) and say: *"Let's work on [concept name]. Read the LEARNING_ROADMAP.md for context, then let's build the example and write the blog post."* The session brief for each concept gives enough context to start cold.
+**How to use this:** Pick any unchecked concept. Open a Claude session (or your preferred AI assistant) and say: _"Let's work on [concept name]. Read the LEARNING_ROADMAP.md for context, then let's build the example and write the blog post."_ The session brief for each concept gives enough context to start cold.
 
 **Prerequisite knowledge:** This repo already covers ReAct, Plan+Execute, tool calling, and 3-phase evals. The roadmap builds on those foundations.
 
@@ -21,6 +21,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build a multi-turn assistant (e.g., a recipe helper) that tracks conversation history. Show what breaks when you don't pass history. Then add a message array that grows with each turn. Demonstrate the agent referencing earlier context ("as I mentioned, the chicken needs 30 minutes").
 
 **Key ideas to cover:**
+
 - Message array as the core state primitive
 - Role labels (system, user, assistant, tool) and why they matter
 - Growing context: what happens when history gets long (preview of concept #6)
@@ -29,6 +30,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Your Agent Has Amnesia — How Conversation Memory Actually Works"
 
 **Sources:**
+
 - [OpenAI Chat Completions API — `messages` parameter](https://platform.openai.com/docs/api-reference/chat/create) — the canonical implementation of the message array pattern
 - [OpenAI Conversation State guide](https://platform.openai.com/docs/guides/conversation-state) — explains why each request is stateless and how to manage history
 - [Anthropic Messages API — multi-turn conversations](https://docs.anthropic.com/en/api/messages) — alternating user/assistant turns
@@ -45,6 +47,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build a decision-making agent that must return structured JSON for its choices. Compare three approaches: (a) asking for JSON in the prompt and hoping, (b) using `response_format: { type: "json_object" }`, (c) using a tool schema to force structure. Show parsing failures with approach (a) and reliability with (b)/(c).
 
 **Key ideas to cover:**
+
 - `response_format` vs. tool schemas as two paths to structured output
 - Zod schemas for runtime validation
 - When to use JSON mode vs. when free text is fine
@@ -53,6 +56,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Stop Parsing AI Output with Regex — Use JSON Mode Instead"
 
 **Sources:**
+
 - [OpenAI Structured Outputs](https://platform.openai.com/docs/guides/structured-outputs) — JSON Schema-conforming outputs with guaranteed validity
 - [Efficient Guided Generation for Large Language Models](https://arxiv.org/abs/2307.09702) — Willard & Louf, 2023 — foundational paper on FSM-based constrained decoding (basis for the Outlines library)
 - [Instructor library](https://github.com/instructor-ai/instructor) — Jason Liu, 2023 — widely adopted library for extracting typed, validated outputs from any LLM
@@ -69,6 +73,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build an agent with a `reasoning` tool that returns `{ thought: string, shouldContinue: boolean }`. Set `tool_choice: "any"` so the LLM must call it. Show how this creates a reliable decision gate: the agent always thinks before acting, and the `shouldContinue` boolean is a structured exit signal.
 
 **Key ideas to cover:**
+
 - `tool_choice: "any"` vs `"auto"` vs `"none"` — when to use each
 - The "fake tool" pattern: a tool with no side effects, used purely for structured reasoning
 - Why this is more reliable than asking the LLM to include a "DONE" token in free text
@@ -77,6 +82,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "The Most Useful Tool Your Agent Will Never Execute"
 
 **Sources:**
+
 - [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629) — Yao et al., 2022 (ICLR 2023) — foundational paper establishing interleaved reasoning + actions
 - [The "think" tool: Enabling Claude to stop and think](https://www.anthropic.com/engineering/claude-think-tool) — Anthropic, 2025 — describes the exact fake-tool-for-reasoning pattern with benchmarks
 - [OpenAI Function Calling](https://openai.com/index/function-calling-and-other-api-updates/) — original introduction of `tool_choice` parameter
@@ -93,6 +99,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Take the existing ReAct agent and deliberately break it (give it an impossible task, or a tool that always returns "try again"). Watch it loop. Then add: max iteration limit, total token budget, per-turn timeout, and a simple input validation check. Show each guardrail catching a different failure mode.
 
 **Key ideas to cover:**
+
 - Max iterations per turn and per conversation
 - Token counting and budget enforcement
 - Timeout handling for slow tool calls
@@ -102,6 +109,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Your Agent Will Run Forever If You Let It — Adding Circuit Breakers"
 
 **Sources:**
+
 - [Building effective agents](https://www.anthropic.com/research/building-effective-agents) — Anthropic, 2024 — practitioner guidance on guardrails, sandboxing, and stopping conditions
 - [NeMo Guardrails: A Toolkit for Controllable and Safe LLM Applications](https://arxiv.org/pdf/2310.10501) — Rebedea et al. (NVIDIA), EMNLP 2023 — peer-reviewed paper on programmable guardrails
 - [NeMo Guardrails](https://github.com/NVIDIA-NeMo/Guardrails) — NVIDIA's open-source guardrails framework
@@ -122,6 +130,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Refactor the ReAct hotel agent from a while-loop into a 4-node graph: `think` → `route` → `execute_tool` → `synthesize`. Use a simple state object passed between nodes. Implement conditional edges (think → route decides: call tool or synthesize). No framework needed — just functions and a dispatcher.
 
 **Key ideas to cover:**
+
 - Nodes as pure functions: `(state) => state`
 - Conditional edges: routing based on state
 - Shared annotation/state schema
@@ -131,6 +140,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "From While Loop to State Graph — Refactoring an AI Agent"
 
 **Sources:**
+
 - [LangGraph announcement](https://blog.langchain.com/langgraph/) — LangChain, 2024 — primary source for the StateGraph / conditional edges pattern
 - [Building LangGraph: Designing an Agent Runtime from First Principles](https://blog.langchain.com/building-langgraph/) — explains why Pregel/BSP was chosen over DAG topological sort
 - [Pregel: A System for Large-Scale Graph Processing](https://research.google/pubs/pregel-a-system-for-large-scale-graph-processing/) — Malewicz et al. (Google), SIGMOD 2010 — the upstream graph computation model
@@ -147,6 +157,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build a long-running agent (e.g., a research assistant that takes 20+ turns). Show it failing when history exceeds the context window. Then add a summarization node that triggers when token count exceeds a threshold: it summarizes old messages, replaces them with the summary, and continues. Compare information retention with truncation vs. summarization.
 
 **Key ideas to cover:**
+
 - Token counting (tiktoken or model-specific counting)
 - When to trigger summarization (threshold-based)
 - What to preserve in a summary (key facts, decisions, tool results)
@@ -156,6 +167,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "When Your Agent Forgets Mid-Conversation — Context Window Management"
 
 **Sources:**
+
 - [Recursively Summarizing Enables Long-Term Dialogue Memory in Large Language Models](https://arxiv.org/abs/2308.15022) — Wang et al., 2023 — academic paper on recursive LLM-generated summaries for long conversations
 - [LangChain ConversationSummaryMemory](https://python.langchain.com/api_reference/langchain/memory/langchain.memory.summary.ConversationSummaryMemory.html) — canonical practical implementation of progressive summarization
 - [Anthropic Long Context Prompting Tips](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/long-context-tips) — covers context compaction and information placement
@@ -172,6 +184,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build 3 agent profiles for a travel assistant: `flight_agent` (flight search tools), `hotel_agent` (hotel booking tools), `activity_agent` (attraction/restaurant tools). Add a router that reads the user's question and picks the right profile. Show that the specialized agent outperforms a single agent with all tools.
 
 **Key ideas to cover:**
+
 - Profile definition: name, description, tool set, system prompt additions
 - Router implementation: an LLM call with profile descriptions → structured output picking one
 - Tool scoping: only giving the selected profile's tools to the agent
@@ -181,6 +194,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "One Agent, Many Hats — How Multi-Agent Routing Works"
 
 **Sources:**
+
 - [Mixture-of-Agents Enhances Large Language Model Capabilities](https://arxiv.org/abs/2406.04692) — Wang et al., 2024 — paper on composing multiple specialized LLMs in layered roles
 - [OpenAI Swarm](https://github.com/openai/swarm) — OpenAI, 2024 — lightweight educational framework for agent routing via handoffs
 - [Orchestrating Agents: Routines and Handoffs](https://cookbook.openai.com/examples/orchestrating_agents) — OpenAI Cookbook — design document for agent routing
@@ -197,6 +211,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build a parent agent that receives "Plan a weekend trip to Portland" and spawns 3 child agents: one for flights, one for hotels, one for activities. Each child runs independently with its own tool set. Results flow back to the parent, which synthesizes a unified itinerary. Add a depth limit so children can't spawn further children beyond depth 2.
 
 **Key ideas to cover:**
+
 - Parent-child message passing (child results as tool results)
 - Depth tracking and limiting
 - Independent execution (children don't share state)
@@ -206,6 +221,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Promise.all() for AI — Delegating Work to Sub-Agents"
 
 **Sources:**
+
 - [AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation](https://arxiv.org/abs/2308.08155) — Wu et al. (Microsoft Research), ICLR 2024 Best Paper — hierarchical multi-agent conversations with recursive invocation
 - [ReDel: A Toolkit for LLM-Powered Recursive Multi-Agent Systems](https://www.cis.upenn.edu/~ccb/publications/recursive-multi-agent-llms.pdf) — Zhu et al. (UPenn), ACL 2024 — directly addresses recursive sub-agent spawning with depth control
 - [Plan-and-Solve Prompting](https://arxiv.org/abs/2305.04091) — Wang et al., ACL 2023 — academic origin of the Plan-and-Execute pattern (decompose → delegate → synthesize)
@@ -226,6 +242,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build an HTTP server that runs an agent and streams results via SSE. Define 4 event types: `text` (token chunks), `tool_call` (tool invocation with name and params), `tool_result` (tool output), `done` (stream complete). Build a minimal HTML client that renders each event type differently.
 
 **Key ideas to cover:**
+
 - SSE protocol basics (EventSource, event types, data format)
 - Typed message events vs. raw token streaming
 - Buffering and flushing
@@ -235,6 +252,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Beyond console.log — Streaming Agent Output to a Real UI"
 
 **Sources:**
+
 - [Server-sent events — MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) — authoritative SSE web standard reference
 - [OpenAI Streaming API](https://platform.openai.com/docs/guides/streaming-responses) — streaming with typed event types (`response.output_text.delta`, etc.)
 - [Anthropic Streaming Messages](https://docs.anthropic.com/en/api/messages-streaming) — SSE protocol for Claude (`message_start`, `content_block_delta`, `message_stop`)
@@ -251,6 +269,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build a documentation assistant. Create a small knowledge base (10-20 markdown files about a fictional product). Implement a search tool that finds relevant docs by keyword/embedding similarity. Show the agent answering questions with and without RAG — compare accuracy and hallucination rates.
 
 **Key ideas to cover:**
+
 - Document chunking (splitting docs into searchable pieces)
 - Search strategies: keyword (BM25), embedding similarity, hybrid
 - Context injection: search results as tool results vs. system prompt
@@ -260,6 +279,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Teaching Your Agent to Read the Docs — RAG from Scratch"
 
 **Sources:**
+
 - [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401) — Lewis et al. (Facebook AI Research), NeurIPS 2020 — the paper that coined "RAG" and defined the paradigm
 - [REALM: Retrieval-Augmented Language Model Pre-Training](https://arxiv.org/abs/2002.08909) — Guu et al. (Google Research), ICML 2020 — co-originator of retrieval-augmented approach
 - [LlamaIndex — Introduction to RAG](https://docs.llamaindex.ai/en/stable/understanding/rag/) — practical guide covering the full RAG pipeline
@@ -276,6 +296,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build an agent with a large system prompt (2000+ tokens) and 10+ tools. Measure latency and cost for 10 sequential requests without caching. Then enable prompt caching (Anthropic's cache control headers or equivalent). Measure again. Show the difference.
 
 **Key ideas to cover:**
+
 - What gets cached: system prompt, tool definitions, conversation prefix
 - Cache control headers (Anthropic-specific, but the concept is general)
 - Cache hit rates and their impact on latency/cost
@@ -285,6 +306,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "The Cheapest Optimization You're Not Using — Prompt Caching"
 
 **Sources:**
+
 - [Anthropic Prompt Caching](https://www.anthropic.com/news/prompt-caching) — announcement describing `cache_control`, TTL tiers, and pricing (reads at 0.1x cost)
 - [Anthropic Prompt Caching API docs](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) — implementation reference
 - [OpenAI Prompt Caching](https://platform.openai.com/docs/guides/prompt-caching) — automatic caching for prompts >= 1024 tokens
@@ -302,6 +324,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Take the existing eval framework and add mocked tool implementations. Create evals that check: (a) tool call sequence (trajectory), (b) parameter correctness, (c) final response quality (LLM-as-judge). Show how a prompt change improves one eval but breaks another — this is why you need a suite, not a single test.
 
 **Key ideas to cover:**
+
 - Mock design: deterministic responses for known inputs
 - Trajectory evaluation: expected vs. actual tool call sequence
 - Tool precision and recall: did the agent call all necessary tools? Did it call unnecessary ones?
@@ -311,6 +334,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Testing AI Agents Like Software — Evals with Mocked Tools"
 
 **Sources:**
+
 - [Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena](https://arxiv.org/abs/2306.05685) — Zheng et al. (UC Berkeley), NeurIPS 2023 — canonical paper establishing LLM-as-Judge methodology
 - [LangSmith — Evaluate a complex agent](https://docs.smith.langchain.com/evaluation) — trajectory evaluation with tool mocking
 - [Braintrust Eval SDK](https://www.braintrust.dev/docs/start/eval-sdk) — offline agent evals with stubbed dependencies
@@ -327,6 +351,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build an agent with a SQL query tool. Deliberately introduce common failure modes: syntax errors, invalid column names, type mismatches. Show three recovery strategies: (a) crash on error, (b) blind retry (same call), (c) corrective retry (feed error back with "fix this" instruction). Measure recovery rates for each approach.
 
 **Key ideas to cover:**
+
 - Error as tool result: returning the error to the LLM as a normal tool response
 - Corrective prompting: adding guidance ("The query failed because X. Try Y instead.")
 - Max retries: don't let correction loop forever
@@ -336,6 +361,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "When Your Agent's Query Fails — Teaching LLMs to Self-Correct"
 
 **Sources:**
+
 - [Self-Refine: Iterative Refinement with Self-Feedback](https://arxiv.org/abs/2303.17651) — Madaan et al. (CMU / Allen AI), NeurIPS 2023 — the GENERATE → FEEDBACK → REFINE loop using a single LLM
 - [Reflexion: Language Agents with Verbal Reinforcement Learning](https://arxiv.org/abs/2303.11366) — Shinn et al., NeurIPS 2023 — agents maintaining episodic memory of self-reflective text from prior failures
 - [OpenAI Cookbook — Self-Evolving Agents](https://cookbook.openai.com/examples/partners/self_evolving_agents/autonomous_agent_retraining) — practical retry loop with LLM-as-judge evaluation
@@ -355,6 +381,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build an agent with 5+ tools. Start with minimal descriptions ("Search for hotels"). Show common misuse. Then iteratively improve descriptions with: when to use this tool vs. alternatives, required parameter constraints (min/max values), output format expectations, common mistakes to avoid. Measure tool call accuracy before and after.
 
 **Key ideas to cover:**
+
 - Description as instruction: "Use this when X, not when Y"
 - Parameter constraints in descriptions (min/max, required formats)
 - Anti-pattern documentation: "Do NOT use this for Z"
@@ -365,6 +392,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "The Most Important Code You'll Write for Your Agent Isn't Code — It's Tool Descriptions"
 
 **Sources:**
+
 - [Writing effective tools for AI agents](https://www.anthropic.com/engineering/writing-tools-for-agents) — Anthropic, 2025 — primary source; articulates "tool descriptions are prompts" with real-world examples
 - [Building effective agents — Appendix 2: Prompt Engineering your Tools](https://www.anthropic.com/research/building-effective-agents) — Anthropic, 2024 — covers natural-text descriptions and anti-patterns
 - [OpenAI Function Calling guide](https://platform.openai.com/docs/guides/function-calling) — covers clear naming, parameter descriptions, and system prompt coordination
@@ -381,6 +409,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build an agent with a data query tool. First, return full data to the LLM — show it struggling with large results and wasting tokens. Then split the return: `content` (3-5 line text summary for the LLM) and `artifact` (full JSON data for the UI). Show how the LLM gives better responses with concise content while the UI still renders complete data.
 
 **Key ideas to cover:**
+
 - Token economics: why less is more for LLM context
 - Content design: what to include in the summary (counts, top-N, key insights)
 - Artifact design: structured data the UI can render without LLM involvement
@@ -390,6 +419,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Two Returns, One Tool — How to Feed Your LLM Less and Get Better Results"
 
 **Sources:**
+
 - [LangChain — How to return artifacts from a tool](https://python.langchain.com/docs/how_to/tool_artifacts/) — defines `response_format="content_and_artifact"` and the two-tuple return convention
 - [Improving core tool interfaces and docs in LangChain](https://blog.langchain.com/improving-core-tool-interfaces-and-docs-in-langchain/) — July 2024 — explains the motivation: large tool outputs inflate context
 - [Claude Artifacts](https://www.anthropic.com/news/artifacts) — Anthropic, 2024 — UI-level instantiation of separating conversation content from rendered artifacts
@@ -405,6 +435,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build a metrics agent with two approaches: (a) raw query tool (LLM writes the query string), (b) query builder tool (LLM fills parameters, code builds query). Compare error rates across 20 test questions. Show cases where the raw approach fails but the builder succeeds.
 
 **Key ideas to cover:**
+
 - Structured parameters vs. raw query strings
 - Server-side query construction with validation
 - When to use builder (safety-critical, complex syntax) vs. raw (flexible, simple syntax)
@@ -414,6 +445,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Don't Let Your LLM Write SQL — The Query Builder Pattern"
 
 **Sources:**
+
 - [Seq2SQL: Generating Structured Queries from Natural Language using Reinforcement Learning](https://arxiv.org/abs/1709.00103) — Zhong et al. (Salesforce), 2017 — foundational NL-to-SQL paper
 - [Spider: A Large-Scale Human-Labeled Dataset for Text-to-SQL](https://arxiv.org/abs/1809.08887) — Yu et al. (Yale), EMNLP 2018 — benchmark dataset that drove the field
 - [dbt Semantic Layer](https://docs.getdbt.com/docs/use-dbt-semantic-layer/dbt-sl) — practical implementation of the structured query layer pattern
@@ -430,6 +462,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build a chat agent that references entities (users, products, orders) in its responses. Define a tag format: `<User id="123" name="Alice" />`. Instruct the LLM to use these tags via the system prompt. Build a simple parser that extracts tags from the response and renders them as clickable links in the UI.
 
 **Key ideas to cover:**
+
 - System prompt instructions for tag format
 - Tag schemas: which attributes to include
 - Parsing tags from markdown/text streams (regex or proper parser)
@@ -439,6 +472,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Making AI Output Clickable — Structured Entity Tags in LLM Responses"
 
 **Sources:**
+
 - [Use XML tags to structure your prompts](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-tags) — Anthropic — primary source; Claude is trained to treat XML tags as structural mechanisms
 - [Anthropic Structured Outputs](https://docs.anthropic.com/en/docs/build-with-claude/structured-output) — JSON-schema and XML-delimited structured output
 - [Anthropic Prompt Engineering Tutorial — Formatting Output](https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/Anthropic%201P/05_Formatting_Output_and_Speaking_for_Claude.ipynb) — code examples of stop-sequence + XML-tag technique
@@ -454,6 +488,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build a simple agent and demonstrate 5 common injection attacks: role override ("You are now..."), system prompt extraction, instruction override, context poisoning, indirect injection via tool results. Then implement detection: keyword patterns, LLM-based classification, and input sanitization. Test each defense against the attack set.
 
 **Key ideas to cover:**
+
 - Common injection patterns and why they work
 - Detection strategies: rule-based, LLM-based classification, hybrid
 - False positive handling: legitimate inputs that look like injections
@@ -463,6 +498,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Hacking Your Own Agent — A Practical Guide to Prompt Injection Defense"
 
 **Sources:**
+
 - [Prompt injection attacks against GPT-3](https://simonwillison.net/2022/Sep/12/prompt-injection/) — Simon Willison, 2022 — the blog post that coined the term "prompt injection"
 - [Ignore Previous Prompt: Attack Techniques For Language Models](https://arxiv.org/abs/2211.09527) — Perez & Ribeiro, NeurIPS 2022 ML Safety Workshop — first academic paper on prompt injection
 - [HackAPrompt: Exposing Systemic Vulnerabilities of LLMs](https://arxiv.org/abs/2311.16119) — Schulhoff et al., EMNLP 2023 — 600K+ adversarial prompts, largest empirical study
@@ -480,6 +516,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Add OpenTelemetry instrumentation to the existing ReAct agent. Emit a span for each: LLM call (with token counts), tool execution (with duration and status), agent turn (with iteration count). Export to a local collector (Jaeger or console). Show how a trace tells the full story of a single agent invocation.
 
 **Key ideas to cover:**
+
 - Span hierarchy: agent → turn → LLM call / tool call
 - Key attributes: model, token counts (input/output), tool name, status
 - Cost tracking: tokens × price per token
@@ -489,6 +526,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Observability for AI Agents — Adding OpenTelemetry to Your LLM Application"
 
 **Sources:**
+
 - [OpenTelemetry Semantic Conventions for Generative AI](https://opentelemetry.io/docs/specs/semconv/gen-ai/) — official spec defining span attributes and metrics for LLM calls
 - [OpenTelemetry GenAI Agent Spans](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-agent-spans/) — span conventions specifically for agent execution
 - [OpenTelemetry for Generative AI](https://opentelemetry.io/blog/2024/otel-generative-ai/) — OTel blog post announcing the GenAI SIG
@@ -506,6 +544,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Session brief:** Build an agent that uses 2-3 model tiers. Routing/classification: use a small/fast model. Main reasoning: use a medium model. Final synthesis: use the best model. Track token counts and costs per-tier. Compare total cost vs. using the best model for everything.
 
 **Key ideas to cover:**
+
 - Model tiers: fast/cheap vs. capable/expensive
 - Task classification: which tasks need which tier
 - Token counting and cost calculation per model
@@ -515,6 +554,7 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 **Blog angle:** "Not Every LLM Call Deserves GPT-4 — Smart Model Selection for Agents"
 
 **Sources:**
+
 - [FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance](https://arxiv.org/abs/2305.05176) — Chen, Zaharia, Zou (Stanford), 2023 — introduces the "LLM cascade" concept (try cheapest model first, escalate if confidence is low)
 - [RouteLLM: Learning to Route LLMs with Preference Data](https://arxiv.org/abs/2406.18665) — Ong et al. (LMSYS / UC Berkeley), ICLR 2025 — open-source framework showing >85% cost reduction without quality loss
 - [RouteLLM](https://github.com/lm-sys/RouteLLM) — LMSYS — open-source implementation
@@ -525,28 +565,28 @@ A structured list of 20 concepts for building production-grade AI agents, organi
 
 ## Progress Tracking
 
-| #  | Concept                         | Tier | Status      |
-|----|---------------------------------|------|-------------|
-| 1  | Multi-Turn Conversation Memory  | 1    | Done        |
-| 2  | Structured Output (JSON Mode)   | 1    | Done        |
-| 3  | Reasoning Tool Pattern          | 1    | Done        |
-| 4  | Guardrails & Circuit Breakers   | 1    | Done        |
-| 5  | State Graph                     | 2    | Done        |
-| 6  | Context Window Management       | 2    | Done        |
-| 7  | Multi-Agent Routing             | 2    | Done        |
-| 8  | Sub-Agent Delegation            | 2    | Done        |
-| 9  | Streaming Responses (SSE)       | 3    | Done        |
-| 10 | RAG                             | 3    | Done        |
-| 11 | Prompt Caching                  | 3    | Done        |
-| 12 | Evaluation with Mocked Tools    | 3    | Done        |
-| 13 | LLM Error Recovery              | 3    | Done        |
-| 14 | Tool Description Engineering    | 4    | Done        |
-| 15 | Dual Return Pattern             | 4    | Done        |
-| 16 | Query Builder Pattern           | 4    | Done        |
-| 17 | Structured Entity Tags          | 4    | Done        |
-| 18 | Prompt Injection Detection      | 4    | Done        |
-| 19 | Self-Instrumentation            | 4    | Done        |
-| 20 | Cost Tracking & Model Selection | 4    | Done        |
+| #   | Concept                         | Tier | Status |
+| --- | ------------------------------- | ---- | ------ |
+| 1   | Multi-Turn Conversation Memory  | 1    | Done   |
+| 2   | Structured Output (JSON Mode)   | 1    | Done   |
+| 3   | Reasoning Tool Pattern          | 1    | Done   |
+| 4   | Guardrails & Circuit Breakers   | 1    | Done   |
+| 5   | State Graph                     | 2    | Done   |
+| 6   | Context Window Management       | 2    | Done   |
+| 7   | Multi-Agent Routing             | 2    | Done   |
+| 8   | Sub-Agent Delegation            | 2    | Done   |
+| 9   | Streaming Responses (SSE)       | 3    | Done   |
+| 10  | RAG                             | 3    | Done   |
+| 11  | Prompt Caching                  | 3    | Done   |
+| 12  | Evaluation with Mocked Tools    | 3    | Done   |
+| 13  | LLM Error Recovery              | 3    | Done   |
+| 14  | Tool Description Engineering    | 4    | Done   |
+| 15  | Dual Return Pattern             | 4    | Done   |
+| 16  | Query Builder Pattern           | 4    | Done   |
+| 17  | Structured Entity Tags          | 4    | Done   |
+| 18  | Prompt Injection Detection      | 4    | Done   |
+| 19  | Self-Instrumentation            | 4    | Done   |
+| 20  | Cost Tracking & Model Selection | 4    | Done   |
 
 ---
 

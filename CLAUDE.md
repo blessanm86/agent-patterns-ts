@@ -88,6 +88,7 @@ Follow these steps when implementing a concept from the learning roadmap:
 Before writing any code or forming an implementation plan, do a research pass across multiple sources. The goal is to understand the concept deeply — including real-world tradeoffs, provider differences, and measured results — so the implementation and README reflect the best current thinking, not just one vendor's perspective.
 
 **Always research across these 5 areas:**
+
 - **The web** — broad web search to discover what's out there; surface blog posts, tutorials, discussions, and framework docs (Vercel AI SDK, LangChain, LlamaIndex) that cover the concept
 - **LLM makers** — Anthropic, OpenAI, Google/Gemini, Mistral — their engineering blog posts, API docs, and official guides on how they implement or recommend the pattern
 - **Providers** — cloud platforms, tooling companies, and framework authors that offer the pattern as a product or feature — how they package it for real users
@@ -95,6 +96,7 @@ Before writing any code or forming an implementation plan, do a research pass ac
 - **Practitioners** — engineers who've built with the pattern in production; their blog posts, write-ups, and community discussions surface failure modes, gotchas, and real-world tradeoffs that official docs omit
 
 **Use parallel agent spawning for research.** Spawn multiple Task agents simultaneously — one per source or topic area — so research completes faster. For example:
+
 ```
 Agent 1: Fetch and summarize Anthropic's engineering post on the concept
 Agent 2: Fetch OpenAI + Vercel AI SDK docs on the concept
@@ -106,6 +108,7 @@ Agent 3: Web search for practitioner experience and measured results
 **Save research artifacts** to `.research/<topic>.md` so they're available during implementation. The `.research/` directory is gitignored.
 
 Synthesize findings before starting implementation. Key things to extract:
+
 - Concrete before/after examples (weak vs. strong implementations)
 - Measured impact (accuracy numbers, benchmark results, latency data)
 - Where providers/frameworks disagree — these disagreements are worth surfacing in the README
@@ -167,6 +170,7 @@ Change `[ ]` to `[x]` and update the status in the progress table at the bottom.
 ### Model Configuration
 
 Set via `.env`. No code changes needed to swap models:
+
 ```
 MODEL=qwen2.5:7b        # default
 OLLAMA_HOST=http://localhost:11434

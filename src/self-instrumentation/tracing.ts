@@ -31,7 +31,7 @@ class PrettyConsoleExporter implements SpanExporter {
   export(spans: ReadableSpan[], resultCallback: (result: ExportResult) => void): void {
     for (const span of spans) {
       const durationMs = hrTimeToMs(span.duration);
-      const hasParent = span.parentSpanId !== undefined;
+      const hasParent = span.parentSpanContext !== undefined;
       const indent = hasParent ? "  " : "";
       const name = span.name;
 
