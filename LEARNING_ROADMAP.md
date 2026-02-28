@@ -567,7 +567,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 > Patterns that emerge when agents move from single-user chat into production infrastructure: multi-platform deployment, sandboxed execution, dynamic integrations, and autonomous workflows.
 
-### [ ] 21. Declarative Plan Execution Tool
+### [x] 21. Declarative Plan Execution Tool
 
 **What it is:** A "meta-tool" where the LLM specifies a multi-step plan declaratively in a single tool call — a step list with tool names, arguments, and `$ref`-style cross-step data references. A deterministic runtime executor resolves references between steps, runs them sequentially, and returns all results at once. The LLM plans; the runtime executes.
 

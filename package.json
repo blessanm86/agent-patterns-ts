@@ -32,6 +32,8 @@
     "dev:prompt-injection:unprotected": "tsx src/prompt-injection/index.ts --unprotected",
     "dev:self-instrumentation": "tsx src/self-instrumentation/index.ts",
     "dev:cost-tracking": "tsx src/cost-tracking/index.ts",
+    "dev:declarative-plan": "tsx src/declarative-plan/index.ts",
+    "dev:declarative-plan:individual": "tsx src/declarative-plan/index.ts --individual",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

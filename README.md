@@ -2,7 +2,7 @@
 
 Minimal TypeScript implementations of common agentic patterns, using a local model via Ollama. No frameworks. Just the patterns.
 
-🗺️ **[See the learning roadmap](./LEARNING_ROADMAP.md)** — 20 concepts from foundations to production.
+🗺️ **[See the learning roadmap](./LEARNING_ROADMAP.md)** — 21 concepts from foundations to production.
 
 ---
 
@@ -71,6 +71,14 @@ Refinements and optimizations for production-grade agents.
 | [Prompt Injection Detection](src/prompt-injection/README.md)               | Hotel agent with 3-layer defense: heuristic patterns, LLM classifier, canary tokens — run protected vs unprotected | `pnpm dev:prompt-injection`     |
 | [Self-Instrumentation (Observability)](src/self-instrumentation/README.md) | Hotel agent with OpenTelemetry tracing — span hierarchy, token counts, cost estimation, trace summaries            | `pnpm dev:self-instrumentation` |
 | [Cost Tracking & Model Tier Selection](src/cost-tracking/README.md)        | Hotel agent with 3-tier model routing — fast classifier, per-call cost tracking, savings vs all-capable baseline   | `pnpm dev:cost-tracking`        |
+
+### Tier 6 — Advanced Execution
+
+Sophisticated execution strategies that push beyond simple tool calling.
+
+| Pattern                                                      | Demo                                                                                                                  | Entry point                 |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| [Declarative Plan Execution](src/declarative-plan/README.md) | Metrics monitor with execute_plan meta-tool — `$ref` cross-step references, declarative vs individual mode comparison | `pnpm dev:declarative-plan` |
 
 ---
 
