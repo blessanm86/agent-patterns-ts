@@ -594,7 +594,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 22. On-Demand Skill Injection
+### [x] 22. On-Demand Skill Injection
 
 **What it is:** Instead of putting all workflow instructions in static tool descriptions, the agent has a `getSkill` tool it calls at runtime to retrieve step-by-step instructions for complex multi-tool procedures. Skills are named bundles of `{ instructions, tools[] }`, dynamically filtered to only include skills whose required tools are present in the current session.
 
@@ -869,7 +869,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 | 19  | Self-Instrumentation              | 4    | Done    |
 | 20  | Cost Tracking & Model Selection   | 4    | Done    |
 | 21  | Declarative Plan Execution Tool   | 5    | Done    |
-| 22  | On-Demand Skill Injection         | 5    | Pending |
+| 22  | On-Demand Skill Injection         | 5    | Done    |
 | 23  | Self-Validation Tool (QA Gate)    | 5    | Pending |
 | 24  | Post-Conversation Metadata        | 5    | Pending |
 | 25  | Agent TODO Lists (Scaffold)       | 5    | Pending |
