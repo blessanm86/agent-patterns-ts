@@ -621,7 +621,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 23. Self-Validation Tool (Agent QA Gate)
+### [x] 23. Self-Validation Tool (Agent QA Gate)
 
 **What it is:** A dedicated validation tool the agent calls to check artifacts it produced before delivering them to the user. The tool takes the generated content (e.g., a YAML dashboard definition), validates it against a schema, and returns `{ valid, message, errors[] }`. This creates a self-imposed QA gate within the reasoning loop — the agent checks its own work.
 
@@ -870,7 +870,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 | 20  | Cost Tracking & Model Selection   | 4    | Done    |
 | 21  | Declarative Plan Execution Tool   | 5    | Done    |
 | 22  | On-Demand Skill Injection         | 5    | Done    |
-| 23  | Self-Validation Tool (QA Gate)    | 5    | Pending |
+| 23  | Self-Validation Tool (QA Gate)    | 5    | Done    |
 | 24  | Post-Conversation Metadata        | 5    | Pending |
 | 25  | Agent TODO Lists (Scaffold)       | 5    | Pending |
 | 26  | Ambient Context Store             | 5    | Pending |

@@ -190,6 +190,10 @@ Use this list when researching concepts. Prioritize by tier — S and A tier sho
 | **C** — Some major advantages giving potential | Meta AI (LLaMA), Nvidia (NeMo), Microsoft (Phi), Tencent AI Lab (Hunyuan) | Spot-check for unique angles           |
 | **D** — Behind but promising                   | Amazon AGI Lab (Nova), MiniMax, Mistral AI                                | Check when they have relevant features |
 
+### Demo Domain Preferences
+
+- **Do NOT use observability/monitoring examples** for demos (no dashboards, metrics, tracing, alerting). Pick domains like e-commerce, travel, recipes, restaurants, CI/CD pipelines, etc.
+
 ### Concept Kickoff
 
 When the user names a concept from the roadmap (e.g. "Context Window Management"), trigger the full process automatically: research (step 0) → plan → implement. No extra prompting needed.

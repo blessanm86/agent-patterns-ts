@@ -36,6 +36,8 @@
     "dev:declarative-plan:individual": "tsx src/declarative-plan/index.ts --individual",
     "dev:skill-injection": "tsx src/skill-injection/index.ts",
     "dev:skill-injection:no-skills": "tsx src/skill-injection/index.ts --no-skills",
+    "dev:self-validation": "tsx src/self-validation/index.ts",
+    "dev:self-validation:one-shot": "tsx src/self-validation/index.ts --one-shot",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
