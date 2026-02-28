@@ -90,7 +90,7 @@ Before writing any code or forming an implementation plan, do a research pass ac
 **Always research across these 5 areas:**
 
 - **The web** — broad web search to discover what's out there; surface blog posts, tutorials, discussions, and framework docs (Vercel AI SDK, LangChain, LlamaIndex) that cover the concept
-- **LLM makers** — Anthropic, OpenAI, Google/Gemini, Mistral — their engineering blog posts, API docs, and official guides on how they implement or recommend the pattern
+- **LLM makers** — check the tiered AI labs list below; prioritize S and A tier, cover B tier for concepts where they have relevant work, and spot-check C/D tier for unique angles. Look at their engineering blog posts, API docs, and official guides on how they implement or recommend the pattern
 - **Providers** — cloud platforms, tooling companies, and framework authors that offer the pattern as a product or feature — how they package it for real users
 - **Researchers** — academic papers (the LEARNING_ROADMAP.md lists key papers per concept); read abstracts and results sections for benchmarks, formal definitions, and measured outcomes. Also search https://arxiv.org/ directly for recent preprints on the topic
 - **Practitioners** — engineers who've built with the pattern in production; their blog posts, write-ups, and community discussions surface failure modes, gotchas, and real-world tradeoffs that official docs omit
@@ -177,6 +177,18 @@ OLLAMA_HOST=http://localhost:11434
 ```
 
 Models with good tool-call support: `qwen2.5:7b`, `qwen2.5:14b`, `llama3.1:8b`, `mistral:7b`.
+
+### AI Labs — Tiered Reference List
+
+Use this list when researching concepts. Prioritize by tier — S and A tier should always be checked, B tier when they have relevant work, C/D tier for unique angles.
+
+| Tier                                           | Labs                                                                      | Notes                                  |
+| ---------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------- |
+| **S** — Dominating leaders                     | DeepMind, OpenAI, Anthropic                                               | Always research these                  |
+| **A** — Other leaders with clear dominance     | xAI, Tongyi Qianwen (Alibaba)                                             | Always research these                  |
+| **B** — Strong contenders with SOTA releases   | DeepSeek, Moonshot (Kimi), Zhipu AI (GLM), Baidu (ERNIE)                  | Check for relevant work                |
+| **C** — Some major advantages giving potential | Meta AI (LLaMA), Nvidia (NeMo), Microsoft (Phi), Tencent AI Lab (Hunyuan) | Spot-check for unique angles           |
+| **D** — Behind but promising                   | Amazon AGI Lab (Nova), MiniMax, Mistral AI                                | Check when they have relevant features |
 
 ### Concept Kickoff
 
