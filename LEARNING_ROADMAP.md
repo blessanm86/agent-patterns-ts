@@ -868,7 +868,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 | 18  | Prompt Injection Detection        | 4    | Done    |
 | 19  | Self-Instrumentation              | 4    | Done    |
 | 20  | Cost Tracking & Model Selection   | 4    | Done    |
-| 21  | Declarative Plan Execution Tool   | 5    | Pending |
+| 21  | Declarative Plan Execution Tool   | 5    | Done    |
 | 22  | On-Demand Skill Injection         | 5    | Pending |
 | 23  | Self-Validation Tool (QA Gate)    | 5    | Pending |
 | 24  | Post-Conversation Metadata        | 5    | Pending |
