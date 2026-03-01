@@ -1,6 +1,6 @@
 # Agent Patterns — TypeScript
 
-Minimal TypeScript implementations of common agentic patterns, using a local model via Ollama. No frameworks. Just the patterns.
+TypeScript implementations of agentic patterns drawn from across the AI landscape — research papers, LLM maker docs, framework authors, and practitioners. Each concept is a self-contained demo with an explainer that compares approaches, surfaces where sources disagree, and links everything. Runs entirely on free local models via Ollama.
 
 **[See the learning roadmap](./LEARNING_ROADMAP.md)** for session briefs, source papers, and detailed concept descriptions.
 
