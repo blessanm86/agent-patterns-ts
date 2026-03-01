@@ -263,6 +263,18 @@ This matters less for monitoring queries and more for SQL, GraphQL, or any query
 
 ---
 
+## In the Wild: Coding Agent Harnesses
+
+Coding agent harnesses face the query builder problem every time they search a codebase. An LLM writing raw `grep -rn --include='*.ts' -e 'function.*auth' ./src` would routinely botch flag syntax, forget quoting, or pass invalid regex. Every major harness solves this the same way this demo does: expose structured parameters and let code construct the actual query.
+
+**Claude Code** is the most explicit example. Its [Grep tool](https://www.vtrivedy.com/posts/claudecode-tools-reference) accepts typed, constrained parameters -- `pattern` (regex string), `path` (directory scope), `glob` (file filter like `"*.ts"`), `type` (language shorthand like `"js"` or `"py"`), `output_mode` (enum: `"content"`, `"files_with_matches"`, `"count"`), context flags (`-A`, `-B`, `-C`), and boolean toggles (`-i` for case-insensitive, `multiline`). The harness assembles these into a valid ripgrep invocation. The LLM never writes shell commands, flag syntax, or regex escaping beyond the pattern itself. The Glob tool follows the same principle: the LLM provides a `pattern` and optional `path`, and the harness handles the underlying file-matching engine. This is the query builder pattern applied to code search rather than metrics queries.
+
+**Cursor** decomposes search into [three specialized builder tools](https://gist.github.com/sshh12/25ad2e40529b269a88b80e7cf1c38084), each with its own constrained parameter schema. `codebase_search` takes a natural language `query` plus optional `target_directories` (glob array) and routes through an embedding pipeline -- the LLM never constructs vector queries or similarity thresholds. `grep_search` accepts `query` (regex), `include_pattern`, `exclude_pattern`, and `case_sensitive` -- structured parameters that the harness maps to ripgrep flags. `file_search` takes a single fuzzy `query` string. By splitting one broad "search the codebase" intent into three tools with different parameter shapes, Cursor constrains the LLM to express _what_ it wants to find while the harness decides _how_ to find it. This mirrors the demo's approach of using enums and typed fields to eliminate syntax errors.
+
+**Cline** takes a [three-tier retrieval approach](https://www.codeant.ai/blogs/why-coding-agents-should-use-ripgrep) -- ripgrep for lexical search, fzf for fuzzy file matching, and tree-sitter for AST-based structural queries -- each exposed through structured tool parameters. The LLM selects which retrieval mechanism to use and fills in the appropriate fields; the harness constructs and executes the actual queries. This layered approach is worth noting because it shows the builder pattern scaling beyond a single query language: each search tier has its own parameter schema, and the LLM never writes raw invocations for any of them.
+
+The pattern is consistent across harnesses: separate _intent_ (what the LLM specifies through structured parameters) from _execution_ (how the harness constructs and runs the actual search). The same principle this demo applies to metrics queries -- enum-constrained fields, validated parameters, code-side construction -- is exactly how production coding agents handle codebase search at scale.
+
 ## Key Takeaways
 
 1. **LLMs are bad at syntax, good at semantics.** They know _what_ to query but struggle with _how_ to express it. The builder pattern separates intent (LLM's job) from syntax (code's job).

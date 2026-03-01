@@ -301,6 +301,22 @@ Then open `http://localhost:16686` for a full waterfall UI.
 
 ---
 
+## In the Wild: Coding Agent Harnesses
+
+The pattern in this demo — tracking token counts, latency, and estimated cost per LLM call — is exactly what production coding agent harnesses do on every interaction. The difference is that harnesses surface this instrumentation directly to the user as a first-class UI element, not just as developer-facing traces.
+
+**Aider** is the most transparent. After every interaction, it prints a one-line cost summary directly in the terminal: `Tokens: 114k sent, 92 received. Cost: $0.34 message, $0.67 session.` The per-message and per-session split means you can see both the marginal cost of your last request and the running total. The `/tokens` command gives a deeper breakdown, listing each context component (individual files, repo map, chat history) with its token count and dollar cost — essentially the same span-level attribution our demo puts on `chat` spans, but sliced by input source rather than by operation. Aider's [model metadata system](https://aider.chat/docs/config/adv-model-settings.html) stores per-model pricing (`input_cost_per_token`, `output_cost_per_token`) for hundreds of models, making cost estimation automatic regardless of which provider you use.
+
+**Claude Code** takes a different approach: instrumentation is available on demand rather than printed after every turn. The [`/cost` command](https://code.claude.com/docs/en/costs) shows session-level totals — total cost, API duration, wall-clock duration, and code changes — while `/context` shows current context window consumption. Users can also [configure the status line](https://code.claude.com/docs/en/costs) to display token usage continuously, turning the bottom of the terminal into a live dashboard. Claude Code's cost documentation reveals that the average developer spends about $6/day, with 90% of users staying under $12/day. For teams, the platform provides workspace-level spend limits and admin cost reporting in the Console — the organizational layer of instrumentation that individual traces feed into.
+
+**Roo Code** surfaces instrumentation most visibly during [context condensing](https://docs.roocode.com/features/intelligent-context-condensing). When conversation history approaches the context window limit, Roo Code summarizes older messages and displays a `ContextCondenseRow` in the chat showing token counts before and after condensing, the cost of the condensation call itself, and an expandable summary of what was condensed. A `ContextWindowProgress` bar provides a persistent visual of token distribution — current usage, space reserved for output, and remaining capacity. This is instrumentation driving a user-facing decision: the developer can see exactly how much context was reclaimed and at what cost.
+
+**Cursor** abstracts most token economics behind its "fast request" quota system — users see request counts consumed rather than raw token numbers. But under the hood, Cursor runs [six or more simultaneous models](https://cursor.com/blog/instant-apply) (main chat, two for edits, one for suggestions, one for indexing, one for context assembly), each with its own cost profile. The [Settings > Usage dashboard](https://cursor.com/docs/models) shows fast requests consumed by premium vs. free models, and third-party extensions like [Cursor Usage & Cost Tracker](https://marketplace.visualstudio.com/items?itemName=cocodev.cursor-price-tracking) fill the gap with per-session token breakdowns. The interesting pattern here is model specialization as a cost optimization strategy — routing cheap tasks to cheap models is itself an instrumentation-informed decision.
+
+The common thread across all these harnesses is that token counts and cost are not hidden implementation details — they are user-facing metrics that drive behavior. Developers learn to `/clear` context when costs creep up, switch to cheaper models for simple tasks, and watch for context window pressure. This is the same feedback loop our demo creates with the trace summary, scaled up to production.
+
+---
+
 ## Key Takeaways
 
 1. **Three span types are enough.** `invoke_agent` (root), `chat` (LLM calls), `execute_tool` (tools). Token counts go on `chat` spans, total duration on the root. This hierarchy is the universal pattern across OTel GenAI conventions and every major observability vendor.

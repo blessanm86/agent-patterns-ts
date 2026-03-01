@@ -254,6 +254,24 @@ Model routing adds complexity. Skip it when:
 
 ---
 
+## In the Wild: Coding Agent Harnesses
+
+The most striking thing about production coding agents is that none of them use a single model. Every major harness runs multiple LLMs simultaneously, each assigned to a different task at a different cost point. This is the model-routing pattern taken to its logical extreme -- not just "pick the right tier for a query," but "decompose every user turn into sub-tasks and run each on the cheapest model that can handle it."
+
+**Cursor** is the most aggressive example, running [six or more LLMs concurrently](https://cursor.com/blog/instant-apply): a frontier model (GPT-4o or Claude Sonnet) for the main chat reasoning, a [purpose-trained fast-apply model](https://fireworks.ai/blog/cursor) that translates edit plans into file changes at ~1000 tokens/second using speculative edits, a separate model for autocomplete suggestions, one for codebase indexing, and another for context assembly. Their "Auto" mode adds dynamic routing on top -- [selecting cheaper or more capable models based on query complexity](https://cursor.com/docs/models), much like the router in this demo. The two-model edit architecture is particularly clever: the expensive thinking model decides _what_ to change, and a cheap specialized model executes the change. This splits a single expensive operation into one expensive + one cheap call, reducing per-edit cost without sacrificing quality.
+
+**Aider** takes a more explicit approach with its [Architect/Editor mode](https://aider.chat/2024/09/26/architect.html). Users configure four distinct model roles: the main model for reasoning, an editor model for applying changes, a "weak" model for cheap operations like commit messages and chat summarization, and an optional architect model for high-level planning. The cost savings are dramatic -- pairing DeepSeek R1 as architect with Claude Sonnet as editor [achieved state-of-the-art benchmark results at 14x less cost](https://aider.chat/2025/01/24/r1-sonnet.html) than the previous best. This is the FrugalGPT cascade idea made practical: a strong reasoning model proposes, a cheaper editing model disposes.
+
+**Claude Code** uses a simpler two-tier strategy. The main model (Sonnet or Opus) handles all reasoning and tool use, while [Haiku handles cheaper sub-tasks](https://code.claude.com/docs/en/model-config) like classifying bash commands for safety and validating tool inputs. The cost ratio between tiers is stark -- 1:12:60 for Haiku:Sonnet:Opus -- so even routing 30-40% of internal operations to Haiku [yields 60-80% savings](https://restato.github.io/blog/claude-code-model-selection/) compared to running everything on Opus. Practitioners have noted that over 70% of typical tasks -- test generation, formatting, boilerplate, simple refactors -- could be handled by the cheapest tier.
+
+**Manus** pushes the pattern across provider boundaries. Rather than routing within a single vendor's model family, Manus [assigns different providers to different task types](https://gist.github.com/renschni/4fbc70b31bad8dd57f3370239dccd58f): Claude for complex reasoning, Gemini for multimodal understanding, and fine-tuned Qwen models for routine operations. This is cross-provider cost arbitrage -- exploiting the fact that different vendors price different capabilities differently. A multimodal task that would be expensive on one provider might be cheap on another that specializes in it.
+
+**Amazon Q Developer** invests compute differently: rather than routing to cheaper models, it [generates multiple solution candidates and selects the best one](https://aws.amazon.com/blogs/devops/reinventing-the-amazon-q-developer-agent-for-software-development/). Its multi-agent debugger includes a memory agent, a critic agent, and intelligent backtracking that can roll back dead-end solution paths. This trades higher upfront compute cost for better final quality -- the opposite tradeoff from routing, but still a deliberate model-selection decision about where to spend tokens.
+
+The pattern across all these harnesses is clear: **the unit of cost optimization is not the request, it's the sub-task.** A single user message might trigger a cheap classification call, a mid-tier tool execution, an expensive reasoning step, and a cheap apply step -- four models, four cost tiers, one turn. This is exactly what the cost tracker in this demo measures per-call rather than per-request.
+
+---
+
 ## Key Takeaways
 
 1. **60-70% of LLM queries are simple enough for cheaper models.** Greetings, acknowledgments, yes/no — these don't need your most capable model.
