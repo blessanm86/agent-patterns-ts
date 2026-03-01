@@ -2,7 +2,7 @@
 
 Minimal TypeScript implementations of common agentic patterns, using a local model via Ollama. No frameworks. Just the patterns.
 
-🗺️ **[See the learning roadmap](./LEARNING_ROADMAP.md)** — 23 concepts from foundations to production.
+🗺️ **[See the learning roadmap](./LEARNING_ROADMAP.md)** — 24 concepts from foundations to production.
 
 ---
 
@@ -76,11 +76,12 @@ Refinements and optimizations for production-grade agents.
 
 Sophisticated execution strategies that push beyond simple tool calling.
 
-| Pattern                                                         | Demo                                                                                                                  | Entry point                 |
-| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| [Declarative Plan Execution](src/declarative-plan/README.md)    | Metrics monitor with execute_plan meta-tool — `$ref` cross-step references, declarative vs individual mode comparison | `pnpm dev:declarative-plan` |
-| [On-Demand Skill Injection](src/skill-injection/README.md)      | E-commerce support agent with get_skill meta-tool — on-demand procedure loading vs verbose tool descriptions          | `pnpm dev:skill-injection`  |
-| [Self-Validation Tool (QA Gate)](src/self-validation/README.md) | Menu config generator with validate_menu QA gate — 3-layer Zod validation, validated vs one-shot mode comparison      | `pnpm dev:self-validation`  |
+| Pattern                                                                | Demo                                                                                                                  | Entry point                           |
+| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| [Declarative Plan Execution](src/declarative-plan/README.md)           | Metrics monitor with execute_plan meta-tool — `$ref` cross-step references, declarative vs individual mode comparison | `pnpm dev:declarative-plan`           |
+| [On-Demand Skill Injection](src/skill-injection/README.md)             | E-commerce support agent with get_skill meta-tool — on-demand procedure loading vs verbose tool descriptions          | `pnpm dev:skill-injection`            |
+| [Self-Validation Tool (QA Gate)](src/self-validation/README.md)        | Menu config generator with validate_menu QA gate — 3-layer Zod validation, validated vs one-shot mode comparison      | `pnpm dev:self-validation`            |
+| [Post-Conversation Metadata](src/post-conversation-metadata/README.md) | CloudStack support agent with hidden secondary LLM call — thread naming, suggestions, classification, security flags  | `pnpm dev:post-conversation-metadata` |
 
 ---
 

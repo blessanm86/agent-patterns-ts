@@ -38,6 +38,8 @@
     "dev:skill-injection:no-skills": "tsx src/skill-injection/index.ts --no-skills",
     "dev:self-validation": "tsx src/self-validation/index.ts",
     "dev:self-validation:one-shot": "tsx src/self-validation/index.ts --one-shot",
+    "dev:post-conversation-metadata": "tsx src/post-conversation-metadata/index.ts",
+    "dev:post-conversation-metadata:no-metadata": "tsx src/post-conversation-metadata/index.ts --no-metadata",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

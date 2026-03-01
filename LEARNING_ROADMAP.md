@@ -648,7 +648,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 24. Post-Conversation Metadata Generation
+### [x] 24. Post-Conversation Metadata Generation
 
 **What it is:** After the main agent response, a separate lightweight LLM call produces typed metadata: thread name, follow-up suggestions, request classification, and security flags. This runs as a parallel post-processing node using a cheaper model. Results are stored as typed metadata messages that don't appear in the conversation but are used by the UI (suggestions as clickable chips) and observability (security flags as OTel attributes).
 
@@ -871,7 +871,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 | 21  | Declarative Plan Execution Tool   | 5    | Done    |
 | 22  | On-Demand Skill Injection         | 5    | Done    |
 | 23  | Self-Validation Tool (QA Gate)    | 5    | Done    |
-| 24  | Post-Conversation Metadata        | 5    | Pending |
+| 24  | Post-Conversation Metadata        | 5    | Done    |
 | 25  | Agent TODO Lists (Scaffold)       | 5    | Pending |
 | 26  | Ambient Context Store             | 5    | Pending |
 | 27  | Cross-Platform Response Rendering | 5    | Pending |
