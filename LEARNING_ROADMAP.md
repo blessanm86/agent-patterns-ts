@@ -37,7 +37,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Self-Validation Tool (QA Gate)            | Done    | LLM Error Recovery                           |
 | Post-Conversation Metadata                | Done    |                                              |
 | Agent TODO Lists (Scaffold)               | Done    |                                              |
-| Human-in-the-Loop                         | Pending | Guardrails                                   |
+| Human-in-the-Loop                         | Done    | Guardrails                                   |
 | Persistent Cross-Session Memory           | Pending | Multi-Turn Memory, Context Window Management |
 | Agentic RAG                               | Pending | RAG                                          |
 | Multi-Modal Agents                        | Pending |                                              |
@@ -170,7 +170,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Human-in-the-Loop (Approval Workflows)
+### [x] Human-in-the-Loop (Approval Workflows)
 
 **What it is:** Agents pausing execution to request human confirmation before taking high-impact or irreversible actions. Includes approval gates, confidence-based escalation, and interactive disambiguation.
 
