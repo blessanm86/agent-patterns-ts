@@ -87,13 +87,14 @@ Follow these steps when implementing a concept from the learning roadmap:
 
 Before writing any code or forming an implementation plan, do a research pass across multiple sources. The goal is to understand the concept deeply — including real-world tradeoffs, provider differences, and measured results — so the implementation and README reflect the best current thinking, not just one vendor's perspective.
 
-**Always research across these 5 areas:**
+**Always research across these 6 areas:**
 
 - **The web** — broad web search to discover what's out there; surface blog posts, tutorials, discussions, and framework docs (Vercel AI SDK, LangChain, LlamaIndex) that cover the concept
 - **LLM makers** — check the tiered AI labs list below; prioritize S and A tier, cover B tier for concepts where they have relevant work, and spot-check C/D tier for unique angles. Look at their engineering blog posts, API docs, and official guides on how they implement or recommend the pattern
 - **Providers** — cloud platforms, tooling companies, and framework authors that offer the pattern as a product or feature — how they package it for real users
 - **Researchers** — academic papers (the LEARNING_ROADMAP.md lists key papers per concept); read abstracts and results sections for benchmarks, formal definitions, and measured outcomes. Also search https://arxiv.org/ directly for recent preprints on the topic
 - **Practitioners** — engineers who've built with the pattern in production; their blog posts, write-ups, and community discussions surface failure modes, gotchas, and real-world tradeoffs that official docs omit
+- **Coding agent harnesses** — check if the pattern is used by popular coding agent harnesses (see the reference list below). These harnesses are the most visible, widely-used agentic systems today — they combine dozens of patterns into a single product that developers interact with daily. Understanding how they apply a pattern grounds the concept in something concrete the reader already uses
 
 **Use parallel agent spawning for research.** Spawn multiple Task agents simultaneously — one per source or topic area — so research completes faster. For example:
 
@@ -113,6 +114,7 @@ Synthesize findings before starting implementation. Key things to extract:
 - Measured impact (accuracy numbers, benchmark results, latency data)
 - Where providers/frameworks disagree — these disagreements are worth surfacing in the README
 - Failure modes and anti-patterns practitioners have encountered in production
+- **Harness usage** — which coding agent harnesses use this pattern, how they implement it, and any interesting variations or tradeoffs between harnesses. This feeds directly into the README's "In the Wild" section
 
 **0.5. Assess: single concept or topic decomposition**
 
@@ -154,12 +156,25 @@ Every concept folder gets a `README.md` that reads as a well-written blog post a
 - Show the core idea with a diagram or concise code snippet
 - Walk through the implementation with annotated examples
 - Explain the tradeoffs: when to use this pattern vs. alternatives
+- Include an **"In the Wild: Coding Agent Harnesses"** section (see below)
 - Close with concrete key takeaways
 - Include a "Sources & Further Reading" section with links to key papers, docs, and blog posts from the research phase
 - Link back to the root README with `[Agent Patterns — TypeScript](../../README.md)`
 - Reference the previous concept post if this one builds on it
 
 The tone should be that of a good technical blog post — not bare-bones documentation.
+
+**The "In the Wild: Coding Agent Harnesses" section**
+
+If research reveals that one or more coding agent harnesses use this pattern, include a dedicated section that shows how real products apply it. This section demystifies the harnesses — turning them from black boxes into concrete examples of patterns the reader just learned.
+
+Guidelines for this section:
+
+- **Include it when the pattern is clearly used by at least one harness.** Most patterns will qualify — harnesses are the densest concentration of agentic patterns in production today.
+- **Be specific, not hand-wavy.** Don't just say "Claude Code uses this pattern." Explain _how_ — what the tool name is, what the flow looks like, what tradeoffs the harness made. Reference the harness's documentation or source code where possible.
+- **Compare across harnesses** when they take different approaches to the same pattern. These differences are the most valuable teaching moments (e.g., Aider's multiple edit formats vs. Claude Code's search-replace vs. Cursor's inline diff).
+- **Keep it concise** — 3-6 paragraphs. This is a spotlight, not a full case study. The goal is "oh, _that's_ what Claude Code is doing when it..." moments.
+- **Skip it** if the pattern is too low-level or theoretical for any harness to visibly use (e.g., pure academic evaluation patterns). Don't force it.
 
 **4. Add a dev script to `package.json`**
 
@@ -205,6 +220,24 @@ Use this list when researching concepts. All tiers must be researched and distil
 | **B** — Strong contenders with SOTA releases   | DeepSeek, Moonshot (Kimi), Zhipu AI (GLM), Baidu (ERNIE)                  | Always research and distill |
 | **C** — Some major advantages giving potential | Meta AI (LLaMA), Nvidia (NeMo), Microsoft (Phi), Tencent AI Lab (Hunyuan) | Always research and distill |
 | **D** — Behind but promising                   | Amazon AGI Lab (Nova), MiniMax, Mistral AI                                | Always research and distill |
+
+### Coding Agent Harnesses — Reference List
+
+Use this list when researching the "Coding agent harnesses" area. These are the most widely-used agentic coding tools — each one is a production harness that combines many patterns from this repo.
+
+| Category               | Harnesses                                                           | Notes                                                   |
+| ---------------------- | ------------------------------------------------------------------- | ------------------------------------------------------- |
+| **CLI / Terminal**     | Claude Code, OpenAI Codex CLI, Aider, OpenCode                      | Terminal-native, git-integrated, often open-source      |
+| **IDE-embedded**       | Cursor, Windsurf (Codeium), GitHub Copilot, Cline, Roo Code         | Editor extensions or forks, visual diff, inline edits   |
+| **Cloud / Autonomous** | Devin (Cognition), OpenAI Codex (cloud sandbox), Amazon Q Developer | Full dev environment, long-running, sandboxed execution |
+| **Hybrid / Other**     | Manus, Augment Code, Tabnine                                        | Varying architectures worth checking for unique angles  |
+
+When checking harnesses during research:
+
+- Prioritize CLI and IDE categories — they're the most transparent and best-documented
+- Check open-source harnesses (Aider, Cline, OpenCode) for implementation details — their source code is the ground truth
+- For closed-source harnesses (Claude Code, Cursor, Codex), rely on official docs, engineering blogs, and practitioner reverse-engineering posts
+- Not every harness will use every pattern — focus on the 2-3 harnesses where the pattern is most visible or interesting
 
 ### Demo Domain Preferences
 

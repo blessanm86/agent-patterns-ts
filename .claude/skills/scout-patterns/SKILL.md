@@ -13,7 +13,7 @@ Scout the web for new agentic AI patterns published within `$ARGUMENTS` and add 
 
 ## Phase 1 — Parallel Research
 
-Spawn **6 agents in parallel**, each focused on a different research area. Every agent must:
+Spawn **7 agents in parallel**, each focused on a different research area. Every agent must:
 
 - Include the current year in all search queries (e.g., "agentic patterns 2026", NOT just "agentic patterns")
 - Scope searches to the time period specified by `$ARGUMENTS`
@@ -123,11 +123,29 @@ Queries (4-6, all time-bounded):
 - `AI agent browser automation computer use {year}`
 - `voice agent infrastructure pattern {year}`
 
+### Agent 7 — Coding Agent Harnesses
+
+Search for new patterns, architectural insights, and engineering techniques from production coding agent harnesses (Claude Code, Cursor, Aider, OpenCode, Codex, Windsurf, Cline, Roo Code, Devin, Manus, Amazon Q Developer):
+
+- New edit formats, context management strategies, or permission models
+- Reverse-engineering analyses revealing internal architecture changes
+- Harness comparison posts that surface differentiating patterns
+- Engineering blog posts from harness teams about their architecture decisions
+
+Queries (4-6, all time-bounded):
+
+- `Claude Code architecture pattern {year}`
+- `Cursor Windsurf Codex agent architecture {year}`
+- `Aider Cline OpenCode coding agent new feature pattern {year}`
+- `coding agent harness engineering {year}`
+- `AI coding assistant architecture comparison {year}`
+- `Devin Manus agent architecture engineering blog {year}`
+
 ---
 
 ## Phase 2 — Consolidation
 
-After all 6 agents complete:
+After all 7 agents complete:
 
 1. Merge all findings into a single list
 2. **Deduplicate cross-agent finds** — if multiple agents found the same pattern, merge into one entry keeping the best description and all source URLs
@@ -166,7 +184,7 @@ Write the full consolidated research to `.research/scout-YYYY-MM-DD.md` (using t
 
 - Time period: {$ARGUMENTS}
 - Date run: {today}
-- Agents: 6
+- Agents: 7
 
 ## Raw Findings by Agent
 
@@ -178,7 +196,7 @@ Write the full consolidated research to `.research/scout-YYYY-MM-DD.md` (using t
 
 ...
 
-(repeat for all 6 agents)
+(repeat for all 7 agents)
 
 ## Consolidated Findings
 
@@ -199,16 +217,17 @@ Write the full consolidated research to `.research/scout-YYYY-MM-DD.md` (using t
 
 Assign each new topic to a tier using these criteria:
 
-| Tier                                                    | Criteria                                                                                                   |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| **Tier 1 — Foundations**                                | Core building blocks everything else depends on. Unlikely to have new entries.                             |
-| **Tier 2 — Practical Extensions**                       | Single-concept additions that make agents more useful (e.g., a new output pattern, a new memory strategy). |
-| **Tier 3 — Multi-Model & Retrieval**                    | Patterns involving multiple models, retrieval, or external knowledge.                                      |
-| **Tier 4 — Observability & Quality**                    | Production monitoring, evaluation, cost management, quality assurance.                                     |
-| **Tier 5 — Advanced Production**                        | Multi-platform, sandboxed execution, dynamic integrations, autonomous workflows.                           |
-| **Tier 6 — Agent Infrastructure & Advanced Evaluation** | Scaling across compute boundaries, long tool chains, behavioral evaluation.                                |
+| Tier                                                    | Criteria                                                                                                     |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Tier 1 — Foundations**                                | Core building blocks everything else depends on. Unlikely to have new entries.                               |
+| **Tier 2 — Practical Extensions**                       | Single-concept additions that make agents more useful (e.g., a new output pattern, a new memory strategy).   |
+| **Tier 3 — Multi-Model & Retrieval**                    | Patterns involving multiple models, retrieval, or external knowledge.                                        |
+| **Tier 4 — Observability & Quality**                    | Production monitoring, evaluation, cost management, quality assurance.                                       |
+| **Tier 5 — Advanced Production**                        | Multi-platform, sandboxed execution, dynamic integrations, autonomous workflows.                             |
+| **Tier 6 — Agent Infrastructure & Advanced Evaluation** | Scaling across compute boundaries, long tool chains, behavioral evaluation.                                  |
+| **Tier 7 — Harness-Derived Patterns**                   | Patterns extracted from production coding agent harnesses (file edit strategies, cache-aware context, etc.). |
 
-Most new discoveries will land in **Tier 4-6**. Assign to earlier tiers only if the pattern is truly foundational.
+Most new discoveries will land in **Tier 4-7**. Assign to earlier tiers only if the pattern is truly foundational. Tier 7 is specifically for patterns that emerge from studying how harnesses (Claude Code, Cursor, Aider, Codex, etc.) solve real engineering problems.
 
 ---
 

@@ -61,6 +61,13 @@ A structured list of concepts for building production-grade AI agents, organized
 | Test-Time Compute Scaling                 | Pending | Cost Tracking & Model Selection, Self-Validation Tool      |
 | Multi-Agent Coordination Topologies       | Pending | Multi-Agent Routing, Sub-Agent Delegation                  |
 | A2A Protocol (Agent-to-Agent)             | Pending | MCP                                                        |
+| File Edit Strategies                      | Pending | Tool Description Engineering                               |
+| Architect/Editor Model Split              | Pending | Cost Tracking & Model Selection, File Edit Strategies      |
+| Repository Mapping                        | Pending | RAG                                                        |
+| CodeAct (Code-as-Action)                  | Pending | Sandboxed Code Execution                                   |
+| KV-Cache-Aware Context Design             | Pending | Prompt Caching, Context Window Management                  |
+| Client-Agnostic Agent Protocol            | Pending | Streaming                                                  |
+| Pre-Execution Validation                  | Pending | Self-Validation Tool, Sandboxed Code Execution             |
 
 The table order is the recommended learning progression. Start from the top; the **Builds on** column shows prerequisites.
 
@@ -1473,3 +1480,233 @@ Each concept is designed to be completable in a single focused session: build th
 - [TRAJECT-Bench (arXiv:2510.04550)](https://arxiv.org/abs/2510.04550) — trajectory-level metrics for tool selection, arguments, and dependency satisfaction
 - [AgentBench (ICLR 2024)](https://github.com/THUDM/AgentBench) — multi-environment stateful benchmark establishing ground-truth outcome evaluation
 - [Simulating Multi-Turn Tool Calling (arXiv:2601.19914)](https://arxiv.org/abs/2601.19914) — ordered dependency tracking in simulation without a live backend
+
+## Tier 7 — Harness-Derived Patterns
+
+> Patterns extracted from studying production coding agent harnesses (Claude Code, Cursor, Aider, Codex, Cline, Windsurf, Devin, Manus). These are the engineering techniques that make real-world harnesses work — distilled into implementable, teachable concepts.
+
+### [ ] File Edit Strategies (Search/Replace, Diff, Apply Model)
+
+**What it is:** The different approaches agents use to modify files — the format the LLM outputs edits in, and the algorithm that applies those edits to the actual file. Approaches range from full-file regeneration to search/replace blocks to unified diffs, each with different tradeoffs in accuracy, token efficiency, and model compatibility.
+
+**Why it matters:** File editing is the most failure-prone operation in any coding agent. Get it wrong and the agent corrupts files, introduces merge conflicts, or fails silently. Every major harness has invested heavily in this problem, and the solutions diverge significantly: Aider maintains 7+ edit formats because different models need different formats. OpenCode uses a 9-level fuzzy matching pipeline because LLMs rarely produce exact matches. Cursor uses two separate models because formatting and reasoning compete for the same capacity. Understanding these tradeoffs is essential for building any agent that modifies artifacts.
+
+**Builds on:** Tool Description Engineering
+
+**Session brief:** Build an agent that can edit recipe files (or config files) using three different strategies: (1) full-file regeneration, (2) search/replace blocks with exact matching, (3) search/replace with progressive fuzzy matching (exact → trimmed → whitespace-normalized → Levenshtein distance). Compare token cost, success rate, and failure modes across the three strategies. Show what happens when the model's `old_string` doesn't exactly match — how fuzzy matching recovers gracefully while exact matching fails.
+
+**Key ideas to cover:**
+
+- Edit format taxonomy: whole-file, search/replace, unified diff, patch format
+- Matching strategies: exact → trimmed → whitespace-normalized → indentation-flexible → fuzzy (Levenshtein)
+- Why line numbers are fragile (files change between read and edit)
+- Read-before-edit requirement: why the agent must see current file state
+- Uniqueness enforcement: what happens when `old_string` matches multiple locations
+- Order-invariant application: handling out-of-order edit blocks
+- Model-specific format selection: different LLMs work better with different formats
+- Post-edit validation: running linters/LSP to catch errors immediately
+
+**Blog angle:** "The Hardest Problem in AI Coding: How Agents Actually Edit Your Files"
+
+**Sources:**
+
+- [Fabian Hertwig — Code Surgery: How AI Assistants Make Precise Edits](https://fabianhertwig.com/blog/coding-assistants-file-edits/) — comparison of edit approaches across Aider, Claude Code, Cursor, Codex
+- [Aider — Edit Formats](https://aider.chat/docs/more/edit-formats.html) — the most comprehensive edit format zoo, with benchmarks per model family
+- [Cursor — Instant Apply](https://cursor.com/blog/instant-apply) — two-model approach with speculative edits at 1000 tok/s
+- [Cline — Improving Diff Edits by 10%](https://cline.bot/blog/improving-diff-edits-by-10) — order-invariant multi-diff application with model-specific delimiters
+- [OpenCode Deep Dive](https://cefboud.com/posts/coding-agents-internals-opencode-deepdive/) — 9-level progressive fuzzy matching with LSP diagnostics feedback
+- [Anthropic — Text Editor Tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/text-editor-tool) — the search/replace tool design that Claude Code uses
+
+---
+
+### [ ] Architect/Editor Model Split (Dual-Model Pipeline)
+
+**What it is:** Separating reasoning from formatting by routing a task through two models in sequence: a powerful "architect" model that decides _what_ to change, and a specialized "editor" model that produces the precise file edits. The architect reasons in natural language; the editor converts that reasoning into the exact format needed.
+
+**Why it matters:** LLMs struggle to simultaneously solve a problem AND conform to strict text formatting requirements. When a model must reason about a bug fix AND produce perfectly-formatted search/replace blocks, both capabilities degrade. By splitting the pipeline, each model can focus on its strength. Aider demonstrated a +5.3% improvement on SWE-bench (79.7% → 85.0%) with this approach. Cursor took it further by fine-tuning a dedicated Llama-3-70B as their apply model, achieving ~1000 tokens/sec through speculative edits.
+
+**Builds on:** Cost Tracking & Model Selection, File Edit Strategies
+
+**Session brief:** Build a two-model agent pipeline for modifying recipe files. The "architect" (a powerful model) receives the user's request and the current file, then produces a natural-language description of the changes needed. The "editor" (a smaller, cheaper model) takes the architect's description plus the current file and produces exact search/replace blocks. Compare single-model vs. dual-model accuracy and token cost. Show how the editor can be swapped independently of the architect.
+
+**Key ideas to cover:**
+
+- Why reasoning and formatting compete for model capacity
+- Architect prompt design: encourage thinking about _what_ to change, not _how_ to format it
+- Editor prompt design: precise formatting instructions, few-shot examples of the edit format
+- Cost optimization: architect uses a frontier model, editor uses a cheaper/faster model
+- Speculative edits: using the original file as "speculation" to skip unchanged tokens
+- When to use a single model vs. splitting (file size, task complexity)
+- Composability: swapping architects or editors independently
+
+**Blog angle:** "Two Brains Are Better Than One: Why Coding Agents Use Separate Models for Thinking and Editing"
+
+**Sources:**
+
+- [Aider — Architect Mode](https://aider.chat/2024/09/26/architect.html) — original architect/editor design with SWE-bench results
+- [Cursor — Instant Apply](https://cursor.com/blog/instant-apply) — fine-tuned Llama-3-70B as apply model with speculative decoding
+- [Fireworks Blog — Cursor Fast Apply](https://fireworks.ai/blog/cursor) — infrastructure behind serving the apply model at scale
+- [Martin Fowler — Context Engineering for Coding Agents](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html) — the "execution control" dimension of agent design
+
+---
+
+### [ ] Repository Mapping (Codebase-Aware Context Assembly)
+
+**What it is:** Building a compact structural representation of an entire codebase — its files, functions, classes, imports, and dependencies — so the agent can intelligently select which code to include in its context window. Unlike RAG (which retrieves by text similarity), repository mapping uses AST parsing and graph algorithms to understand code structure and rank files by relevance.
+
+**Why it matters:** A coding agent with a 200K token window still can't fit a large codebase. The question is: which files matter for this task? Naive approaches (include all open files, or search by keyword) miss structural dependencies. Aider's repository map uses tree-sitter to extract function/class definitions, builds a dependency graph, and ranks files using PageRank — the same algorithm that makes Google Search work. This gives the model a "bird's eye view" of the codebase in ~1024 tokens, enabling it to request specific files when needed.
+
+**Builds on:** RAG
+
+**Session brief:** Build a repository mapper that: (1) walks a project directory, (2) uses tree-sitter (or a simpler AST parser) to extract top-level definitions (functions, classes, exports) from each file, (3) builds a dependency graph by matching references to definitions, (4) ranks files using PageRank, and (5) generates a compact "repo map" string that fits in a configurable token budget. Feed this map to an agent and show it can navigate a multi-file project without reading every file. Compare agent performance with and without the map.
+
+**Key ideas to cover:**
+
+- AST parsing with tree-sitter: extracting definitions and references
+- Dependency graph construction: files as nodes, references as edges
+- PageRank with personalization: boosting "active" files (chat context, recent edits)
+- Token-budget binary search: finding the maximum map that fits within a limit
+- Three-level caching: disk cache for tags, memory cache for maps, tree cache for rendering
+- Vector embeddings vs. structural mapping: when each approach wins
+- Generating the map: concise format that maximizes information density
+- Dynamic map updates: how the map evolves as the agent reads/edits files
+
+**Blog angle:** "How AI Coding Agents See Your Codebase: PageRank, Tree-Sitter, and Repository Maps"
+
+**Sources:**
+
+- [Aider — Repository Map](https://aider.chat/docs/repomap.html) — the canonical implementation with PageRank + tree-sitter
+- [DeepWiki — Aider Repository Mapping](https://deepwiki.com/Aider-AI/aider/4.1-repository-mapping) — detailed architecture breakdown
+- [Cursor — How Cursor Works Internally](https://adityarohilla.com/2025/05/08/how-cursor-works-internally/) — vector embeddings via tree-sitter chunking
+- [Windsurf — Context Awareness](https://docs.windsurf.com/context-awareness/overview) — full codebase indexing for flow-aware context
+- [GitHub Copilot — Agent Mode 101](https://github.blog/ai-and-ml/github-copilot/agent-mode-101-all-about-github-copilots-powerful-mode/) — workspace tree summary approach
+
+---
+
+### [ ] CodeAct (Code-as-Action)
+
+**What it is:** Instead of calling tools via structured JSON function calls, the agent writes executable code (Python, JavaScript, shell scripts) as its action mechanism. The code is executed in a sandboxed environment, and stdout/stderr become the observation. This replaces the traditional `{"tool": "search", "args": {"query": "..."}}` pattern with `results = search("...")` — real code that can combine multiple operations, use conditionals, and leverage libraries.
+
+**Why it matters:** JSON tool-calling forces agents into one-tool-at-a-time execution. CodeAct lets the agent compose operations naturally — calling three APIs in sequence, filtering results, computing derived values, handling errors — all in a single action. Hugging Face's smolagents demonstrated up to 81% token reduction compared to JSON tool-calling. Manus uses this as their primary action mechanism, treating the sandbox as the agent's "hands." The tradeoff: CodeAct is harder to sandbox safely and harder to inspect/approve than structured tool calls.
+
+**Builds on:** Sandboxed Code Execution
+
+**Session brief:** Build an agent that solves tasks by writing and executing Python code in a sandboxed environment. Expose a set of functions (e.g., `search_recipes()`, `get_nutritional_info()`, `calculate_meal_plan()`) as importable modules in the sandbox. The agent writes Python that imports and calls these functions, processes the results, and returns a final answer. Compare token usage and task completion rate between CodeAct and traditional JSON tool-calling for the same tasks.
+
+**Key ideas to cover:**
+
+- Code generation as tool invocation: the agent writes real code, not JSON
+- Sandbox design: what the agent can import, what file system access it has
+- Multi-step composition: doing in one code block what would take 5 sequential tool calls
+- Safety: preventing shell injection, import of dangerous modules, infinite loops
+- Observation format: capturing stdout, stderr, return values, and exceptions
+- When CodeAct wins: complex data processing, conditional logic, multi-step operations
+- When JSON wins: simple single-tool calls, strict auditability, easier permissions
+- Hybrid approaches: CodeAct for computation, JSON tools for side effects
+
+**Blog angle:** "Code Is the New JSON: Why Some Agents Write Python Instead of Calling Tools"
+
+**Sources:**
+
+- [CodeAct: Executable Code Actions Elicit Better LLM Agents (arXiv:2402.01030)](https://arxiv.org/abs/2402.01030) — foundational paper with benchmark results
+- [Hugging Face smolagents — Code Agents](https://huggingface.co/docs/smolagents/tutorials/secure_code_execution) — production implementation with 81% token reduction
+- [Manus — Context Engineering for AI Agents](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus) — CodeAct as primary action mechanism in production
+- [Cloudflare — Code Mode for AI](https://developers.cloudflare.com/ai-gateway/) — CodeAct in a cloud agent context
+
+---
+
+### [ ] KV-Cache-Aware Context Design (Cache-First Architecture)
+
+**What it is:** Designing the entire agent context pipeline — message ordering, tool definitions, system prompts, action history — around maximizing prefix cache hit rate. Every architectural decision serves cache efficiency: context is append-only (never mutate previous entries), tool lists use stable ordering and naming conventions, timestamps are excluded from system prompts, and tool availability is controlled via logit masking rather than removing tools from the prompt (which would change the prefix and invalidate the cache).
+
+**Why it matters:** In production agents, input tokens outnumber output tokens by 100:1. With prefix caching, cached tokens cost 10x less than uncached (e.g., $0.30 vs. $3.00 per million tokens on Claude Sonnet). A single changed token in the prefix invalidates the entire cache from that point forward. Manus rebuilt their context pipeline four times to optimize for this. OpenAI discovered that non-deterministic MCP tool ordering was causing cache misses on every call. This pattern transforms prompt caching from a "nice to have" into the primary cost and latency driver.
+
+**Builds on:** Prompt Caching, Context Window Management
+
+**Session brief:** Build a multi-turn agent with a cache-aware context pipeline. Implement three versions: (1) naive (mutates history, includes timestamps, reorders tools), (2) append-only (never modifies previous messages, stable tool ordering), (3) full cache-optimized (append-only + logit masking for tool availability + restorable compression with filesystem offload). Measure cache hit rate, cost, and latency across 20+ turns. Show how a single timestamp in the system prompt destroys cache efficiency.
+
+**Key ideas to cover:**
+
+- Prefix caching mechanics: KV-cache reuse when the prompt prefix is identical
+- Append-only context: never modify previous actions or observations
+- Stable prefixes: deterministic tool ordering, no timestamps, no dynamic content before the stable boundary
+- Logit masking for tool availability: constrain tool selection at decode time instead of removing tools from the prompt
+- Tool naming conventions: consistent prefixes (`browser_*`, `shell_*`) for efficient masking
+- Restorable compression: drop content but keep metadata (file paths, URLs) for later retrieval
+- Filesystem as external memory: offload verbose tool results to disk, keep pointers in context
+- Measuring cache efficiency: hit rate, cost per turn, latency trends
+
+**Blog angle:** "The 10x Cost Difference: Why Cache Hit Rate Is the Most Important Metric for AI Agents"
+
+**Sources:**
+
+- [Manus — Context Engineering for AI Agents](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus) — the definitive write-up on KV-cache-first design
+- [Lance Martin — Context Engineering in Manus](https://rlancemartin.github.io/2025/10/15/manus/) — analysis of Manus's three-category context management
+- [OpenAI — Unrolling the Codex Agent Loop](https://openai.com/index/unrolling-the-codex-agent-loop/) — MCP tool ordering cache bug discovery
+- [Anthropic — Prompt Caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) — the underlying API feature this pattern optimizes
+- [Lance Martin — Agent Design Patterns](https://rlancemartin.github.io/2026/01/09/agent_design/) — "Cache Context" as a core agent design pattern
+
+---
+
+### [ ] Client-Agnostic Agent Protocol (Agent Server Pattern)
+
+**What it is:** Decoupling the agent runtime from its user interface by defining a protocol layer with durable session primitives. The agent backend exposes a stable API (typically JSON-RPC over stdio or HTTP+SSE) that any client — CLI, web app, IDE extension, mobile app — can consume. The protocol defines three core abstractions: an **Item** (atomic unit of input/output with lifecycle events), a **Turn** (sequence of items from one unit of agent work), and a **Thread** (durable container for an ongoing session that supports resume, fork, and archival).
+
+**Why it matters:** Most agent demos couple the agent loop directly to a readline prompt or a specific UI framework. This works for demos but breaks when you need the same agent accessible from a CLI, a web dashboard, and an IDE extension. OpenAI's Codex solved this with their App Server protocol — one Rust binary serves the CLI, VS Code extension, macOS desktop app, and web app through one API. OpenCode did the same with a Go TUI client talking to a JS backend over HTTP+SSE. The pattern also enables approval flows (the server pauses a turn and sends a request to the client) and reconnection (clients can rejoin a thread without losing state).
+
+**Builds on:** Streaming Responses
+
+**Session brief:** Build an agent backend that exposes a JSON-RPC API over stdio (for CLI) and HTTP+SSE (for web). Define the three primitives: `Item` (types: user_message, agent_message, tool_execution, approval_request), `Turn` (groups items from one agent cycle), `Thread` (durable session with create/resume/fork). Build two clients: a terminal readline client and a simple web client. Show the same agent session being driven from both, with thread resumption and an approval flow where the server pauses until the client responds.
+
+**Key ideas to cover:**
+
+- Item lifecycle: started → streaming deltas → completed
+- Turn grouping: one user input triggers one turn containing multiple items
+- Thread persistence: create, resume, fork, archive
+- Transport abstraction: stdio for local, HTTP+SSE for remote
+- Approval flows: server sends a request, pauses the turn, waits for client response
+- Reconnection: client rejoins a thread without losing event history
+- Why not just MCP: MCP's tool-oriented design doesn't map to richer session semantics (streaming diffs, approval flows)
+- Protocol versioning and backward compatibility
+
+**Blog angle:** "One Agent, Many Faces: Building a Client-Agnostic Agent Protocol"
+
+**Sources:**
+
+- [OpenAI — Unlocking the Codex Harness](https://openai.com/index/unlocking-the-codex-harness/) — the App Server protocol with Item/Turn/Thread primitives
+- [Codex App Server Docs](https://developers.openai.com/codex/app-server/) — detailed protocol specification
+- [OpenCode Deep Dive](https://cefboud.com/posts/coding-agents-internals-opencode-deepdive/) — Go TUI + JS backend over HTTP+SSE
+- [AG-UI Protocol](https://docs.ag-ui.com/introduction) — agent-to-frontend streaming standard with 16 event types
+- [Anthropic Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) — async generator streaming as an alternative pattern
+
+---
+
+### [ ] Pre-Execution Validation (Shadow Workspace)
+
+**What it is:** Before committing an agent's action to the user's real environment, the action is first applied in an isolated shadow environment where automated validators (linters, type checkers, test suites, language servers) verify correctness. Only if validation passes does the action propagate to the real workspace. This catches errors _before_ the user sees them, reducing the back-and-forth correction loop.
+
+**Why it matters:** When an agent edits a file, the user typically sees the edit, runs a linter or build, discovers errors, and asks the agent to fix them. Each correction round costs tokens, time, and user patience. Cursor's Shadow Workspace eliminates this by running a hidden Electron window with a full Language Server Protocol (LSP) server where edits are applied first. If the LSP reports type errors or import failures, the agent self-corrects before presenting the diff. Amazon Q takes a different approach: it generates multiple candidate solutions, tests each in a sandbox, and presents only the best one. Both approaches share the core insight: validate before you ship.
+
+**Builds on:** Self-Validation Tool, Sandboxed Code Execution
+
+**Session brief:** Build an agent that validates its edits before committing them. Create a "shadow workspace" — a temporary copy of the project (or a relevant subset). When the agent proposes a file edit: (1) apply it to the shadow workspace, (2) run a validator (TypeScript compiler, linter, or a simple syntax checker), (3) if validation fails, feed errors back to the agent for self-correction without the user seeing the broken state, (4) only apply to the real workspace when validation passes. Show the reduction in user-visible errors compared to direct editing.
+
+**Key ideas to cover:**
+
+- Shadow workspace lifecycle: clone, apply, validate, promote or discard
+- LSP integration: using language servers for real-time diagnostics
+- Candidate generation: generating multiple edits and selecting the best (Amazon Q's approach)
+- Cost of validation: shadow workspace adds latency — when it's worth it vs. overkill
+- Streaming shadow validation: validating as edits stream in, not waiting for completion
+- Concurrency: multiple agents sharing one shadow workspace (Cursor serializes requests)
+- Shadow vs. staging: similarities to staging environments in deployment
+
+**Blog angle:** "Edit in the Shadows: How AI Agents Test Code Before You See It"
+
+**Sources:**
+
+- [Cursor — Shadow Workspace](https://cursor.com/blog/shadow-workspace) — hidden Electron window with LSP validation, gRPC/protobuf IPC
+- [AWS — Reinventing Amazon Q Developer Agent](https://aws.amazon.com/blogs/devops/reinventing-the-amazon-q-developer-agent-for-software-development/) — candidate generation + sandbox testing
+- [AWS — Enhancing Code Generation with Real-Time Execution](https://aws.amazon.com/blogs/devops/enhancing-code-generation-with-real-time-execution-in-amazon-q-developer/) — real-time execution feedback loop
+- [OpenCode Deep Dive](https://cefboud.com/posts/coding-agents-internals-opencode-deepdive/) — LSP diagnostics feedback after every file edit
+- [Aider — Linting & Testing](https://aider.chat/docs/usage/lint-test.html) — auto-lint + auto-test as a post-edit validation loop
