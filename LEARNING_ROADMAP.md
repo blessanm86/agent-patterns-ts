@@ -10,44 +10,50 @@ A structured list of concepts for building production-grade AI agents, organized
 
 ## Progress Tracking
 
-| Concept                             | Status  | Builds on                                    |
-| ----------------------------------- | ------- | -------------------------------------------- |
-| Multi-Turn Conversation Memory      | Done    |                                              |
-| Structured Output (JSON Mode)       | Done    |                                              |
-| Reasoning Tool Pattern              | Done    | Structured Output                            |
-| Guardrails & Circuit Breakers       | Done    |                                              |
-| Evaluation with Mocked Tools        | Done    |                                              |
-| LLM Error Recovery                  | Done    |                                              |
-| State Graph                         | Done    | ReAct Loop                                   |
-| Context Window Management           | Done    | Multi-Turn Memory                            |
-| Multi-Agent Routing                 | Done    |                                              |
-| Sub-Agent Delegation                | Done    | Multi-Agent Routing                          |
-| Streaming Responses (SSE)           | Done    |                                              |
-| RAG                                 | Done    |                                              |
-| Prompt Caching                      | Done    |                                              |
-| Tool Description Engineering        | Done    |                                              |
-| Dual Return Pattern                 | Done    |                                              |
-| Query Builder Pattern               | Done    |                                              |
-| Structured Entity Tags              | Done    |                                              |
-| Prompt Injection Detection          | Done    |                                              |
-| Self-Instrumentation                | Done    |                                              |
-| Cost Tracking & Model Selection     | Done    |                                              |
-| Declarative Plan Execution Tool     | Done    | Plan+Execute                                 |
-| On-Demand Skill Injection           | Done    | Tool Description Engineering                 |
-| Self-Validation Tool (QA Gate)      | Done    | LLM Error Recovery                           |
-| Post-Conversation Metadata          | Done    |                                              |
-| Agent TODO Lists (Scaffold)         | Done    |                                              |
-| Human-in-the-Loop                   | Pending | Guardrails                                   |
-| Persistent Cross-Session Memory     | Pending | Multi-Turn Memory, Context Window Management |
-| Agentic RAG                         | Pending | RAG                                          |
-| Multi-Modal Agents                  | Pending |                                              |
-| Ambient Context Store               | Pending | Structured Entity Tags                       |
-| Cross-Platform Response Rendering   | Pending | Structured Entity Tags                       |
-| MCP (Model Context Protocol)        | Pending |                                              |
-| Tool Bundle System                  | Pending |                                              |
-| External Event-Triggered Agent      | Pending | Streaming                                    |
-| Sandboxed Code Execution            | Pending |                                              |
-| Long-Running Agents & Checkpointing | Pending | State Graph                                  |
+| Concept                                   | Status  | Builds on                                    |
+| ----------------------------------------- | ------- | -------------------------------------------- |
+| Multi-Turn Conversation Memory            | Done    |                                              |
+| Structured Output (JSON Mode)             | Done    |                                              |
+| Reasoning Tool Pattern                    | Done    | Structured Output                            |
+| Guardrails & Circuit Breakers             | Done    |                                              |
+| Evaluation with Mocked Tools              | Done    |                                              |
+| LLM Error Recovery                        | Done    |                                              |
+| State Graph                               | Done    | ReAct Loop                                   |
+| Context Window Management                 | Done    | Multi-Turn Memory                            |
+| Multi-Agent Routing                       | Done    |                                              |
+| Sub-Agent Delegation                      | Done    | Multi-Agent Routing                          |
+| Streaming Responses (SSE)                 | Done    |                                              |
+| RAG                                       | Done    |                                              |
+| Prompt Caching                            | Done    |                                              |
+| Tool Description Engineering              | Done    |                                              |
+| Dual Return Pattern                       | Done    |                                              |
+| Query Builder Pattern                     | Done    |                                              |
+| Structured Entity Tags                    | Done    |                                              |
+| Prompt Injection Detection                | Done    |                                              |
+| Self-Instrumentation                      | Done    |                                              |
+| Cost Tracking & Model Selection           | Done    |                                              |
+| Declarative Plan Execution Tool           | Done    | Plan+Execute                                 |
+| On-Demand Skill Injection                 | Done    | Tool Description Engineering                 |
+| Self-Validation Tool (QA Gate)            | Done    | LLM Error Recovery                           |
+| Post-Conversation Metadata                | Done    |                                              |
+| Agent TODO Lists (Scaffold)               | Done    |                                              |
+| Human-in-the-Loop                         | Pending | Guardrails                                   |
+| Persistent Cross-Session Memory           | Pending | Multi-Turn Memory, Context Window Management |
+| Agentic RAG                               | Pending | RAG                                          |
+| Multi-Modal Agents                        | Pending |                                              |
+| Ambient Context Store                     | Pending | Structured Entity Tags                       |
+| Cross-Platform Response Rendering         | Pending | Structured Entity Tags                       |
+| MCP (Model Context Protocol)              | Pending |                                              |
+| Tool Bundle System                        | Pending |                                              |
+| External Event-Triggered Agent            | Pending | Streaming                                    |
+| Sandboxed Code Execution                  | Pending |                                              |
+| Long-Running Agents & Checkpointing       | Pending | State Graph                                  |
+| In-Band Metadata via Streaming Sentinel   | Pending | Streaming, Structured Output                 |
+| Sandboxed CLI Tool Bridge                 | Pending | Sandboxed Code Execution                     |
+| Stateless Agent with History Re-Injection | Pending | Multi-Turn Memory, Context Window Management |
+| Sub-Agent Event Demultiplexing            | Pending | Sub-Agent Delegation, Streaming              |
+| Tool-Response Reminder Injection          | Pending | Tool Description Engineering                 |
+| Ordered Precondition Evaluation           | Pending | Evaluation with Mocked Tools                 |
 
 The table order is the recommended learning progression. Start from the top; the **Builds on** column shows prerequisites.
 
@@ -1061,3 +1067,193 @@ Each concept is designed to be completable in a single focused session: build th
 - [Durable Execution — Temporal](https://temporal.io/how-temporal-works) — the canonical durable execution runtime; crash-resilient workflows with automatic replay
 - [Inngest — Durable Functions](https://www.inngest.com/docs/features/inngest-functions/steps-workflows) — step-based durable execution with automatic retries and state persistence
 - [Google ADK — Long-Running Agents](https://google.github.io/adk-docs/sessions/) — session-based state management with checkpointing for multi-turn agent tasks
+
+---
+
+## Tier 6 — Agent Infrastructure & Advanced Evaluation
+
+> Patterns for scaling agents across compute boundaries, maintaining coherence in long tool chains, and evaluating behavioral correctness beyond accuracy.
+
+### [ ] In-Band Metadata Extraction via Streaming Sentinel
+
+**What it is:** The LLM appends a structured JSON block delimited by sentinel tags (e.g., `<metadata>...</metadata>`) at the end of every streaming response. A stream processor detects the sentinel marker in real-time, stops forwarding tokens to the client, strips the block on completion, and parses the JSON — extracting thread names, follow-up suggestions, and security flags from a single generation pass with zero additional inference cost.
+
+**Why it matters:** Separate metadata-generation calls double inference cost and add latency. Native JSON mode forces the entire response into a schema. The sentinel approach lets the LLM produce free-form prose and structured metadata in one pass, with the streaming layer cleanly separating them before they reach the user.
+
+**Builds on:** Streaming Responses, Structured Output
+
+**Session brief:** Build a streaming chat agent that appends `<metadata>{"title":"...","suggestions":["..."]}</metadata>` to every response. Implement a `TransformStream` processor that detects the sentinel, halts visible output, strips the block, and returns both the clean prose and parsed metadata separately. Show the metadata driving UI elements (conversation title, suggestion chips) without a second LLM call.
+
+**Key ideas to cover:**
+
+- Sentinel tag design (unique markers the LLM won't generate in prose)
+- Stream processor state machine: buffering, detection, cutoff
+- Handling partial sentinel matches in chunk boundaries
+- Metadata schema design (what to extract: title, suggestions, flags)
+- Fallback when the LLM omits or malforms the metadata block
+- Comparison with native JSON mode and separate post-generation calls
+
+**Blog angle:** "One Generation, Two Outputs — Piggybacking Structured Metadata on Streaming Prose"
+
+**Sources:**
+
+- [Anthropic — Streaming Messages](https://docs.anthropic.com/en/api/messages-streaming) — SSE event format a sentinel processor must operate on
+- [Anthropic — Structured Outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) — native alternative that motivates the lighter sentinel approach
+- [OpenAI — Introducing Structured Outputs](https://openai.com/index/introducing-structured-outputs-in-the-api/) — industry precedent for in-band structured payloads alongside streaming
+- [XGrammar (arXiv:2411.15100)](https://arxiv.org/abs/2411.15100) — proves structured JSON can be produced in a single autoregressive pass at near-zero overhead
+- [Generating Structured Outputs from LLMs (arXiv:2501.10868)](https://arxiv.org/html/2501.10868v1) — benchmarks suffix injection vs. guided sampling trade-offs
+
+---
+
+### [ ] Sandboxed CLI Tool Bridge
+
+**What it is:** An agent running inside a sandboxed process (VM, container) cannot make direct API calls to the host's tool registry. Instead, tools are exposed as a CLI binary inside the sandbox. The agent calls tools by running shell commands (`tools describe toolName`, `tools invoke toolName --args='...'`). The CLI binary sends IPC messages (WebSocket or stdin) back to the host, which resolves the tool, executes it, and returns stdout/exitCode. A describe-before-invoke protocol prevents schema-guessing errors.
+
+**Why it matters:** Sandboxed agents need tool access without breaking isolation boundaries. Native LLM tool-calling APIs aren't available when the agent is a subprocess. The CLI bridge gives the agent a familiar shell interface while the host retains full control over tool resolution, authentication, and execution — preserving security without sacrificing tool richness.
+
+**Builds on:** Sandboxed Code Execution
+
+**Session brief:** Build a host process with 3-4 typed tools (e.g., weather lookup, calculator, file search). Spawn a sandboxed subprocess (child process or Docker container) running an agent. Inside the sandbox, provide a `tools` CLI binary that communicates with the host via stdin/stdout JSON-RPC. The agent calls `tools describe calculator` to get the schema, then `tools invoke calculator --args='{"expression":"2+2"}'` to execute. Show the host resolving, executing, and returning results across the process boundary.
+
+**Key ideas to cover:**
+
+- CLI binary as the sandbox-side tool interface
+- IPC transport: stdin/stdout, WebSocket, or Unix socket
+- Describe-before-invoke protocol to prevent schema guessing
+- Host-side tool resolution with authentication context
+- Namespace support for organizing tools (`namespace.toolName`)
+- Error handling: timeouts, invalid tool names, malformed arguments
+
+**Blog angle:** "Shell Commands as Tool Calls — Bridging Sandboxed Agents to Host Infrastructure"
+
+**Sources:**
+
+- [LangChain — The Two Patterns by Which Agents Connect Sandboxes](https://blog.langchain.com/the-two-patterns-by-which-agents-connect-sandboxes/) — canonical taxonomy of sandbox integration architectures
+- [Modal Labs — Sandboxes](https://modal.com/docs/guide/sandboxes) — production `Sandbox.exec` API matching the CLI-bridge model
+- [E2B — Secure Sandbox for AI Agents](https://github.com/e2b-dev/E2B) — open-source Firecracker microVM sandbox with tool-bridge SDK
+- [Google Cloud — Agent Sandbox on GKE](https://docs.cloud.google.com/kubernetes-engine/docs/how-to/agent-sandbox) — gVisor-based infrastructure for sandboxed agent execution
+- [AISI — Inspect Sandboxing Toolkit](https://www.aisi.gov.uk/blog/the-inspect-sandboxing-toolkit-scalable-and-secure-ai-agent-evaluations) — safety-critical implementation with model-outside/commands-inside separation
+
+---
+
+### [ ] Stateless Agent with History Re-Injection
+
+**What it is:** Every agent invocation creates a fresh session — no session resumption, no sticky processes. The full conversation history is serialized as timestamped, role-prefixed text and injected into the user message. The canonical history is stored in a database. Any worker in a pool can serve any turn with no session handoff, enabling true horizontal scaling.
+
+**Why it matters:** Session-pinned agents require sticky routing, complicate failover, and limit horizontal scaling. The stateless pattern decouples compute from conversation state: any worker serves any thread, crashed workers are instantly replaced, and scaling is just adding more workers. The trade-off is re-injection cost per turn, manageable with prompt caching.
+
+**Builds on:** Multi-Turn Conversation Memory, Context Window Management
+
+**Session brief:** Build a multi-turn agent backed by a worker pool (3 simulated workers). Store conversation history in a JSON file (simulating a database). On each turn, pick a random worker, load the full history, serialize it as timestamped text, inject it into the prompt, and run a fresh agent session. Show that any worker can serve any conversation. Then kill a worker mid-conversation and show seamless failover to another worker with no context loss.
+
+**Key ideas to cover:**
+
+- History serialization format (timestamps, roles, tool results)
+- External history store (database, Redis, file) as the source of truth
+- Worker pool with random assignment (no sticky routing)
+- Re-injection cost and prompt caching as mitigation
+- Failover: worker death is invisible to the conversation
+- Comparison with session-pinned architectures
+
+**Blog angle:** "Stateless by Design — How to Scale Agents Without Sticky Sessions"
+
+**Sources:**
+
+- [Pensieve (arXiv:2312.05516)](https://arxiv.org/abs/2312.05516) — quantifies re-injection cost and proposes caching as the solution
+- [LangChain — RunnableWithMessageHistory](https://docs.langchain.com/oss/python/langgraph/memory) — canonical framework implementation with Redis/Postgres backend
+- [LlamaIndex — Agent State](https://docs.llamaindex.ai/en/stable/understanding/agent/state/) — "stateless by default" with serializable Context
+- [Benchmarking Stateless vs Stateful Agents (ResearchGate 2024)](https://www.researchgate.net/publication/399576067_Benchmarking_Stateless_Versus_Stateful_LLM_Agent_Architectures_in_Enterprise_Environments) — empirical validation of horizontal scaling advantages
+- [Multi-Turn Conversation Evaluation Survey (arXiv:2503.22458)](https://arxiv.org/html/2503.22458v1) — documents transcript-concatenation as the dominant stateless strategy
+
+---
+
+### [ ] Sub-Agent Event Demultiplexing
+
+**What it is:** When a parent agent delegates to a sub-agent that uses a different streaming protocol or event schema, a stateful transformer normalizes the foreign event stream into the host's typed message schema. It tracks part IDs to route reasoning vs. text deltas correctly, accumulates text segments across multi-step tool-call boundaries, and maps sub-agent threads to parent threads.
+
+**Why it matters:** Multi-agent systems rarely use homogeneous protocols. A LangGraph orchestrator might delegate to an OpenAI Assistants sub-agent, or a custom agent might embed a Claude-powered specialist. Without event demultiplexing, the parent agent can't stream sub-agent output to users, track tool calls, or maintain conversation coherence across agent boundaries.
+
+**Builds on:** Sub-Agent Delegation, Streaming Responses
+
+**Session brief:** Build a parent agent that delegates tasks to a sub-agent with a different event schema. The sub-agent emits events like `{ type: "part.delta", partId: "abc", text: "..." }` and `{ type: "step.finish", toolCalls: [...] }`. Build a `SubAgentTransformer` class that normalizes these into the parent's schema (`{ role: "assistant", content: "..." }` and `{ role: "tool", name: "...", result: "..." }`). Show correct handling of interleaved reasoning and tool-call events.
+
+**Key ideas to cover:**
+
+- Event schema mapping between heterogeneous agent protocols
+- Part ID tracking for routing reasoning vs. content deltas
+- Text accumulation across multi-step boundaries
+- Thread ID mapping (sub-agent thread → parent thread)
+- Handling out-of-order events and reconnection
+- Testing with synthetic event streams
+
+**Blog angle:** "Speaking Two Protocols — Normalizing Sub-Agent Event Streams in Multi-Agent Systems"
+
+**Sources:**
+
+- [OpenAI Agents SDK — Streaming Events](https://openai.github.io/openai-agents-python/ref/stream_events/) — defines RawResponsesStreamEvent, RunItemStreamEvent, and the \_StreamingState accumulator
+- [OpenAI Responses API — Streaming](https://platform.openai.com/docs/api-reference/responses-streaming) — granular event hierarchy with output_index/content_index routing
+- [LangGraph — Subgraphs and Streaming](https://docs.langchain.com/oss/python/langgraph/use-subgraphs) — per-subgraph namespace tagging and state-schema transformation
+- [Anthropic — Streaming Messages](https://docs.anthropic.com/claude/reference/messages-streaming) — Claude SSE schema a demultiplexer must map between
+- [Anthropic Engineering — Multi-Agent Research System](https://www.anthropic.com/engineering/multi-agent-research-system) — real-world choices about which sub-agent events propagate
+
+---
+
+### [ ] Tool-Response Reminder Injection (Instruction Reinforcement)
+
+**What it is:** Every tool response is suffixed with a `<system-reminder>` block before being returned to the agent, re-asserting the most critical behavioral rules (formatting, conciseness, safety constraints). This exploits the tool-response channel — processed at every reasoning step — to counteract the model's tendency to drift from system prompt instructions over long multi-tool chains.
+
+**Why it matters:** LLMs exhibit "lost in the middle" attention decay: instructions in the system prompt lose influence as the conversation grows. In long tool chains (10+ sequential tool calls), the agent gradually forgets formatting rules, safety constraints, and output requirements. Injecting reminders in tool responses places critical instructions at the attention-favored recency position after every tool call.
+
+**Builds on:** Tool Description Engineering
+
+**Session brief:** Build a multi-step agent that calls 10+ tools sequentially (e.g., researching a topic across multiple sources). First, show instruction drift: the agent starts following formatting rules but gradually ignores them by tool call 8-10. Then add a `wrapToolResponse(result)` function that appends a 200-token reminder block to every tool result. Show the agent maintaining consistent behavior across all 10+ steps.
+
+**Key ideas to cover:**
+
+- "Lost in the middle" attention decay in long contexts
+- Tool response as a high-attention injection point (recency bias)
+- Reminder content design: which rules to reinforce (keep it short)
+- Token budget: balancing reinforcement value vs. context consumption
+- Measuring drift: comparing agent behavior at step 2 vs. step 10
+- Alternative approaches: system prompt repetition, context window reset
+
+**Blog angle:** "The 200-Token Fix for Instruction Drift — Injecting Reminders in Tool Responses"
+
+**Sources:**
+
+- [Lost in the Middle (arXiv:2307.03172)](https://arxiv.org/abs/2307.03172) — foundational paper proving LLM performance degrades for middle-context content
+- [Drift No More? (arXiv:2510.07777)](https://arxiv.org/abs/2510.07777) — formalises drift and shows goal-reminder interventions reliably reduce it
+- [Anthropic — Effective Context Engineering for AI Agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — guidance on keeping instructions accessible at every reasoning step
+- [Anthropic — Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — re-injection of key instructions across context windows
+- [Solving Agent Prompt Drift — A 300-Token Fix](https://dev.to/nikolasi/solving-agent-system-prompt-drift-in-long-sessions-a-300-token-fix-1akh) — practitioner demonstration of compressed rule re-injection
+
+---
+
+### [ ] Ordered Precondition Evaluation (Stateful Tool Call Simulation)
+
+**What it is:** An evaluation pattern where a simulation harness maintains explicit mutable state tracking which information-discovery steps the agent has completed. Each intercepted tool call checks preconditions against that state before counting as a "match." Calls made out-of-order or without prerequisites are flagged. This tests whether the agent reasons in a logically valid sequence, not just whether it calls the right tools.
+
+**Why it matters:** Standard tool-call evaluation checks presence (did the agent call the right tools?) but not order. In real workflows, information discovery has dependencies: you must find the metric name before querying its details, and get details before building a query. An agent that calls tools out of order might get lucky with cached data but would fail on novel inputs. Ordered precondition evaluation catches these subtle reasoning failures.
+
+**Builds on:** Evaluation with Mocked Tools
+
+**Session brief:** Build an evaluation harness for a multi-step research agent. Define a `SimulationState` class with boolean flags (`knowsMetricName`, `knowsMetricDetails`, `hasBuiltQuery`). Create mock tool handlers that check preconditions: `getMetricDetails` only succeeds if `knowsMetricName` is true, `buildQuery` only if `knowsMetricDetails` is true. Run the agent against the simulation and score: correct-order calls vs. out-of-order calls vs. total calls. Show how this catches an agent that skips the discovery step.
+
+**Key ideas to cover:**
+
+- Simulation state machine: boolean flags for completed prerequisites
+- Precondition checking on intercepted tool calls
+- Scoring: precision (correct-order / total) and recall (correct-order / expected)
+- Out-of-order detection: calls that skip prerequisites
+- Composable simulations: reusable state machines for different workflows
+- Comparison with simple presence-based tool evaluation
+
+**Blog angle:** "Did Your Agent Cheat? Evaluating Tool Call Order with State Machine Simulations"
+
+**Sources:**
+
+- [τ-bench (arXiv:2406.12045)](https://arxiv.org/abs/2406.12045) — stateful task evaluation comparing database state against annotated goals
+- [TPS-Bench (arXiv:2511.01527)](https://arxiv.org/abs/2511.01527) — evaluates tool planning with strict dependency chains
+- [TRAJECT-Bench (arXiv:2510.04550)](https://arxiv.org/abs/2510.04550) — trajectory-level metrics for tool selection, arguments, and dependency satisfaction
+- [AgentBench (ICLR 2024)](https://github.com/THUDM/AgentBench) — multi-environment stateful benchmark establishing ground-truth outcome evaluation
+- [Simulating Multi-Turn Tool Calling (arXiv:2601.19914)](https://arxiv.org/abs/2601.19914) — ordered dependency tracking in simulation without a live backend
