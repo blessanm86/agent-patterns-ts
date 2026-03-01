@@ -24,7 +24,7 @@ Instead of one model for everything, we define three tiers:
 | Standard | `qwen2.5:7b`   | Main reasoning + tool calls   | $1.10 in / $4.40 out              |
 | Capable  | `qwen2.5:14b`  | Complex multi-step synthesis  | $2.80 in / $11.20 out             |
 
-The pricing ratios mirror real cloud API tiers (Haiku / Sonnet / Opus at roughly 1x / 11x / 28x). Ollama runs locally for free, but the demo tracks what production costs _would be_ — the same approach Concept 19 uses with "GPT-4o pricing."
+The pricing ratios mirror real cloud API tiers (Haiku / Sonnet / Opus at roughly 1x / 11x / 28x). Ollama runs locally for free, but the demo tracks what production costs _would be_ — the same approach [Self-Instrumentation](../self-instrumentation/README.md) uses with "GPT-4o pricing."
 
 ---
 

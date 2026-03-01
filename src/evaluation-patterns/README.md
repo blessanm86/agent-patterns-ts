@@ -1,6 +1,6 @@
 # Evaluation Patterns
 
-> **Concept 12 of 20** — a Tier 2 pattern that applies to every agent you build. You wouldn't ship software without tests. This post covers the eight eval patterns every agent developer needs.
+> A Tier 2 pattern that applies to every agent you build. You wouldn't ship software without tests. This post covers the eight eval patterns every agent developer needs.
 
 ---
 
@@ -236,7 +236,7 @@ Each scenario tests a specific failure mode. The assertions are minimal — just
 
 The `makeFailThenSucceed` factory creates a fresh counter per call — each test gets its own state. Don't share the closure between tests.
 
-This pattern directly tests the error-recovery behavior from [Concept 13 — LLM Error Recovery](../error-recovery/README.md). Write error injection evals before implementing recovery logic — they serve as the spec.
+This pattern directly tests the error-recovery behavior from [LLM Error Recovery](../error-recovery/README.md). Write error injection evals before implementing recovery logic — they serve as the spec.
 
 ---
 

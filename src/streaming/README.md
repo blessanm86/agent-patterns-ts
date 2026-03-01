@@ -1,6 +1,6 @@
 # Beyond console.log — Streaming Agent Output to a Real UI
 
-[Agent Patterns — TypeScript](../../README.md) · Concept 9 of 20
+[Agent Patterns — TypeScript](../../README.md)
 
 > **Previous concept:** [Sub-Agent Delegation](../sub-agent-delegation/README.md) — spawning parallel child agents. This concept moves from terminal output to HTTP streaming, making agent output visible token-by-token in a browser.
 
@@ -76,7 +76,7 @@ export interface StreamMetrics {
 
 ## Adapting the ReAct Loop for Streaming
 
-The original ReAct agent from Concept 1 makes a blocking `ollama.chat()` call and waits for the complete response:
+The original [ReAct](../react/README.md) agent makes a blocking `ollama.chat()` call and waits for the complete response:
 
 ```typescript
 // Non-streaming (original ReAct agent)

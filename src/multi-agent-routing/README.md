@@ -1,8 +1,8 @@
 # One Agent, Many Hats — How Multi-Agent Routing Works
 
-[Agent Patterns — TypeScript](../../README.md) · Concept 7 of 20
+[Agent Patterns — TypeScript](../../README.md)
 
-> **Previous concept:** [Context Window Management](../context-management/README.md) — managing long conversations. This concept builds on the ReAct loop from [Concept 1](../react/README.md) and the state graph ideas from [Concept 5](../state-graph/README.md).
+> **Previous concept:** [Context Window Management](../context-management/README.md) — managing long conversations. This concept builds on the ReAct loop from [ReAct](../react/README.md) and the state graph ideas from [State Graph](../state-graph/README.md).
 
 ---
 

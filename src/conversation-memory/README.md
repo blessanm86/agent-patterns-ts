@@ -1,6 +1,6 @@
 # Your Agent Has Amnesia — How Conversation Memory Actually Works
 
-> **Concept #1 of 20** — [Agent Patterns — TypeScript](../../README.md)
+> [Agent Patterns — TypeScript](../../README.md)
 
 Every time you send a message to an LLM API, you start from zero. The model has no recollection of the last request. It doesn't know what you said a turn ago, what restrictions the user mentioned, or what it already found.
 
@@ -110,7 +110,7 @@ In the working version, the agent will reference your nut allergy naturally — 
 
 There's a tradeoff hidden in this pattern: every turn sends more tokens to the API. A 10-turn conversation sends ~10x the tokens of a 1-turn conversation. At 100 turns, you're re-sending a lot of text — and eventually you'll hit the model's context limit.
 
-Strategies for managing this are covered in **Concept #6: Context Window Management**, which shows how to summarize older messages into a compact representation while preserving key facts.
+Strategies for managing this are covered in **[Context Window Management](../context-management/README.md)**, which shows how to summarize older messages into a compact representation while preserving key facts.
 
 For most applications — conversations under 20-30 turns — passing the full history is the right default. Don't prematurely optimize for a problem you don't have yet.
 

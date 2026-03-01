@@ -1,6 +1,6 @@
 # Don't Put Everything in the System Prompt — On-Demand Skill Injection for Agents
 
-[Agent Patterns — TypeScript](../../README.md) · Concept 22
+[Agent Patterns — TypeScript](../../README.md)
 
 ---
 

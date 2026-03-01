@@ -1,6 +1,6 @@
 # Learning Roadmap — Agentic AI Patterns
 
-A structured list of 30 concepts for building production-grade AI agents, organized into 5 tiers from foundational to advanced. Each concept is a self-contained learning session: build a small example, write a blog post, check it off.
+A structured list of concepts for building production-grade AI agents, organized into tiers from foundational to advanced. Each concept is a self-contained learning session: build a small example, write a blog post, check it off.
 
 **How to use this:** Pick any unchecked concept. Open a Claude session (or your preferred AI assistant) and say: _"Let's work on [concept name]. Read the LEARNING_ROADMAP.md for context, then let's build the example and write the blog post."_ The session brief for each concept gives enough context to start cold.
 
@@ -8,11 +8,58 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
+## Progress Tracking
+
+| Concept                             | Status  | Builds on                                    |
+| ----------------------------------- | ------- | -------------------------------------------- |
+| Multi-Turn Conversation Memory      | Done    |                                              |
+| Structured Output (JSON Mode)       | Done    |                                              |
+| Reasoning Tool Pattern              | Done    | Structured Output                            |
+| Guardrails & Circuit Breakers       | Done    |                                              |
+| Evaluation with Mocked Tools        | Done    |                                              |
+| LLM Error Recovery                  | Done    |                                              |
+| State Graph                         | Done    | ReAct Loop                                   |
+| Context Window Management           | Done    | Multi-Turn Memory                            |
+| Multi-Agent Routing                 | Done    |                                              |
+| Sub-Agent Delegation                | Done    | Multi-Agent Routing                          |
+| Streaming Responses (SSE)           | Done    |                                              |
+| RAG                                 | Done    |                                              |
+| Prompt Caching                      | Done    |                                              |
+| Tool Description Engineering        | Done    |                                              |
+| Dual Return Pattern                 | Done    |                                              |
+| Query Builder Pattern               | Done    |                                              |
+| Structured Entity Tags              | Done    |                                              |
+| Prompt Injection Detection          | Done    |                                              |
+| Self-Instrumentation                | Done    |                                              |
+| Cost Tracking & Model Selection     | Done    |                                              |
+| Declarative Plan Execution Tool     | Done    | Plan+Execute                                 |
+| On-Demand Skill Injection           | Done    | Tool Description Engineering                 |
+| Self-Validation Tool (QA Gate)      | Done    | LLM Error Recovery                           |
+| Post-Conversation Metadata          | Done    |                                              |
+| Agent TODO Lists (Scaffold)         | Done    |                                              |
+| Human-in-the-Loop                   | Pending | Guardrails                                   |
+| Persistent Cross-Session Memory     | Pending | Multi-Turn Memory, Context Window Management |
+| Agentic RAG                         | Pending | RAG                                          |
+| Multi-Modal Agents                  | Pending |                                              |
+| Ambient Context Store               | Pending | Structured Entity Tags                       |
+| Cross-Platform Response Rendering   | Pending | Structured Entity Tags                       |
+| MCP (Model Context Protocol)        | Pending |                                              |
+| Tool Bundle System                  | Pending |                                              |
+| External Event-Triggered Agent      | Pending | Streaming                                    |
+| Sandboxed Code Execution            | Pending |                                              |
+| Long-Running Agents & Checkpointing | Pending | State Graph                                  |
+
+The table order is the recommended learning progression. Start from the top; the **Builds on** column shows prerequisites.
+
+Each concept is designed to be completable in a single focused session: build the example, run it, write the blog post.
+
+---
+
 ## Tier 1 — Foundations
 
 > Extend the patterns already in this repo. These are the building blocks everything else depends on.
 
-### [x] 1. Multi-Turn Conversation Memory
+### [x] Multi-Turn Conversation Memory
 
 **What it is:** Maintaining a message history array across multiple user turns so the LLM remembers what was already discussed and discovered.
 
@@ -38,7 +85,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 2. Structured Output (JSON Mode)
+### [x] Structured Output (JSON Mode)
 
 **What it is:** Constraining LLM output to valid JSON matching a specific schema, rather than hoping the model returns parseable text.
 
@@ -64,7 +111,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 3. Reasoning Tool Pattern (Forced Structured Thinking)
+### [x] Reasoning Tool Pattern (Forced Structured Thinking)
 
 **What it is:** Creating a "fake" tool that exists only to force the LLM to reason in a structured way. Combined with `tool_choice: "any"`, the LLM must call this tool — it can't skip to a text response.
 
@@ -90,7 +137,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 4. Guardrails & Circuit Breakers
+### [x] Guardrails & Circuit Breakers
 
 **What it is:** Hard limits that prevent runaway agents — max iterations, token budgets, timeout enforcement, and input validation.
 
@@ -117,11 +164,39 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
+### [ ] Human-in-the-Loop (Approval Workflows)
+
+**What it is:** Agents pausing execution to request human confirmation before taking high-impact or irreversible actions. Includes approval gates, confidence-based escalation, and interactive disambiguation.
+
+**Why it matters:** Agents that can book flights, delete records, or send emails need a safety net. Human-in-the-loop isn't just a UX nicety — it's the difference between a useful assistant and a liability. Production agents need to know when they're uncertain and ask rather than guess.
+
+**Builds on:** Guardrails & Circuit Breakers
+
+**Session brief:** Build an agent that manages a to-do list with destructive operations (delete all, reassign). Add an approval gate: when the agent decides on a destructive action, it pauses and presents the plan to the user for confirmation before executing. Implement confidence-based escalation: the agent auto-executes high-confidence actions but escalates ambiguous ones. Show the difference between an agent that silently deletes vs. one that asks first.
+
+**Key ideas to cover:**
+
+- Approval gates: tool calls that require human confirmation before execution
+- Confidence-based escalation: auto-execute vs. ask based on certainty
+- Interactive disambiguation: "Did you mean X or Y?"
+- Timeout handling: what happens when the human doesn't respond
+- Audit trail: logging what was approved, by whom, when
+
+**Blog angle:** "Your Agent Shouldn't Delete Things Without Asking — Human-in-the-Loop Patterns"
+
+**Sources:**
+
+- [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — Anthropic, 2024 — the "human-in-the-loop" workflow as a core agentic pattern
+- [Human-in-the-Loop Agents — LangGraph](https://langchain-ai.github.io/langgraph/concepts/human_in_the_loop/) — breakpoints, approval nodes, and edit-before-continue patterns
+- [OpenAI Agents SDK — Human-in-the-loop](https://openai.github.io/openai-agents-python/human_in_the_loop/) — guardrails that trigger human approval on specific tool calls
+
+---
+
 ## Tier 2 — Architecture
 
 > The leap from loop-based agents to graph-based architectures. These concepts define how production agents are structured internally.
 
-### [x] 5. State Graph (Node-Based Agent Architecture)
+### [x] State Graph (Node-Based Agent Architecture)
 
 **What it is:** Replacing a simple while-loop agent with a directed graph where each node is a distinct processing step, edges are conditional routing decisions, and state flows through a shared annotation.
 
@@ -148,7 +223,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 6. Context Window Management & Summarization
+### [x] Context Window Management & Summarization
 
 **What it is:** When conversation history grows beyond the LLM's context window, using an LLM call to summarize older messages into a compact representation while preserving key facts.
 
@@ -175,7 +250,36 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 7. Multi-Agent Routing (Specialized Profiles)
+### [ ] Persistent Cross-Session Memory
+
+**What it is:** Memory that survives beyond a single conversation — the agent recalls facts, preferences, and prior interactions across sessions. Includes vector stores for semantic retrieval, structured memory records, and memory lifecycle management (what to remember, what to forget).
+
+**Why it matters:** Without persistent memory, every session starts cold. The agent re-asks the same questions, forgets user preferences, and can't learn from past interactions. Cross-session memory transforms a stateless tool into a personalized assistant.
+
+**Builds on:** Multi-Turn Conversation Memory, Context Window Management
+
+**Session brief:** Build an agent that stores key facts from conversations into a persistent memory store (e.g., a local JSON file or SQLite with embeddings). On each new session, retrieve relevant memories and inject them into the system prompt. Show the agent recalling a user's preference from 3 sessions ago. Implement memory management: importance scoring, deduplication, and a forget mechanism.
+
+**Key ideas to cover:**
+
+- Memory extraction: which parts of a conversation are worth persisting
+- Storage strategies: key-value, vector store (embedding similarity), structured records
+- Retrieval at session start: semantic search over past memories
+- Memory lifecycle: importance decay, deduplication, explicit forgetting
+- Privacy considerations: what should never be persisted
+
+**Blog angle:** "Your Agent Should Remember You — Persistent Memory Across Sessions"
+
+**Sources:**
+
+- [Memory — LangGraph](https://langchain-ai.github.io/langgraph/concepts/memory/) — short-term (thread state) vs long-term (cross-thread) memory with semantic search
+- [MemGPT / Letta](https://github.com/letta-ai/letta) — Packer et al., 2023 — OS-inspired memory management for LLMs with tiered storage
+- [Generative Agents: Interactive Simulacra of Human Behavior](https://arxiv.org/abs/2304.03442) — Park et al. (Stanford), 2023 — memory stream with retrieval based on recency, importance, and relevance
+- [OpenAI Memory](https://help.openai.com/en/articles/8590148-memory-in-chatgpt-faq) — production implementation of cross-session memory extraction and recall
+
+---
+
+### [x] Multi-Agent Routing (Specialized Profiles)
 
 **What it is:** Having multiple specialized agent configurations (different system prompts, different tool sets) and an LLM-powered router that selects the right one based on the user's question.
 
@@ -202,7 +306,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 8. Sub-Agent Delegation (Recursive Task Spawning)
+### [x] Sub-Agent Delegation (Recursive Task Spawning)
 
 **What it is:** An agent spawning child agents to handle subtasks, with results flowing back to the parent. Includes depth control to prevent infinite recursion.
 
@@ -233,7 +337,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 > Making agents reliable, fast, and testable for real users.
 
-### [x] 9. Streaming Responses (Server-Sent Events)
+### [x] Streaming Responses (Server-Sent Events)
 
 **What it is:** Sending LLM output to the client token-by-token as it's generated, rather than waiting for the complete response. Using typed message events, not just raw text.
 
@@ -260,7 +364,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 10. RAG (Retrieval-Augmented Generation)
+### [x] RAG (Retrieval-Augmented Generation)
 
 **What it is:** Before answering a question, searching a knowledge base for relevant documents and injecting them into the LLM's context to ground its response in facts.
 
@@ -287,7 +391,37 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 11. Prompt Caching
+### [ ] Agentic RAG (Iterative Retrieval)
+
+**What it is:** Unlike basic RAG (search once, answer), agentic RAG puts the agent in control of the retrieval loop. The agent decides when to search, formulates its own queries, evaluates whether results are sufficient, and iterates — refining queries or searching different sources until it has enough information.
+
+**Why it matters:** Basic RAG retrieves once and hopes for the best. But real questions often need multiple searches: the first result reveals the right terminology, the second search uses that terminology to find the actual answer. Agentic RAG closes the gap between "search then answer" and "research then answer."
+
+**Builds on:** RAG
+
+**Session brief:** Build a research assistant over a documentation set. Compare basic RAG (single search → answer) with agentic RAG (agent calls search tool, evaluates results, decides to refine query or search again). Show questions where basic RAG fails but agentic RAG succeeds by iterating. Implement a "search budget" to prevent infinite retrieval loops.
+
+**Key ideas to cover:**
+
+- Agent-driven query formulation (not user query passthrough)
+- Result evaluation: does the agent have enough information to answer?
+- Query refinement: using initial results to formulate better follow-up queries
+- Multi-source retrieval: searching different indexes or knowledge bases
+- Search budget: max retrievals per question to prevent runaway loops
+- When basic RAG is sufficient vs. when you need agentic RAG
+
+**Blog angle:** "Search Once or Search Until You Know — Agentic RAG vs. Basic RAG"
+
+**Sources:**
+
+- [Agentic RAG — LlamaIndex](https://docs.llamaindex.ai/en/stable/understanding/agentic_rag/) — agentic RAG as tool-use over retrieval with query planning
+- [Corrective Retrieval Augmented Generation (CRAG)](https://arxiv.org/abs/2401.15884) — Yan et al., 2024 — self-correcting retrieval with confidence-based re-retrieval
+- [Self-RAG: Learning to Retrieve, Generate, and Critique](https://arxiv.org/abs/2310.11511) — Asai et al., 2023 — LLM learns when to retrieve and self-evaluates generation quality
+- [Adaptive RAG](https://arxiv.org/abs/2403.14403) — Jeong et al., 2024 — dynamically choosing retrieval strategy based on query complexity
+
+---
+
+### [x] Prompt Caching
 
 **What it is:** Marking stable parts of the prompt (system prompt, tool definitions) as cacheable so the LLM provider reuses computed representations across requests, reducing latency and cost.
 
@@ -315,7 +449,35 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 12. Evaluation with Mocked Tools
+### [ ] Multi-Modal Agents (Vision & Audio)
+
+**What it is:** Agents that process and reason over images, screenshots, audio, and video — not just text. Includes vision-based tool use (reading screenshots, interpreting charts), image generation as a tool, and audio input/output for voice-driven agents.
+
+**Why it matters:** Most real-world agent tasks involve non-text data. A support agent that can see the user's screenshot, a coding agent that reads error dialogs, a data agent that interprets charts — multi-modal capabilities transform what agents can do. As vision and audio become standard in frontier models, agents that ignore these modalities are leaving capability on the table.
+
+**Session brief:** Build an agent with two multi-modal capabilities: (1) a vision tool that accepts an image URL/path and describes or extracts structured data from it (e.g., reading a receipt, interpreting a chart), (2) image generation as a tool output. Show the agent answering questions about uploaded images, extracting structured data from screenshots, and generating visual artifacts. Compare text-only vs. multi-modal performance on tasks that involve visual information.
+
+**Key ideas to cover:**
+
+- Image-as-input: passing images in user messages or tool results
+- Vision-based tool use: screenshot reading, chart interpretation, document OCR
+- Structured extraction from images: "read this receipt and return JSON"
+- Audio input/output: voice-to-text and text-to-speech in the agent loop
+- Cost implications: vision tokens are expensive
+- When multi-modal is essential vs. when text descriptions suffice
+
+**Blog angle:** "Your Agent Can See Now — Building Multi-Modal AI Agents"
+
+**Sources:**
+
+- [Vision — OpenAI API](https://platform.openai.com/docs/guides/vision) — passing images to GPT-4o, detail levels, token costs
+- [Vision — Anthropic](https://docs.anthropic.com/en/docs/build-with-claude/vision) — image support in Claude messages, base64 and URL formats
+- [Computer Use — Anthropic](https://docs.anthropic.com/en/docs/agents-and-tools/computer-use) — agents that interact with GUIs via screenshots
+- [GPT-4o Realtime API](https://platform.openai.com/docs/guides/realtime) — audio input/output for voice-driven agents
+
+---
+
+### [x] Evaluation with Mocked Tools
 
 **What it is:** Testing agent behavior by replacing real tool implementations with deterministic mocks that return fixed data, then checking the agent's decisions (which tools it called, in what order, with what parameters).
 
@@ -342,7 +504,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 13. LLM Error Recovery (Retry with Corrective Prompting)
+### [x] LLM Error Recovery (Retry with Corrective Prompting)
 
 **What it is:** When a tool call fails or returns an error, feeding the error message back to the LLM with guidance on how to fix it, rather than crashing or retrying blindly.
 
@@ -372,7 +534,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 > Advanced patterns that emerge at production scale. These are refinements and optimizations, not prerequisites.
 
-### [x] 14. Tool Description Engineering
+### [x] Tool Description Engineering
 
 **What it is:** Writing tool descriptions not just as documentation but as behavioral instructions that coach the LLM on when, why, and how to use each tool. Including constraints, anti-patterns, and usage guidance directly in the schema.
 
@@ -400,7 +562,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 15. Dual Return Pattern (Content + Artifact)
+### [x] Dual Return Pattern (Content + Artifact)
 
 **What it is:** A tool returning two separate things: a concise text summary for the LLM (saves tokens), and a full structured data object for the UI to render directly (tables, charts, cards).
 
@@ -426,7 +588,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 16. Query Builder Pattern (Structured Input → Safe Query)
+### [x] Query Builder Pattern (Structured Input → Safe Query)
 
 **What it is:** Instead of letting the LLM write raw queries (SQL, PromQL, etc.), providing a tool that accepts structured parameters and constructs the query server-side.
 
@@ -453,7 +615,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 17. Structured Entity Tags in LLM Output
+### [x] Structured Entity Tags in LLM Output
 
 **What it is:** Instructing the LLM to wrap entity references in XML/JSX-like tags within its natural language response. The UI parses these and renders them as interactive, clickable elements.
 
@@ -479,7 +641,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 18. Prompt Injection Detection
+### [x] Prompt Injection Detection
 
 **What it is:** Checking user input for attempts to manipulate the LLM's behavior through injected instructions, before passing the input to the agent.
 
@@ -507,7 +669,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 19. Self-Instrumentation (Agent Observability)
+### [x] Self-Instrumentation (Agent Observability)
 
 **What it is:** The agent emitting traces, metrics, and logs about its own execution — which nodes ran, how long each took, which tools were called, token counts, error rates.
 
@@ -535,7 +697,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 20. Cost Tracking & Model Tier Selection
+### [x] Cost Tracking & Model Tier Selection
 
 **What it is:** Using different LLM models for different tasks within the same agent, based on task complexity, and tracking per-request costs.
 
@@ -567,7 +729,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 > Patterns that emerge when agents move from single-user chat into production infrastructure: multi-platform deployment, sandboxed execution, dynamic integrations, and autonomous workflows.
 
-### [x] 21. Declarative Plan Execution Tool
+### [x] Declarative Plan Execution Tool
 
 **What it is:** A "meta-tool" where the LLM specifies a multi-step plan declaratively in a single tool call — a step list with tool names, arguments, and `$ref`-style cross-step data references. A deterministic runtime executor resolves references between steps, runs them sequentially, and returns all results at once. The LLM plans; the runtime executes.
 
@@ -594,7 +756,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 22. On-Demand Skill Injection
+### [x] On-Demand Skill Injection
 
 **What it is:** Instead of putting all workflow instructions in static tool descriptions, the agent has a `getSkill` tool it calls at runtime to retrieve step-by-step instructions for complex multi-tool procedures. Skills are named bundles of `{ instructions, tools[] }`, dynamically filtered to only include skills whose required tools are present in the current session.
 
@@ -621,7 +783,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 23. Self-Validation Tool (Agent QA Gate)
+### [x] Self-Validation Tool (Agent QA Gate)
 
 **What it is:** A dedicated validation tool the agent calls to check artifacts it produced before delivering them to the user. The tool takes the generated content (e.g., a YAML dashboard definition), validates it against a schema, and returns `{ valid, message, errors[] }`. This creates a self-imposed QA gate within the reasoning loop — the agent checks its own work.
 
@@ -648,7 +810,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 24. Post-Conversation Metadata Generation
+### [x] Post-Conversation Metadata Generation
 
 **What it is:** After the main agent response, a separate lightweight LLM call produces typed metadata: thread name, follow-up suggestions, request classification, and security flags. This runs as a parallel post-processing node using a cheaper model. Results are stored as typed metadata messages that don't appear in the conversation but are used by the UI (suggestions as clickable chips) and observability (security flags as OTel attributes).
 
@@ -676,7 +838,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [x] 25. Agent-Authored TODO Lists (Persistent Reasoning Scaffold)
+### [x] Agent-Authored TODO Lists (Persistent Reasoning Scaffold)
 
 **What it is:** A `todoWrite` tool lets the agent create and update a structured TODO list during multi-step reasoning. Unlike the one-shot Reasoning Tool pattern (concept #3), this persists across many tool calls as a running work-breakdown tracker. The TODO list renders as a live progress indicator in the UI, is excluded from conversation summarization, and is depth-gated (sub-agents don't get their own lists).
 
@@ -704,7 +866,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 26. Ambient Context Store (UI-Driven Context Injection)
+### [ ] Ambient Context Store (UI-Driven Context Injection)
 
 **What it is:** Any UI component that displays domain data (a service sidebar, a chart, a trace explorer) can register contextual data that gets automatically included in the agent's next prompt. Uses reference counting: mounting a component adds context, unmounting removes it. Active contexts appear as chips the user can individually exclude. When the user submits a prompt, accumulated contexts are serialized as structured tags injected into the message.
 
@@ -732,7 +894,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 27. Cross-Platform Response Rendering
+### [ ] Cross-Platform Response Rendering
 
 **What it is:** The agent produces output containing structured tags (MDX/JSX like `<Service name="checkout" />`). Different platforms (web UI, Slack, Linear) need different renderings. An AST-based converter parses the output, walks the tree, and dispatches tag-specific handlers to produce platform-appropriate formats — Slack Block Kit, markdown links, or interactive React components.
 
@@ -760,7 +922,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 28. External Event-Triggered Agent (Webhook-Driven)
+### [ ] External Event-Triggered Agent (Webhook-Driven)
 
 **What it is:** The agent is triggered not by a human typing in a UI but by webhooks from external platforms (Slack, Linear, etc.). This involves: HMAC signature verification of the raw request body, immediate ACK within the platform's timeout window (Slack: 3s, Linear: 5s), async background processing, user identity resolution from the webhook payload, response posting back to the platform, and per-session promise queue serialization for concurrent events. Includes live progress broadcasting with throttled heartbeats to keep external platforms from timing out.
 
@@ -788,7 +950,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 29. Sandboxed Code Execution with Worker Pool
+### [ ] Sandboxed Code Execution with Worker Pool
 
 **What it is:** Running AI agent code inside isolated cloud sandbox VMs. Includes: a pre-warmed pool of ready sandboxes (pop in O(1), replenish in background), thread-bound affinity (same sandbox reused for same conversation), a token-scoped API proxy (revocable short-lived tokens instead of real credentials inside the sandbox), and a CLI bridge for tool invocation across process boundaries (CLI subprocess → WebSocket → orchestrator).
 
@@ -816,7 +978,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 30. Tool Bundle System (Dynamic Tool Availability)
+### [ ] Tool Bundle System (Dynamic Tool Availability)
 
 **What it is:** Tool sets that are conditionally available based on per-user/per-org OAuth integrations. Three-layer architecture: global bundle config (static code/YAML), org-level enablement (database flag), and session-specific credentials (per-request lazy-loaded OAuth tokens). The agent's available tool set changes at runtime based on what integrations the user has configured — without changing the graph code.
 
@@ -844,52 +1006,58 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-## Progress Tracking
+### [ ] MCP (Model Context Protocol)
 
-| #   | Concept                           | Tier | Status  |
-| --- | --------------------------------- | ---- | ------- |
-| 1   | Multi-Turn Conversation Memory    | 1    | Done    |
-| 2   | Structured Output (JSON Mode)     | 1    | Done    |
-| 3   | Reasoning Tool Pattern            | 1    | Done    |
-| 4   | Guardrails & Circuit Breakers     | 1    | Done    |
-| 5   | State Graph                       | 2    | Done    |
-| 6   | Context Window Management         | 2    | Done    |
-| 7   | Multi-Agent Routing               | 2    | Done    |
-| 8   | Sub-Agent Delegation              | 2    | Done    |
-| 9   | Streaming Responses (SSE)         | 3    | Done    |
-| 10  | RAG                               | 3    | Done    |
-| 11  | Prompt Caching                    | 3    | Done    |
-| 12  | Evaluation with Mocked Tools      | 3    | Done    |
-| 13  | LLM Error Recovery                | 3    | Done    |
-| 14  | Tool Description Engineering      | 4    | Done    |
-| 15  | Dual Return Pattern               | 4    | Done    |
-| 16  | Query Builder Pattern             | 4    | Done    |
-| 17  | Structured Entity Tags            | 4    | Done    |
-| 18  | Prompt Injection Detection        | 4    | Done    |
-| 19  | Self-Instrumentation              | 4    | Done    |
-| 20  | Cost Tracking & Model Selection   | 4    | Done    |
-| 21  | Declarative Plan Execution Tool   | 5    | Done    |
-| 22  | On-Demand Skill Injection         | 5    | Done    |
-| 23  | Self-Validation Tool (QA Gate)    | 5    | Done    |
-| 24  | Post-Conversation Metadata        | 5    | Done    |
-| 25  | Agent TODO Lists (Scaffold)       | 5    | Done    |
-| 26  | Ambient Context Store             | 5    | Pending |
-| 27  | Cross-Platform Response Rendering | 5    | Pending |
-| 28  | External Event-Triggered Agent    | 5    | Pending |
-| 29  | Sandboxed Code Execution          | 5    | Pending |
-| 30  | Tool Bundle System                | 5    | Pending |
+**What it is:** A standardized protocol for connecting agents to external tools and data sources dynamically. MCP defines how agents discover available tools, negotiate capabilities, and invoke them over a transport layer — making tool integrations portable across agent frameworks rather than hardcoded per-provider.
+
+**Why it matters:** Without a standard protocol, every agent framework has its own tool integration format. MCP is becoming the USB-C of agent tooling — a universal connector that lets any MCP-compatible agent use any MCP-compatible tool server. This matters for ecosystem growth: tool authors write one MCP server, and it works with Claude, OpenAI agents, LangChain, and any other MCP client.
+
+**Session brief:** Build a simple MCP server that exposes 2-3 tools (e.g., a recipe database and a unit converter). Build an MCP client that discovers available tools at startup, presents them to the agent, and routes tool calls to the server. Show the agent using tools it didn't know about at compile time — discovered dynamically via MCP. Compare with the static tool registration approach used in earlier concepts.
+
+**Key ideas to cover:**
+
+- MCP architecture: client, server, transport (stdio, HTTP+SSE)
+- Tool discovery: server advertises capabilities, client registers them
+- Dynamic vs. static tool registration
+- Server lifecycle: initialize, list tools, call tool, shutdown
+- When MCP adds value (multi-tool ecosystems) vs. overhead (single-tool agents)
+- Relationship to Tool Bundles: MCP is the protocol, bundles are the access control layer
+
+**Blog angle:** "The USB-C of Agent Tools — Building with Model Context Protocol"
+
+**Sources:**
+
+- [Model Context Protocol — Specification](https://modelcontextprotocol.io/) — the official MCP spec and documentation
+- [Introducing the Model Context Protocol](https://www.anthropic.com/news/model-context-protocol) — Anthropic, 2024 — announcement and motivation
+- [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) — official TypeScript client/server implementation
+- [OpenAI adopts MCP](https://openai.com/index/adding-mcp-support/) — OpenAI, 2025 — cross-vendor adoption signal
 
 ---
 
-## Suggested Learning Order
+### [ ] Long-Running Agents & Checkpointing
 
-The tier order works, but within tiers you can jump around based on interest. One recommended path:
+**What it is:** Agents that execute tasks spanning minutes or hours — not just request-response cycles. Includes state checkpointing (persisting agent state so it can resume after crashes), progress reporting, cancellation support, and resource cleanup. The agent survives process restarts and picks up where it left off.
 
-1. **Tier 1** (1 → 2 → 3 → 4) — these build directly on each other
-2. **Concepts 12 → 13** (evals and error recovery) — immediately practical
-3. **Tier 2** (5 → 6 → 7 → 8) — the architectural leap
-4. **Concepts 9 → 10 → 11** (streaming, RAG, caching) — production infrastructure
-5. **Tier 4** (any order) — pick what interests you
-6. **Tier 5** — recommended order: 21 → 23 → 25 → 22 → 24 → 26 → 30 → 27 → 28 → 29 (agent-side patterns first, then UI/platform, then infrastructure)
+**Why it matters:** Many valuable agent tasks — code migrations, large data processing, multi-step research — take longer than a single request-response cycle. Without checkpointing, a crash at step 47 of 50 means starting over. Long-running agent infrastructure makes ambitious tasks feasible and reliable.
 
-Each concept is designed to be completable in a single focused session: build the example, run it, write the blog post.
+**Builds on:** State Graph
+
+**Session brief:** Build an agent that processes a list of 20 items (e.g., migrating recipe records from one format to another). Implement state checkpointing: after each item, persist the agent's progress to disk. Kill the process mid-run and restart — show it resuming from the last checkpoint. Add cancellation support (graceful shutdown on SIGINT) and a progress reporter that emits completion percentage.
+
+**Key ideas to cover:**
+
+- Checkpoint serialization: what state to persist (conversation history, current step, intermediate results)
+- Resume logic: detecting incomplete runs and continuing from last checkpoint
+- Idempotency: ensuring resumed steps don't double-execute
+- Progress reporting: emitting structured progress events
+- Cancellation: graceful shutdown with cleanup
+- Timeout and watchdog: detecting stuck agents
+
+**Blog angle:** "Agents That Survive Crashes — Checkpointing for Long-Running AI Tasks"
+
+**Sources:**
+
+- [LangGraph Persistence](https://langchain-ai.github.io/langgraph/concepts/persistence/) — checkpointing graph state with checkpointers (memory, SQLite, Postgres)
+- [Durable Execution — Temporal](https://temporal.io/how-temporal-works) — the canonical durable execution runtime; crash-resilient workflows with automatic replay
+- [Inngest — Durable Functions](https://www.inngest.com/docs/features/inngest-functions/steps-workflows) — step-based durable execution with automatic retries and state persistence
+- [Google ADK — Long-Running Agents](https://google.github.io/adk-docs/sessions/) — session-based state management with checkpointing for multi-turn agent tasks

@@ -119,7 +119,7 @@ export const ConversationMetadataSchema = z.object({
 export const METADATA_JSON_SCHEMA = z.toJSONSchema(ConversationMetadataSchema);
 ```
 
-The JSON Schema goes directly into Ollama's `format` parameter. Constrained decoding compiles the schema into a grammar and enforces it at the token level — the model physically cannot produce output that violates the schema. This is the same pattern from [Concept 8 — Structured Output](../structured-output/README.md), applied to a different use case.
+The JSON Schema goes directly into Ollama's `format` parameter. Constrained decoding compiles the schema into a grammar and enforces it at the token level — the model physically cannot produce output that violates the schema. This is the same pattern from [Structured Output](../structured-output/README.md), applied to a different use case.
 
 We still run `safeParse()` as belt-and-suspenders validation:
 

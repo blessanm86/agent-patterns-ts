@@ -1,6 +1,6 @@
 # LLM Error Recovery — Retry with Corrective Prompting
 
-> **Concept 13 of 20** — builds on [Guardrails & Circuit Breakers](../guardrails/README.md), which taught _when to stop_. This post teaches _how to recover_.
+> Builds on [Guardrails & Circuit Breakers](../guardrails/README.md), which taught _when to stop_. This post teaches _how to recover_.
 
 ---
 

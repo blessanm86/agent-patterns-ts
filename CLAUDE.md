@@ -114,6 +114,22 @@ Synthesize findings before starting implementation. Key things to extract:
 - Where providers/frameworks disagree — these disagreements are worth surfacing in the README
 - Failure modes and anti-patterns practitioners have encountered in production
 
+**0.5. Assess: single concept or topic decomposition**
+
+After synthesizing research, evaluate whether the topic should remain a single concept or split into multiple sub-concepts:
+
+- **Keep as one** when variations are nuances — different vendor implementations of the same core idea, minor technique differences, or tradeoffs best understood in contrast. Document these in the README.
+- **Split into sub-concepts** when research reveals fundamentally different approaches that have their own distinct architecture, mental model, or implementation worth exploring independently.
+
+Signals that a split is warranted:
+
+- The approaches solve the same high-level problem but in incompatible ways
+- A reader would need to "unlearn" one approach to understand the other
+- Each variant has enough depth for its own demo + README
+- Combining them into one README would require constant "but if you're using X instead..." context-switching
+
+**When splitting: update the LEARNING_ROADMAP.md with the new sub-concept entries (e.g. "Harness Engineering — OpenCode", "Harness Engineering — Claude Code") and stop.** Do not continue to implementation. The user will clear context and kick off each sub-concept in its own session using the normal flow. This keeps each session focused and avoids context bloat that degrades output quality.
+
 **1. Decide: extend an existing demo or create a new one**
 
 - **Extend** if the concept is a small additive change that doesn't obscure how the original works (e.g. adding a guardrail to the ReAct loop)
@@ -180,15 +196,15 @@ Models with good tool-call support: `qwen2.5:7b`, `qwen2.5:14b`, `llama3.1:8b`, 
 
 ### AI Labs — Tiered Reference List
 
-Use this list when researching concepts. Prioritize by tier — S and A tier should always be checked, B tier when they have relevant work, C/D tier for unique angles.
+Use this list when researching concepts. All tiers must be researched and distilled — not just S/A. Every tier brings unique perspectives worth capturing.
 
-| Tier                                           | Labs                                                                      | Notes                                  |
-| ---------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------- |
-| **S** — Dominating leaders                     | DeepMind, OpenAI, Anthropic                                               | Always research these                  |
-| **A** — Other leaders with clear dominance     | xAI, Tongyi Qianwen (Alibaba)                                             | Always research these                  |
-| **B** — Strong contenders with SOTA releases   | DeepSeek, Moonshot (Kimi), Zhipu AI (GLM), Baidu (ERNIE)                  | Check for relevant work                |
-| **C** — Some major advantages giving potential | Meta AI (LLaMA), Nvidia (NeMo), Microsoft (Phi), Tencent AI Lab (Hunyuan) | Spot-check for unique angles           |
-| **D** — Behind but promising                   | Amazon AGI Lab (Nova), MiniMax, Mistral AI                                | Check when they have relevant features |
+| Tier                                           | Labs                                                                      | Notes                       |
+| ---------------------------------------------- | ------------------------------------------------------------------------- | --------------------------- |
+| **S** — Dominating leaders                     | DeepMind, OpenAI, Anthropic                                               | Always research and distill |
+| **A** — Other leaders with clear dominance     | xAI, Tongyi Qianwen (Alibaba)                                             | Always research and distill |
+| **B** — Strong contenders with SOTA releases   | DeepSeek, Moonshot (Kimi), Zhipu AI (GLM), Baidu (ERNIE)                  | Always research and distill |
+| **C** — Some major advantages giving potential | Meta AI (LLaMA), Nvidia (NeMo), Microsoft (Phi), Tencent AI Lab (Hunyuan) | Always research and distill |
+| **D** — Behind but promising                   | Amazon AGI Lab (Nova), MiniMax, Mistral AI                                | Always research and distill |
 
 ### Demo Domain Preferences
 

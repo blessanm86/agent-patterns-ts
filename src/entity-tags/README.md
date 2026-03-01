@@ -1,6 +1,6 @@
 # Making AI Output Clickable — Structured Entity Tags in LLM Responses
 
-[Agent Patterns — TypeScript](../../README.md) · Concept 17 — builds on [Query Builder Pattern](../query-builder/README.md)
+[Agent Patterns — TypeScript](../../README.md) · Builds on [Query Builder Pattern](../query-builder/README.md)
 
 ---
 

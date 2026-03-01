@@ -1,6 +1,6 @@
 # Teaching Your Agent to Read the Docs — RAG from Scratch
 
-[Agent Patterns — TypeScript](../../README.md) · Concept 10 of 20
+[Agent Patterns — TypeScript](../../README.md)
 
 > **Previous concept:** [Streaming Responses](../streaming/README.md) — delivering agent output token-by-token via SSE. This concept moves from _how_ the agent speaks to _what_ it knows, grounding answers in actual documentation instead of hallucinated knowledge.
 
@@ -127,7 +127,7 @@ RRF is elegant because it doesn't need to normalize scores between different sea
 
 ## The Agent Loop
 
-The agent uses the same ReAct loop from [Concept 1](../react/README.md), with one key addition: two system prompts that swap based on whether RAG is enabled.
+The agent uses the same ReAct loop from [ReAct](../react/README.md), with one key addition: two system prompts that swap based on whether RAG is enabled.
 
 **RAG-enabled prompt:**
 

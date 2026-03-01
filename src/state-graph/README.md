@@ -1,6 +1,6 @@
 # From While Loop to State Graph — Refactoring an AI Agent
 
-[Agent Patterns — TypeScript](../../README.md) · Concept 5
+[Agent Patterns — TypeScript](../../README.md)
 
 ---
 
@@ -97,7 +97,7 @@ function routeAfterThink(state: AgentState): string {
 
 Same hotel reservation agent. Same behavior. Different structure.
 
-**While Loop** (from [Concept 4 — Guardrails](../guardrails/README.md)):
+**While Loop** (from [Guardrails](../guardrails/README.md)):
 
 ```typescript
 while (true) {

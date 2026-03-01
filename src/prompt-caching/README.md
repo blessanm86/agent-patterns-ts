@@ -1,6 +1,6 @@
 # The Cheapest Optimization You're Not Using — Prompt Caching
 
-[Agent Patterns — TypeScript](../../README.md) · Concept 11 of 20
+[Agent Patterns — TypeScript](../../README.md)
 
 > **Previous concept:** [RAG](../rag/README.md) — grounding answers in retrieved documentation. This concept shifts from _what_ goes into the prompt to _how efficiently_ that prompt gets processed, because most of your prompt is identical on every request.
 

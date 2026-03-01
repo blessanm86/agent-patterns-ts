@@ -170,7 +170,7 @@ Same tool calls, same result — but during execution you have no visibility int
 
 ## Contrast with the Reasoning Tool
 
-This concept pairs with [Concept 3 — Reasoning Tool](../reasoning-tool/README.md), but they serve fundamentally different purposes:
+This concept pairs with [Reasoning Tool](../reasoning-tool/README.md), but they serve fundamentally different purposes:
 
 | Dimension                  | Reasoning Tool                   | TODO Lists                                |
 | -------------------------- | -------------------------------- | ----------------------------------------- |

@@ -25,7 +25,7 @@ Self-validation is a dedicated tool the agent calls to verify artifacts it gener
                     └────────────┘
 ```
 
-This is distinct from [LLM Error Recovery](../error-recovery/README.md) (concept #7), where an _external_ tool fails and the agent retries. Here, the agent _proactively_ checks its own generation against a known-good schema.
+This is distinct from [LLM Error Recovery](../error-recovery/README.md), where an _external_ tool fails and the agent retries. Here, the agent _proactively_ checks its own generation against a known-good schema.
 
 ## Why This Matters: Intrinsic vs. Tool-Augmented Correction
 
@@ -122,7 +122,7 @@ BEFORE delivering it to the user. If validation fails, fix the errors
 and re-validate until it passes.
 ```
 
-This is instruction via tool description — the same pattern from [Tool Description Engineering](../tool-descriptions/README.md) (concept #16). The system prompt reinforces it, but the tool description is what the model actually references during tool selection.
+This is instruction via tool description — the same pattern from [Tool Description Engineering](../tool-descriptions/README.md). The system prompt reinforces it, but the tool description is what the model actually references during tool selection.
 
 ### Two Modes: Validated vs. One-Shot
 

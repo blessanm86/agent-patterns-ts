@@ -1,6 +1,6 @@
 # Promise.all() for AI — Delegating Work to Sub-Agents
 
-[Agent Patterns — TypeScript](../../README.md) · Concept 8 of 20
+[Agent Patterns — TypeScript](../../README.md)
 
 > **Previous concept:** [Multi-Agent Routing](../multi-agent-routing/README.md) — picking ONE specialist per query. This concept extends that: when a query needs ALL the specialists at once.
 
@@ -8,7 +8,7 @@
 
 "Plan a weekend trip to Portland from Seattle."
 
-The router from Concept 7 would route this to... which agent? Flights? Hotels? Activities? It needs all three. A single routing decision can't decompose a multi-domain task — it can only pick one specialist or fall back to a generalist with all 30 tools.
+The router from [Multi-Agent Routing](../multi-agent-routing/README.md) would route this to... which agent? Flights? Hotels? Activities? It needs all three. A single routing decision can't decompose a multi-domain task — it can only pick one specialist or fall back to a generalist with all 30 tools.
 
 Sub-agent delegation solves this. A **parent agent** decomposes the task, spawns **child agents** in parallel, and synthesizes a unified itinerary from their results. It's `Promise.all()` for AI work.
 
@@ -194,7 +194,7 @@ Three parallel children = ~3-5 seconds total (limited by the slowest child, not 
 
 ## Routing vs. Delegation vs. Single Agent
 
-|                      | Single Agent           | Routing (Concept 7)   | Delegation (this)               |
+|                      | Single Agent           | Routing               | Delegation (this)               |
 | -------------------- | ---------------------- | --------------------- | ------------------------------- |
 | **Tools per turn**   | All 30                 | 2-4 (specialist)      | 2-4 per child                   |
 | **Domains per turn** | 1 (confused with many) | 1 (routed)            | N (parallel children)           |
@@ -204,13 +204,13 @@ Three parallel children = ~3-5 seconds total (limited by the slowest child, not 
 
 The three patterns compose naturally. A production system might:
 
-1. **Route** simple queries to a specialist (Concept 7)
+1. **Route** simple queries to a specialist ([Multi-Agent Routing](../multi-agent-routing/README.md))
 2. **Delegate** complex queries to multiple specialists (this concept)
-3. Each specialist runs a **ReAct loop** with scoped tools (Concept 1)
+3. Each specialist runs a **ReAct loop** with scoped tools ([ReAct](../react/README.md))
 
-## Reusing Concept 7's Profiles
+## Reusing Multi-Agent Routing's Profiles
 
-The specialist profiles from Concept 7 ARE the child agents. No duplication:
+The specialist profiles from Multi-Agent Routing ARE the child agents. No duplication:
 
 ```typescript
 import { getProfileByName } from "../multi-agent-routing/profiles.js";
@@ -227,7 +227,7 @@ function getChildProfile(agentName: string): AgentProfile {
 }
 ```
 
-This is the composability payoff from Concept 7's `AgentProfile` interface. The same profiles work for routing (pick one) and delegation (spawn many).
+This is the composability payoff from Multi-Agent Routing's `AgentProfile` interface. The same profiles work for routing (pick one) and delegation (spawn many).
 
 ## Key Takeaways
 

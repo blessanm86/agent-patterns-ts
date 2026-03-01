@@ -1,6 +1,6 @@
 # Two Returns, One Tool — How to Feed Your LLM Less and Get Better Results
 
-[Agent Patterns — TypeScript](../../README.md) · Concept 15 of 20
+[Agent Patterns — TypeScript](../../README.md)
 
 > **Previous concept:** [Tool Description Engineering](../tool-descriptions/README.md) — writing tool descriptions that coach the model on when, why, and how to call each tool. This concept tackles what comes back from those tool calls, because most of that data never needed to enter the LLM's context in the first place.
 
@@ -239,7 +239,7 @@ This pattern sits at the intersection of two concerns:
 
 - **[Context Window Management](../context-management/README.md)** addresses the same token pressure problem from a different angle — what to do when the conversation grows too long. Dual return prevents the growth in the first place by never injecting unnecessary data. These are complementary: use dual return to keep tool results lean, and context management to handle the conversation history that accumulates over many turns.
 
-- **Observation masking** (covered in concept 6) clears tool results _after_ the LLM has already processed them. Dual return is more efficient — the full data never enters the context at all. Think of it as "observation masking at the source."
+- **Observation masking** (covered in [Context Window Management](../context-management/README.md)) clears tool results _after_ the LLM has already processed them. Dual return is more efficient — the full data never enters the context at all. Think of it as "observation masking at the source."
 
 ## Key Takeaways
 

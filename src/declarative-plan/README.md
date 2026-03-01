@@ -1,6 +1,6 @@
 # One Tool Call to Rule Them All — Declarative Plan Execution for AI Agents
 
-[Agent Patterns — TypeScript](../../README.md) · Concept 21
+[Agent Patterns — TypeScript](../../README.md)
 
 > **Previous concept:** [Cost Tracking & Model Tier Selection](../cost-tracking/README.md) — routing requests to the cheapest model that can handle them. This concept tackles a different kind of cost: the unnecessary LLM round-trips between tool calls when the agent already knows the full sequence it needs.
 

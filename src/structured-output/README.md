@@ -1,6 +1,6 @@
 # Structured Output (JSON Mode)
 
-> **Concept 2 of 20** — a Tier 1 foundation. Many later concepts (Multi-Agent Routing, Plan+Execute, Reasoning Tool) depend on getting reliable structured data from an LLM. This post covers the core technique.
+> A Tier 1 foundation. Many later concepts (Multi-Agent Routing, Plan+Execute, Reasoning Tool) depend on getting reliable structured data from an LLM. This post covers the core technique.
 
 ---
 
