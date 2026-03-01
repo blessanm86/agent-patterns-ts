@@ -3,5 +3,5 @@ dist/
 .env
 .idea/
 memory/
-.claude/
+.claude/settings.local.json
 .research/
