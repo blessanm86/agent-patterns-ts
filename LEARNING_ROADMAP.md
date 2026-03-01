@@ -676,7 +676,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 
 ---
 
-### [ ] 25. Agent-Authored TODO Lists (Persistent Reasoning Scaffold)
+### [x] 25. Agent-Authored TODO Lists (Persistent Reasoning Scaffold)
 
 **What it is:** A `todoWrite` tool lets the agent create and update a structured TODO list during multi-step reasoning. Unlike the one-shot Reasoning Tool pattern (concept #3), this persists across many tool calls as a running work-breakdown tracker. The TODO list renders as a live progress indicator in the UI, is excluded from conversation summarization, and is depth-gated (sub-agents don't get their own lists).
 
@@ -872,7 +872,7 @@ A structured list of 30 concepts for building production-grade AI agents, organi
 | 22  | On-Demand Skill Injection         | 5    | Done    |
 | 23  | Self-Validation Tool (QA Gate)    | 5    | Done    |
 | 24  | Post-Conversation Metadata        | 5    | Done    |
-| 25  | Agent TODO Lists (Scaffold)       | 5    | Pending |
+| 25  | Agent TODO Lists (Scaffold)       | 5    | Done    |
 | 26  | Ambient Context Store             | 5    | Pending |
 | 27  | Cross-Platform Response Rendering | 5    | Pending |
 | 28  | External Event-Triggered Agent    | 5    | Pending |

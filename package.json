@@ -40,6 +40,8 @@
     "dev:self-validation:one-shot": "tsx src/self-validation/index.ts --one-shot",
     "dev:post-conversation-metadata": "tsx src/post-conversation-metadata/index.ts",
     "dev:post-conversation-metadata:no-metadata": "tsx src/post-conversation-metadata/index.ts --no-metadata",
+    "dev:todo-lists": "tsx src/todo-lists/index.ts",
+    "dev:todo-lists:no-todos": "tsx src/todo-lists/index.ts --no-todos",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
