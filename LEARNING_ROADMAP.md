@@ -10,50 +10,57 @@ A structured list of concepts for building production-grade AI agents, organized
 
 ## Progress Tracking
 
-| Concept                                   | Status  | Builds on                                    |
-| ----------------------------------------- | ------- | -------------------------------------------- |
-| Multi-Turn Conversation Memory            | Done    |                                              |
-| Structured Output (JSON Mode)             | Done    |                                              |
-| Reasoning Tool Pattern                    | Done    | Structured Output                            |
-| Guardrails & Circuit Breakers             | Done    |                                              |
-| Evaluation with Mocked Tools              | Done    |                                              |
-| LLM Error Recovery                        | Done    |                                              |
-| State Graph                               | Done    | ReAct Loop                                   |
-| Context Window Management                 | Done    | Multi-Turn Memory                            |
-| Multi-Agent Routing                       | Done    |                                              |
-| Sub-Agent Delegation                      | Done    | Multi-Agent Routing                          |
-| Streaming Responses (SSE)                 | Done    |                                              |
-| RAG                                       | Done    |                                              |
-| Prompt Caching                            | Done    |                                              |
-| Tool Description Engineering              | Done    |                                              |
-| Dual Return Pattern                       | Done    |                                              |
-| Query Builder Pattern                     | Done    |                                              |
-| Structured Entity Tags                    | Done    |                                              |
-| Prompt Injection Detection                | Done    |                                              |
-| Self-Instrumentation                      | Done    |                                              |
-| Cost Tracking & Model Selection           | Done    |                                              |
-| Declarative Plan Execution Tool           | Done    | Plan+Execute                                 |
-| On-Demand Skill Injection                 | Done    | Tool Description Engineering                 |
-| Self-Validation Tool (QA Gate)            | Done    | LLM Error Recovery                           |
-| Post-Conversation Metadata                | Done    |                                              |
-| Agent TODO Lists (Scaffold)               | Done    |                                              |
-| Human-in-the-Loop                         | Done    | Guardrails                                   |
-| Persistent Cross-Session Memory           | Done    | Multi-Turn Memory, Context Window Management |
-| Agentic RAG                               | Pending | RAG                                          |
-| Multi-Modal Agents                        | Pending |                                              |
-| Ambient Context Store                     | Pending | Structured Entity Tags                       |
-| Cross-Platform Response Rendering         | Pending | Structured Entity Tags                       |
-| MCP (Model Context Protocol)              | Pending |                                              |
-| Tool Bundle System                        | Pending |                                              |
-| External Event-Triggered Agent            | Pending | Streaming                                    |
-| Sandboxed Code Execution                  | Pending |                                              |
-| Long-Running Agents & Checkpointing       | Pending | State Graph                                  |
-| In-Band Metadata via Streaming Sentinel   | Pending | Streaming, Structured Output                 |
-| Sandboxed CLI Tool Bridge                 | Pending | Sandboxed Code Execution                     |
-| Stateless Agent with History Re-Injection | Pending | Multi-Turn Memory, Context Window Management |
-| Sub-Agent Event Demultiplexing            | Pending | Sub-Agent Delegation, Streaming              |
-| Tool-Response Reminder Injection          | Pending | Tool Description Engineering                 |
-| Ordered Precondition Evaluation           | Pending | Evaluation with Mocked Tools                 |
+| Concept                                   | Status  | Builds on                                                  |
+| ----------------------------------------- | ------- | ---------------------------------------------------------- |
+| Multi-Turn Conversation Memory            | Done    |                                                            |
+| Structured Output (JSON Mode)             | Done    |                                                            |
+| Reasoning Tool Pattern                    | Done    | Structured Output                                          |
+| Guardrails & Circuit Breakers             | Done    |                                                            |
+| Evaluation with Mocked Tools              | Done    |                                                            |
+| LLM Error Recovery                        | Done    |                                                            |
+| State Graph                               | Done    | ReAct Loop                                                 |
+| Context Window Management                 | Done    | Multi-Turn Memory                                          |
+| Multi-Agent Routing                       | Done    |                                                            |
+| Sub-Agent Delegation                      | Done    | Multi-Agent Routing                                        |
+| Streaming Responses (SSE)                 | Done    |                                                            |
+| RAG                                       | Done    |                                                            |
+| Prompt Caching                            | Done    |                                                            |
+| Tool Description Engineering              | Done    |                                                            |
+| Dual Return Pattern                       | Done    |                                                            |
+| Query Builder Pattern                     | Done    |                                                            |
+| Structured Entity Tags                    | Done    |                                                            |
+| Prompt Injection Detection                | Done    |                                                            |
+| Self-Instrumentation                      | Done    |                                                            |
+| Cost Tracking & Model Selection           | Done    |                                                            |
+| Declarative Plan Execution Tool           | Done    | Plan+Execute                                               |
+| On-Demand Skill Injection                 | Done    | Tool Description Engineering                               |
+| Self-Validation Tool (QA Gate)            | Done    | LLM Error Recovery                                         |
+| Post-Conversation Metadata                | Done    |                                                            |
+| Agent TODO Lists (Scaffold)               | Done    |                                                            |
+| Human-in-the-Loop                         | Done    | Guardrails                                                 |
+| Persistent Cross-Session Memory           | Done    | Multi-Turn Memory, Context Window Management               |
+| Agentic RAG                               | Pending | RAG                                                        |
+| Multi-Modal Agents                        | Pending |                                                            |
+| Ambient Context Store                     | Pending | Structured Entity Tags                                     |
+| Cross-Platform Response Rendering         | Pending | Structured Entity Tags                                     |
+| MCP (Model Context Protocol)              | Pending |                                                            |
+| Tool Bundle System                        | Pending |                                                            |
+| External Event-Triggered Agent            | Pending | Streaming                                                  |
+| Sandboxed Code Execution                  | Pending |                                                            |
+| Long-Running Agents & Checkpointing       | Pending | State Graph                                                |
+| In-Band Metadata via Streaming Sentinel   | Pending | Streaming, Structured Output                               |
+| Sandboxed CLI Tool Bridge                 | Pending | Sandboxed Code Execution                                   |
+| Stateless Agent with History Re-Injection | Pending | Multi-Turn Memory, Context Window Management               |
+| Sub-Agent Event Demultiplexing            | Pending | Sub-Agent Delegation, Streaming                            |
+| Tool-Response Reminder Injection          | Pending | Tool Description Engineering                               |
+| Ordered Precondition Evaluation           | Pending | Evaluation with Mocked Tools                               |
+| Agent Middleware Pipeline                 | Pending | ReAct Loop                                                 |
+| Observational Memory                      | Pending | Persistent Cross-Session Memory, Context Window Management |
+| Dynamic Tool Selection                    | Pending | Tool Description Engineering                               |
+| Event Sourcing for Agents                 | Pending | State Graph                                                |
+| Test-Time Compute Scaling                 | Pending | Cost Tracking & Model Selection, Self-Validation Tool      |
+| Multi-Agent Coordination Topologies       | Pending | Multi-Agent Routing, Sub-Agent Delegation                  |
+| A2A Protocol (Agent-to-Agent)             | Pending | MCP                                                        |
 
 The table order is the recommended learning progression. Start from the top; the **Builds on** column shows prerequisites.
 
@@ -336,6 +343,34 @@ Each concept is designed to be completable in a single focused session: build th
 - [ReDel: A Toolkit for LLM-Powered Recursive Multi-Agent Systems](https://www.cis.upenn.edu/~ccb/publications/recursive-multi-agent-llms.pdf) — Zhu et al. (UPenn), ACL 2024 — directly addresses recursive sub-agent spawning with depth control
 - [Plan-and-Solve Prompting](https://arxiv.org/abs/2305.04091) — Wang et al., ACL 2023 — academic origin of the Plan-and-Execute pattern (decompose → delegate → synthesize)
 - [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) — production successor to Swarm with handoff patterns
+
+---
+
+### [ ] Agent Middleware Pipeline (Composable Execution Hooks)
+
+**What it is:** A middleware system for the agent execution loop where composable, ordered interceptors hook into `before_agent` and `after_agent` points. Each middleware can modify, filter, or augment the agent's behavior without changing the core loop — summarization, human-in-the-loop approval, PII redaction, tool retry, model fallback, sub-agent delegation, and context editing all plug in as independent, reusable middleware.
+
+**Why it matters:** Production agents accumulate cross-cutting concerns: logging, rate limiting, error retry, content filtering, context management. Without middleware, these get tangled into the agent loop as ad-hoc if-statements. A middleware pipeline makes each concern composable, testable, and reorderable — the Express.js/Koa pattern applied to agent execution.
+
+**Session brief:** Build a middleware system for the existing ReAct agent. Define a `Middleware` interface with `beforeAgent(state)` and `afterAgent(state)` hooks. Implement 4 middlewares: (1) `TokenBudgetMiddleware` — tracks cumulative tokens and triggers summarization at a threshold, (2) `ToolRetryMiddleware` — catches tool failures and retries with exponential backoff, (3) `PIIRedactionMiddleware` — scans tool results for email/phone patterns and masks them before they enter conversation history, (4) `ModelFallbackMiddleware` — falls back to a cheaper model when the primary is unavailable. Show how reordering middlewares changes behavior (PII before logging vs. after).
+
+**Key ideas to cover:**
+
+- Middleware interface: `beforeAgent` and `afterAgent` hooks on shared state
+- Composition order matters: middleware runs in sequence, each sees the output of the previous
+- Separation of concerns: each middleware is independently testable
+- Dynamic middleware: enabling/disabling middlewares per-request based on user config
+- The pipeline pattern vs. ad-hoc conditionals in the agent loop
+- How this relates to Express/Koa middleware in web servers
+
+**Blog angle:** "Express.js for AI Agents — Composable Middleware for Agent Execution Loops"
+
+**Sources:**
+
+- [LangChain 1.0 Prebuilt Middleware](https://docs.langchain.com/oss/python/langchain/middleware/built-in) — LangChain, 2025 — 16+ composable middleware hooks for agent execution
+- [LangChain and LangGraph 1.0 Announcement](https://blog.langchain.com/langchain-langgraph-1dot0/) — LangChain, 2025 — middleware as a first-class agent framework primitive
+- [Mastra Changelog — ToolSearchProcessor](https://mastra.ai/blog/changelog-2026-02-04) — Mastra, 2026 — middleware-like tool filtering processors
+- [Vercel AI SDK 6 — DevTools Middleware](https://vercel.com/blog/ai-sdk-6) — Vercel, 2025 — middleware for agent debugging and observability
 
 ---
 
@@ -731,6 +766,66 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
+### [ ] Dynamic Tool Selection (Semantic Tool Filtering)
+
+**What it is:** When an agent has access to a large tool catalog (20+ tools), instead of sending all tool definitions to the model on every turn, an intermediate step filters tools down to only the relevant ones for the current query — using either semantic search over tool descriptions or a lightweight LLM call that selects which tools are relevant.
+
+**Why it matters:** Tool definitions consume significant context. With 50 tools, tool schemas alone can be 10-15K tokens — diluting the model's attention and increasing cost. Studies show 94% context reduction when agents search for tools by relevance rather than receiving all schemas upfront. The model also makes better tool choices when it sees 5 relevant tools instead of 50 competing options.
+
+**Builds on:** Tool Description Engineering
+
+**Session brief:** Build an agent with a catalog of 20+ tools across multiple domains (e-commerce: product search, cart management, order tracking; recipes: search, ingredient lookup, nutrition info; travel: flights, hotels, activities). Implement two selection strategies: (1) embedding-based — encode tool descriptions and the user query, return top-K by cosine similarity, (2) LLM-based — a cheap model call that takes the query and tool name+description pairs and returns which tools are relevant. Compare: all-tools-always vs. embedding-selected vs. LLM-selected on accuracy and context usage.
+
+**Key ideas to cover:**
+
+- The "too many tools" problem: context bloat, attention dilution, wrong tool selection
+- Embedding-based selection: encode tool descriptions, cosine similarity against query
+- LLM-based selection: lightweight classifier picks relevant tools per query
+- Hybrid approach: embeddings for coarse filter, LLM for fine selection
+- Dynamic vs. static tool sets: tools available change per-turn based on query
+- Measuring impact: tool call accuracy and context token usage before/after
+
+**Blog angle:** "50 Tools, 5 Tokens — How Dynamic Tool Selection Keeps Agents Focused"
+
+**Sources:**
+
+- [Mastra ToolSearchProcessor](https://mastra.ai/blog/changelog-2026-02-04) — Mastra, 2026 — semantic tool discovery achieving 94% context reduction in large catalogs
+- [LangChain LLMToolSelectorMiddleware](https://docs.langchain.com/oss/python/langchain/middleware/built-in) — LangChain, 2025 — LLM-powered tool filtering as first-class middleware
+- [ToolSandbox: A Stateful, Conversational, Interactive Evaluation Benchmark](https://arxiv.org/abs/2408.04682) — Lu et al. (Apple), 2024 — benchmarks tool selection in multi-tool environments
+- [Gorilla: Large Language Model Connected with Massive APIs](https://arxiv.org/abs/2305.15334) — Patil et al. (UC Berkeley), 2023 — foundational work on LLM API/tool selection from large catalogs
+
+---
+
+### [ ] Test-Time Compute Scaling (Adaptive Agent Reasoning)
+
+**What it is:** Instead of running the agent once and accepting the result, allocating variable amounts of reasoning compute based on task difficulty and confidence. When the agent is uncertain (low-confidence tool choices, ambiguous queries), run multiple parallel agent trajectories and select the best result via voting or scoring. When confident, use a single pass. This trades compute for accuracy on hard queries while staying fast on easy ones.
+
+**Why it matters:** A single agent run on a hard question might pick the wrong tool or miss a step. Running 5 parallel trajectories and majority-voting the answer can yield 9%+ accuracy gains. But doing this on every query wastes tokens. Confidence-aware scaling — spending more compute only when the agent is uncertain — achieves the accuracy gains at 2-3x fewer tokens than uniform scaling.
+
+**Builds on:** Cost Tracking & Model Selection, Self-Validation Tool
+
+**Session brief:** Build a recipe research agent that handles queries of varying difficulty. Implement three strategies: (1) single-pass — one agent run per query, (2) uniform scaling — always run N=5 parallel trajectories, pick the best, (3) confidence-aware scaling — run once, measure confidence (e.g., did the agent express uncertainty, did it call a reasoning tool with low confidence?), and only spawn additional trajectories if confidence is below threshold. Compare accuracy and token cost across all three on a test set mixing easy and hard questions.
+
+**Key ideas to cover:**
+
+- Best-of-N sampling: run multiple agent trajectories, select the best result
+- Confidence estimation: using tool call patterns, explicit uncertainty markers, or voting entropy
+- Selective scaling: only spend extra compute when confidence is low
+- Voting mechanisms: majority vote, weighted vote by trajectory quality, LLM-as-judge selection
+- Token economics: when does scaling pay for itself vs. diminishing returns
+- The "context ceiling" problem: why naive scaling stops helping for general agents
+
+**Blog angle:** "When in Doubt, Think Twice — Adaptive Compute for Uncertain Agent Queries"
+
+**Sources:**
+
+- [CATTS: Confidence-Aware Test-Time Scaling](https://arxiv.org/abs/2602.12276) — 2026 — selective compute allocation via vote-derived uncertainty; 9.1% gains with 2.3x fewer tokens
+- [ARTIS: Risk-Aware Test-Time Scaling via Iterative Simulation](https://arxiv.org/abs/2602.01709) — 2026 — simulate interactions before real execution with risk-aware rebalancing
+- [General AgentBench: Test-Time Scaling Limits](https://arxiv.org/abs/2602.18998) — 2026 — reveals context ceiling and verification gap limiting naive scaling
+- [Scaling LLM Test-Time Compute Optimally](https://arxiv.org/abs/2408.03314) — Snell et al. (UC Berkeley), 2024 — foundational paper on optimal test-time compute allocation
+
+---
+
 ## Tier 5 — Advanced Production
 
 > Patterns that emerge when agents move from single-user chat into production infrastructure: multi-platform deployment, sandboxed execution, dynamic integrations, and autonomous workflows.
@@ -1067,6 +1162,127 @@ Each concept is designed to be completable in a single focused session: build th
 - [Durable Execution — Temporal](https://temporal.io/how-temporal-works) — the canonical durable execution runtime; crash-resilient workflows with automatic replay
 - [Inngest — Durable Functions](https://www.inngest.com/docs/features/inngest-functions/steps-workflows) — step-based durable execution with automatic retries and state persistence
 - [Google ADK — Long-Running Agents](https://google.github.io/adk-docs/sessions/) — session-based state management with checkpointing for multi-turn agent tasks
+
+---
+
+### [ ] Observational Memory (Compression-Based Agent Memory)
+
+**What it is:** A memory architecture where two background agents — an Observer and a Reflector — compress raw conversation history into dated observation logs. The Observer fires at a token threshold (~30K tokens), distilling recent messages into timestamped factual observations. The Reflector garbage-collects at a higher threshold (~40K tokens), merging and pruning observations. The agent's context always contains two blocks: a compact observation block and a sliding window of recent raw messages.
+
+**Why it matters:** Traditional approaches to long conversations either truncate (losing information), summarize (losing specificity), or use RAG (losing temporal coherence). Observational memory achieves 5-40x compression while scoring 94.87% on LongMemEval — outperforming both RAG (80%) and full-context (60%) approaches. It makes small context windows behave like large ones by treating memory as an ongoing compression process rather than a retrieval problem.
+
+**Builds on:** Persistent Cross-Session Memory, Context Window Management
+
+**Session brief:** Build a long-running recipe assistant that tracks user preferences, dietary restrictions, and past recipe discussions across 30+ turns. Implement the two-agent architecture: (1) an Observer agent that triggers at a token threshold and produces dated observation entries like `[2026-03-01] User prefers Mediterranean cuisine, avoids shellfish`, (2) a Reflector agent that merges redundant observations and drops stale ones. Show the agent correctly recalling preferences from turn 5 when at turn 35 — a point where truncation would have lost the information and basic summarization would have lost the specificity.
+
+**Key ideas to cover:**
+
+- Two-agent architecture: Observer (compress) and Reflector (prune)
+- Threshold-based triggers: Observer at ~30K tokens, Reflector at ~40K tokens
+- Dated observation format: timestamped factual statements
+- Two-block context: observations block + recent raw messages block
+- Comparison with alternatives: truncation, summarization, RAG
+- Cache-friendly design: observation block is append-mostly, enabling prompt cache hits
+
+**Blog angle:** "Your Agent's Memory Doesn't Need a Vector Database — Observational Memory for Long Conversations"
+
+**Sources:**
+
+- [Announcing Observational Memory](https://mastra.ai/blog/observational-memory) — Mastra, 2026 — 94.87% LongMemEval, 5-40x compression with Observer/Reflector architecture
+- [Generative Agents: Interactive Simulacra of Human Behavior](https://arxiv.org/abs/2304.03442) — Park et al. (Stanford), 2023 — memory stream with observation, reflection, and planning layers
+- [AgeMem: Agentic Memory for LLM-Based Agents](https://arxiv.org/abs/2601.01885) — 2026 — memory operations as tool-based actions with three-stage RL training
+- [A-MEM: Agentic Memory for LLM Agents](https://arxiv.org/abs/2502.12110) — 2025 (NeurIPS) — Zettelkasten-inspired interconnected memory with dynamic indexing
+
+---
+
+### [ ] Event Sourcing for Agents
+
+**What it is:** Applying the event sourcing pattern from distributed systems to agent state management. Instead of mutating state directly, agents emit structured JSON intention events validated by a deterministic orchestrator. An append-only event log records every decision, tool call, and state transition. The current state is always reconstructable by replaying the event log. This provides deterministic replay for debugging, forensic traceability for auditing, and time-travel debugging for development.
+
+**Why it matters:** When an agent produces a bad result at step 47 of a complex workflow, traditional debugging requires reproducing the entire run. Event sourcing gives you a complete, replayable record of every decision the agent made. You can replay up to step 46 and inspect exactly what went wrong. In production, the event log is an audit trail proving the agent's reasoning path for compliance and incident investigation.
+
+**Builds on:** State Graph
+
+**Session brief:** Build an e-commerce order management agent that handles multi-step order modifications (change shipping address, add items, apply discount, confirm). Instead of directly executing these changes, the agent emits intention events: `{ type: "CHANGE_ADDRESS", payload: { orderId, newAddress } }`. A deterministic orchestrator validates each event against business rules (e.g., can't change address after shipping), applies it to the order state, and logs it to an append-only event store. Show: (1) replaying the event log to reconstruct any past state, (2) debugging a failed order by inspecting the event sequence, (3) the orchestrator rejecting an invalid agent intention with a structured error.
+
+**Key ideas to cover:**
+
+- Intention events: structured JSON emitted by the agent for each action
+- Deterministic orchestrator: validates intentions against business rules before applying
+- Append-only event log: immutable record of all agent decisions and state transitions
+- State reconstruction: replay events to rebuild any past state
+- Time-travel debugging: replay to step N and inspect
+- Comparison with direct state mutation: tradeoffs of event sourcing overhead vs. debuggability
+
+**Blog angle:** "Replay, Debug, Audit — Event Sourcing Patterns for AI Agents"
+
+**Sources:**
+
+- [ESAA: Event Sourcing for Autonomous Agents](https://arxiv.org/abs/2602.23193) — 2026 — formal treatment of event sourcing applied to LLM agents with forensic traceability
+- [Event Sourcing — Martin Fowler](https://martinfowler.com/eaaDev/EventSourcing.html) — the canonical reference for event sourcing in software architecture
+- [Four Design Patterns for Event-Driven Multi-Agent Systems](https://www.confluent.io/blog/event-driven-multi-agent-systems/) — Confluent, 2026 — event streaming patterns applied to agent coordination
+- [LangGraph Persistence](https://langchain-ai.github.io/langgraph/concepts/persistence/) — LangChain, 2024 — framework implementation of state checkpointing that motivates event sourcing
+
+---
+
+### [ ] Multi-Agent Coordination Topologies
+
+**What it is:** The structural pattern of how multiple agents are connected and communicate — star (one orchestrator, many workers), chain (sequential pipeline), tree (hierarchical decomposition), and graph (peer-to-peer mesh). Each topology has different failure modes, latency profiles, and error propagation characteristics. The topology of coordination matters more than the number of agents: wrong topology amplifies errors up to 17x.
+
+**Why it matters:** Most multi-agent tutorials demonstrate one topology (usually star/orchestrator). But production systems need the right topology for the task: chains for sequential pipelines, trees for hierarchical decomposition, stars for fan-out/gather, and graphs for collaborative reasoning. Research shows adding agents without formal topology creates a "bag of agents" that amplifies errors exponentially — 95% per-step reliability degrades to 36% over 20 steps.
+
+**Builds on:** Multi-Agent Routing, Sub-Agent Delegation
+
+**Session brief:** Build the same task — planning a multi-day trip — using four different topologies: (1) Star: a central planner fans out to flight/hotel/activity agents, gathers results, synthesizes. (2) Chain: flight agent → hotel agent → activity agent, each builds on the previous result. (3) Tree: planner splits by day, each day-agent splits by category. (4) Graph: all agents can communicate peer-to-peer and negotiate (flight agent tells hotel agent about arrival time). Compare the four on: accuracy, latency, token cost, and failure resilience (what happens when one agent fails?).
+
+**Key ideas to cover:**
+
+- Four topologies: star, chain, tree, graph — when to use each
+- Error propagation: how errors compound differently in each topology
+- The "bag of agents" anti-pattern: agents without formal coordination topology
+- The 17x error trap: why wrong topology amplifies errors exponentially
+- Closed-loop design: verification steps that suppress error propagation
+- Topology selection criteria: task structure, latency requirements, failure tolerance
+
+**Blog angle:** "Star, Chain, Tree, or Graph? — Picking the Right Multi-Agent Topology"
+
+**Sources:**
+
+- [Why Your Multi-Agent System is Failing: The 17x Error Trap](https://towardsdatascience.com/why-your-multi-agent-system-is-failing-escaping-the-17x-error-trap-of-the-bag-of-agents/) — Towards Data Science, 2026 — formal topology analysis with quantified error amplification
+- [Google's Eight Essential Multi-Agent Design Patterns](https://www.infoq.com/news/2026/01/multi-agent-design-patterns/) — InfoQ/Google, 2026 — eight architectures from three execution primitives
+- [MultiAgentBench](https://arxiv.org/abs/2503.01935) — ACL 2025 — benchmark evaluating star, chain, tree, graph topologies with milestone-based KPIs
+- [Multi-Agent Teams Hold Experts Back](https://arxiv.org/abs/2602.01011) — 2026 — self-organizing teams degrade expert performance by up to 37.6% due to integrative compromise
+- [Beyond the Monolith: 3-Tier Multi-Agent Architecture](https://autofei.wordpress.com/2026/02/24/3-tier-multi-agent-architecture-future-of-ai/) — 2026 — Orchestrator / Domain / Utility tier separation
+
+---
+
+### [ ] A2A Protocol (Agent-to-Agent Communication)
+
+**What it is:** An open protocol for agents built on different platforms to discover, authenticate, and delegate tasks to each other. Unlike MCP (which connects agents to tools), A2A connects agents to other agents. Each agent publishes an "Agent Card" describing its capabilities. A client agent discovers available agents, negotiates tasks, and receives results — all over standard HTTP/JSON-RPC with SSE for streaming. This enables cross-platform agent interoperability without shared codebases.
+
+**Why it matters:** MCP solved "how does my agent use tools?" A2A solves "how does my agent work with other agents?" In production, agents from different vendors and frameworks need to collaborate: a customer service agent delegates a billing question to a finance agent from a different team. A2A provides the interoperability layer — the HTTP of agent-to-agent communication — with 150+ supporting organizations including Google, Anthropic, and the Linux Foundation.
+
+**Builds on:** MCP
+
+**Session brief:** Build two independent agents as A2A servers — a recipe agent that can search and recommend recipes, and a nutrition agent that can analyze ingredients and calculate macros. Each publishes an Agent Card at `/.well-known/agent.json` describing its capabilities. Build an A2A client (orchestrator agent) that: (1) discovers both agents via their Agent Cards, (2) creates a task on the recipe agent to find a meal plan, (3) takes the result and creates a task on the nutrition agent to analyze it, (4) synthesizes a combined response. Show that the agents run as separate processes with no shared code — they only communicate via A2A protocol messages.
+
+**Key ideas to cover:**
+
+- Agent Cards: JSON capability descriptors at `/.well-known/agent.json`
+- Task lifecycle: create → working → completed/failed, with progress updates
+- Discovery: how agents find each other via Agent Cards
+- Streaming results: SSE for long-running task progress
+- Authentication: how agents verify each other's identity
+- A2A vs MCP: when to use each (tools vs. agent delegation)
+
+**Blog angle:** "The HTTP of AI Agents — Building with the Agent2Agent Protocol"
+
+**Sources:**
+
+- [A2A Protocol Specification](https://a2a-protocol.org/latest/specification/) — official protocol specification
+- [Agent2Agent Protocol — Google Cloud](https://cloud.google.com/blog/products/ai-machine-learning/agent2agent-protocol-is-getting-an-upgrade) — Google, 2025 — v0.3 with gRPC and cryptographic identity
+- [Linux Foundation Launches A2A Project](https://www.linuxfoundation.org/press/linux-foundation-launches-the-agent2agent-protocol-project-to-enable-secure-intelligent-communication-between-ai-agents) — Linux Foundation, 2025 — governance and 100+ contributing organizations
+- [Spring AI A2A Integration](https://spring.io/blog/2026/01/29/spring-ai-agentic-patterns-a2a-integration/) — Spring, 2026 — practical A2A integration in a Java framework
 
 ---
 

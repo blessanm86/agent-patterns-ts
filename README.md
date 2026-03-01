@@ -6,6 +6,36 @@ TypeScript implementations of agentic patterns drawn from across the AI landscap
 
 ---
 
+## Setup
+
+```bash
+# 1. Install Ollama (https://ollama.com), pull the model, and start it
+ollama pull qwen2.5:7b
+ollama serve
+
+# 2. Install dependencies and configure environment
+pnpm install
+cp .env.example .env
+
+# 3. Run any demo
+pnpm dev:react
+pnpm dev:plan-execute
+```
+
+---
+
+## Scouting for New Patterns
+
+The roadmap grows via automated scouting. From Claude Code, run:
+
+```
+/scout-patterns last 3 months
+```
+
+This spawns 6 parallel research agents covering S-tier labs, A/B-tier labs, frameworks, academic papers, practitioners, and tools/infrastructure. Findings are deduplicated against the existing roadmap and qualifying discoveries are added automatically. Research artifacts are saved to `.research/scout-YYYY-MM-DD.md`.
+
+---
+
 ## Patterns
 
 Start from the top and work down. The **Builds on** column shows prerequisite concepts — empty means standalone.
@@ -50,21 +80,10 @@ Start from the top and work down. The **Builds on** column shows prerequisite co
 | External Event-Triggered Agent                                         |                                                                   |                                       | Streaming                                    |
 | Sandboxed Code Execution                                               |                                                                   |                                       |                                              |
 | Long-Running Agents & Checkpointing                                    |                                                                   |                                       | State Graph                                  |
-
----
-
-## Setup
-
-```bash
-# 1. Install Ollama (https://ollama.com), pull the model, and start it
-ollama pull qwen2.5:7b
-ollama serve
-
-# 2. Install dependencies and configure environment
-pnpm install
-cp .env.example .env
-
-# 3. Run
-pnpm dev:react
-pnpm dev:plan-execute
-```
+| Agent Middleware Pipeline                                              |                                                                   |                                       | ReAct Loop                                   |
+| Observational Memory                                                   |                                                                   |                                       | Persistent Memory, Context Window Management |
+| Dynamic Tool Selection                                                 |                                                                   |                                       | Tool Description Engineering                 |
+| Event Sourcing for Agents                                              |                                                                   |                                       | State Graph                                  |
+| Test-Time Compute Scaling                                              |                                                                   |                                       | Cost Tracking, Self-Validation               |
+| Multi-Agent Coordination Topologies                                    |                                                                   |                                       | Multi-Agent Routing, Sub-Agent Delegation    |
+| A2A Protocol (Agent-to-Agent)                                          |                                                                   |                                       | MCP                                          |
