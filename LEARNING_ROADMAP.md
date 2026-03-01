@@ -38,7 +38,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Post-Conversation Metadata                | Done    |                                              |
 | Agent TODO Lists (Scaffold)               | Done    |                                              |
 | Human-in-the-Loop                         | Done    | Guardrails                                   |
-| Persistent Cross-Session Memory           | Pending | Multi-Turn Memory, Context Window Management |
+| Persistent Cross-Session Memory           | Done    | Multi-Turn Memory, Context Window Management |
 | Agentic RAG                               | Pending | RAG                                          |
 | Multi-Modal Agents                        | Pending |                                              |
 | Ambient Context Store                     | Pending | Structured Entity Tags                       |
@@ -256,7 +256,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Persistent Cross-Session Memory
+### [x] Persistent Cross-Session Memory
 
 **What it is:** Memory that survives beyond a single conversation — the agent recalls facts, preferences, and prior interactions across sessions. Includes vector stores for semantic retrieval, structured memory records, and memory lifecycle management (what to remember, what to forget).
 
