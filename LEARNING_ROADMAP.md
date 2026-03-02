@@ -40,7 +40,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Human-in-the-Loop                         | Done    | Guardrails                                                 |
 | Persistent Cross-Session Memory           | Done    | Multi-Turn Memory, Context Window Management               |
 | Agentic RAG                               | Done    | RAG                                                        |
-| Multi-Modal Agents                        | Pending |                                                            |
+| Multi-Modal Agents                        | Done    |                                                            |
 | Ambient Context Store                     | Pending | Structured Entity Tags                                     |
 | Cross-Platform Response Rendering         | Pending | Structured Entity Tags                                     |
 | MCP (Model Context Protocol)              | Pending |                                                            |
@@ -497,7 +497,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Multi-Modal Agents (Vision & Audio)
+### [x] Multi-Modal Agents (Vision & Audio)
 
 **What it is:** Agents that process and reason over images, screenshots, audio, and video — not just text. Includes vision-based tool use (reading screenshots, interpreting charts), image generation as a tool, and audio input/output for voice-driven agents.
 

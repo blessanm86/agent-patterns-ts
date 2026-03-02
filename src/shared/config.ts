@@ -4,4 +4,5 @@
 // Set via .env (MODEL=qwen2.5:14b) — no code changes needed to swap models.
 
 export const MODEL = process.env.MODEL ?? "qwen2.5:7b";
+export const VISION_MODEL = process.env.VISION_MODEL ?? "qwen2.5vl:7b";
 export const EMBEDDING_MODEL = process.env.EMBEDDING_MODEL ?? "nomic-embed-text";
