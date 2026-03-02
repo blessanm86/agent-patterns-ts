@@ -55,12 +55,17 @@ A structured list of concepts for building production-grade AI agents, organized
 | Tool-Response Reminder Injection          | Pending | Tool Description Engineering                               |
 | Ordered Precondition Evaluation           | Pending | Evaluation with Mocked Tools                               |
 | Agent Middleware Pipeline                 | Done    | ReAct Loop                                                 |
+| Agent Dependency Injection                | Pending | ReAct Loop, Multi-Agent Routing                            |
 | Observational Memory                      | Pending | Persistent Cross-Session Memory, Context Window Management |
 | Dynamic Tool Selection                    | Pending | Tool Description Engineering                               |
 | Event Sourcing for Agents                 | Pending | State Graph                                                |
 | Test-Time Compute Scaling                 | Pending | Cost Tracking & Model Selection, Self-Validation Tool      |
 | Multi-Agent Coordination Topologies       | Pending | Multi-Agent Routing, Sub-Agent Delegation                  |
 | A2A Protocol (Agent-to-Agent)             | Pending | MCP                                                        |
+| Agent Framework Landscape [guide]         | Pending | MCP, A2A Protocol                                          |
+| Vendor Agent SDKs [guide]                 | Pending | Agent Framework Landscape                                  |
+| Orchestration Frameworks [guide]          | Pending | Agent Framework Landscape                                  |
+| TypeScript Agent Toolkits [guide]         | Pending | Agent Framework Landscape                                  |
 | File Edit Strategies                      | Pending | Tool Description Engineering                               |
 | Architect/Editor Model Split              | Pending | Cost Tracking & Model Selection, File Edit Strategies      |
 | Repository Mapping                        | Pending | RAG                                                        |
@@ -68,6 +73,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | KV-Cache-Aware Context Design             | Pending | Prompt Caching, Context Window Management                  |
 | Client-Agnostic Agent Protocol            | Pending | Streaming                                                  |
 | Pre-Execution Validation                  | Pending | Self-Validation Tool, Sandboxed Code Execution             |
+| Coding Agent Harness Architecture [guide] | Pending | Agent Framework Landscape                                  |
 
 The table order is the recommended learning progression. Start from the top; the **Builds on** column shows prerequisites.
 
@@ -1172,6 +1178,36 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
+### [ ] Agent Dependency Injection
+
+**What it is:** A typed context carrier that flows through the entire agent loop — available to tools, hooks, guardrails, and handoff callbacks — but is never sent to the LLM. Instead of passing database connections, user info, and loggers as ad-hoc parameters, you define a typed `RunContext<Deps>` object that the framework threads through every function that needs it.
+
+**Why it matters:** As agents grow more complex, the number of "ambient" dependencies grows: database connections, user session info, API clients, feature flags, loggers. Without a formal injection pattern, these get passed ad-hoc through function parameters, leading to inconsistent signatures and tight coupling. Both PydanticAI (`RunContext[Deps]`) and OpenAI Agents SDK (`RunContextWrapper[T]`) independently converged on the same pattern — a strong signal that it solves a real problem. The key insight: the LLM doesn't need to see your database connection, but your tools do.
+
+**Builds on:** ReAct Loop, Multi-Agent Routing
+
+**Session brief:** Build an agent with a typed dependency context. Define a `RunContext` that carries user info (user ID, preferences), a database connection (or mock), and a logger. Wire it through the agent loop so every tool receives the context without it ever appearing in the LLM's messages. Show three things: (1) tools accessing typed dependencies cleanly, (2) the same agent running with different injected contexts (different users, different DB connections), (3) the context remaining invisible to the LLM. Compare before (ad-hoc parameter passing) and after (typed DI).
+
+**Key ideas to cover:**
+
+- The `RunContext<Deps>` pattern: a generic typed carrier
+- Why context is NOT sent to the LLM — the local/LLM split
+- Dependency injection for testability: swap real DB for mock by changing the context
+- How PydanticAI and OpenAI Agents SDK both converge on this pattern independently
+- Context flowing through multi-agent handoffs: does the child agent inherit context or get its own?
+- Making context available to the LLM when needed: dynamic system prompts that reference context
+
+**Blog angle:** "Your Agent's Invisible Backpack: Dependency Injection for AI Agents"
+
+**Sources:**
+
+- [PydanticAI — Dependencies](https://ai.pydantic.dev/dependencies/) — `RunContext[Deps]` with full type safety and IDE support
+- [OpenAI Agents SDK — Context](https://openai.github.io/openai-agents-python/context/) — `RunContextWrapper[T]` with `ToolContext` extension
+- [Vercel AI SDK — Agents Overview](https://ai-sdk.dev/docs/agents/overview) — context passing through `generateText` options
+- [FastAPI Dependency Injection](https://fastapi.tiangolo.com/tutorial/dependencies/) — the web framework pattern that inspired PydanticAI's approach
+
+---
+
 ### [ ] Observational Memory (Compression-Based Agent Memory)
 
 **What it is:** A memory architecture where two background agents — an Observer and a Reflector — compress raw conversation history into dated observation logs. The Observer fires at a token threshold (~30K tokens), distilling recent messages into timestamped factual observations. The Reflector garbage-collects at a higher threshold (~40K tokens), merging and pruning observations. The agent's context always contains two blocks: a compact observation block and a sliding window of recent raw messages.
@@ -1710,3 +1746,182 @@ Each concept is designed to be completable in a single focused session: build th
 - [AWS — Enhancing Code Generation with Real-Time Execution](https://aws.amazon.com/blogs/devops/enhancing-code-generation-with-real-time-execution-in-amazon-q-developer/) — real-time execution feedback loop
 - [OpenCode Deep Dive](https://cefboud.com/posts/coding-agents-internals-opencode-deepdive/) — LSP diagnostics feedback after every file edit
 - [Aider — Linting & Testing](https://aider.chat/docs/usage/lint-test.html) — auto-lint + auto-test as a post-edit validation loop
+
+---
+
+### [ ] Agent Framework Landscape [guide]
+
+**What it is:** A comprehensive overview of the agent framework ecosystem — what the major frameworks are, how they differ architecturally, and when to reach for each one. This is a guide (README only, no demo code) because the value is in analysis and decision-making, not in building a toy version of someone else's product.
+
+**Why it matters:** The agent framework space is crowded and confusing. Developers building agents face a maze of choices — vendor SDKs (Claude Agent SDK, OpenAI Agents SDK), model-agnostic toolkits (Vercel AI SDK, PydanticAI), orchestration frameworks (LangGraph, CrewAI, AutoGen), and full-stack frameworks (Mastra). Understanding the taxonomy — what each solves, where they overlap, and when a raw tool loop suffices — prevents premature adoption of heavy frameworks and helps teams make informed decisions.
+
+**Builds on:** MCP, A2A Protocol — completing these two protocol concepts grounds the reader in the interoperability layer before zooming out to the full ecosystem.
+
+**Guide brief:** Present the 4-layer agent stack (Model APIs → Protocols → Frameworks → Harnesses). Taxonomize frameworks into categories (vendor SDKs, model-agnostic toolkits, orchestration frameworks, full-stack frameworks). For each major framework, cover: core pitch, key primitives, mental model, and tradeoffs. Include a decision guide ("use X when..."). Connect everything back to patterns the reader already built in this repo — every framework is abstracting over patterns they've implemented from scratch.
+
+**Key areas to cover:**
+
+- The 4-layer agent stack: Model APIs, Protocols, Frameworks, Harnesses
+- Framework taxonomy: vendor SDKs vs model-agnostic vs orchestration vs full-stack
+- Deep comparison of 6-8 major frameworks with architecture diagrams and code snippets
+- The "thin vs thick" framework spectrum and where each framework sits
+- The "protocols thin out frameworks" thesis — how MCP and A2A reduce what frameworks need to provide
+- Decision guide: when to use a raw loop vs each framework category
+- The uncomfortable truth: simple while-loop agents are often sufficient
+
+**Blog angle:** "The Agent Framework Landscape: A Taxonomy for Confused Developers"
+
+**Sources:**
+
+- [Claude Agent SDK Docs](https://platform.claude.com/docs/en/agent-sdk/overview)
+- [OpenAI Agents SDK Docs](https://openai.github.io/openai-agents-python/)
+- [Vercel AI SDK Docs](https://ai-sdk.dev/docs/introduction)
+- [LangGraph Docs](https://docs.langchain.com/oss/python/langgraph/overview)
+- [CrewAI Docs](https://docs.crewai.com/)
+- [Mastra Docs](https://mastra.ai/docs)
+- [PydanticAI Docs](https://ai.pydantic.dev/)
+- [How to Think About Agent Frameworks — LangChain Blog](https://blog.langchain.com/how-to-think-about-agent-frameworks/)
+- [Comparing Open-Source AI Agent Frameworks — Langfuse](https://langfuse.com/blog/2025-03-19-ai-agent-comparison)
+- [We Removed 80% of Our Agent's Tools — Vercel](https://vercel.com/blog/we-removed-80-percent-of-our-agents-tools)
+
+---
+
+### [ ] Vendor Agent SDKs [guide]
+
+**What it is:** A deep dive into the two major vendor agent SDKs — Claude Agent SDK (Anthropic) and OpenAI Agents SDK — comparing their architectures, primitives, and design philosophies. This is a guide (README only, no demo code) because the value is in understanding product design decisions, not in building within them.
+
+**Why it matters:** These two SDKs represent fundamentally different approaches to the same problem. Claude Agent SDK bundles a full runtime (file ops, bash, search, context management) — it's Claude Code as a library. OpenAI Agents SDK is deliberately minimal — handoffs, guardrails, tracing, and you bring your own tool implementations. Understanding these tradeoffs helps developers choose the right SDK and understand what they're giving up either way.
+
+**Builds on:** Agent Framework Landscape — provides the taxonomy; this guide goes deep on one category.
+
+**Guide brief:** Compare the two SDKs head-to-head across every major dimension: core loop architecture, built-in tools, multi-agent patterns (subagents vs handoffs), context management, hooks/tracing, sessions, MCP support, permission models, and deployment. Include real code examples from both SDKs for the same task. Surface the fundamental architectural divergence: "full runtime" (Claude) vs "thin orchestration" (OpenAI).
+
+**Key areas to cover:**
+
+- Claude Agent SDK: query() as entry point, built-in tools (Read/Write/Edit/Bash/Glob/Grep), hooks (18+ event types), subagents, sessions with fork/resume, MCP integration, the CLI-binary-bundling architecture
+- OpenAI Agents SDK: Runner.run() loop, function tools with auto-generated schemas, handoffs (conversation transfer), guardrails (parallel tripwire), tracing (automatic), sessions (SQLite/Redis), agents-as-tools pattern
+- Head-to-head comparison: same task implemented in both SDKs
+- When to choose each: filesystem agents → Claude SDK, handoff-based routing → OpenAI SDK, need both → understand the tradeoffs
+- How each SDK implements patterns the reader already built (ReAct, guardrails, HITL, multi-agent routing, streaming)
+
+**Blog angle:** "Claude Agent SDK vs OpenAI Agents SDK: Two Philosophies of Agent Building"
+
+**Sources:**
+
+- [Building Agents with the Claude Agent SDK — Anthropic Blog](https://claude.com/blog/building-agents-with-the-claude-agent-sdk)
+- [Claude Agent SDK Python Reference](https://platform.claude.com/docs/en/agent-sdk/python)
+- [Claude Agent SDK TypeScript Reference](https://platform.claude.com/docs/en/agent-sdk/typescript)
+- [New Tools for Building Agents — OpenAI Blog](https://openai.com/index/new-tools-for-building-agents/)
+- [OpenAI Agents SDK — Multi-Agent Orchestration](https://openai.github.io/openai-agents-python/multi_agent/)
+- [OpenAI Agents SDK — Handoffs](https://openai.github.io/openai-agents-python/handoffs/)
+- [OpenAI Agents SDK — Guardrails](https://openai.github.io/openai-agents-python/guardrails/)
+- [Claude Agent SDK vs LangChain — Skywork AI](https://skywork.ai/blog/claude-code-sdk-vs-langchain-which-is-better-for-developers/)
+
+---
+
+### [ ] Orchestration Frameworks [guide]
+
+**What it is:** A deep comparison of the three dominant multi-agent orchestration paradigms — graph-based (LangGraph), role-based (CrewAI), and conversation-driven (AutoGen/AG2). This is a guide (README only, no demo code) because each framework is a product with its own runtime; the value is in understanding the architectural choices, not in reimplementing them.
+
+**Why it matters:** When an agent system needs multiple agents to coordinate, the orchestration model matters enormously. LangGraph gives you explicit control via state graphs with checkpointing and HITL interrupts. CrewAI gives you fast prototyping with a team metaphor (agents with roles/goals/backstories). AutoGen pioneered conversation-as-computation but has fragmented into 4 different forks. Understanding these paradigms — not just the APIs — helps developers choose the right level of control for their problem.
+
+**Builds on:** Agent Framework Landscape — provides the taxonomy; this guide goes deep on one category.
+
+**Guide brief:** Compare the three paradigms side-by-side. For each: explain the core mental model, show a ReAct agent implemented in that framework (connecting back to this repo's from-scratch version), analyze tradeoffs with real code from their docs. Cover the common practitioner pattern: "prototype with CrewAI, productionize with LangGraph." Address the AutoGen fragmentation story (original → AG2 fork → AutoGen 0.4 rewrite → Microsoft Agent Framework merger) as a cautionary tale.
+
+**Key areas to cover:**
+
+- LangGraph: StateGraph, nodes, edges, conditional routing, reducers, checkpointing, time-travel, HITL via interrupts. 25.4K stars, 6.17M monthly PyPI downloads. Python + TypeScript.
+- CrewAI: Agents with roles/goals/backstories, Tasks, Crews, Flows. ~45K stars but 1.38M downloads. Python only.
+- AutoGen/AG2: ConversableAgent, GroupChat, speaker selection. The 4-way fragmentation story. When to use AG2 vs AutoGen 0.4 vs Microsoft Agent Framework.
+- ReAct loop in each: "You built this from scratch in Chapter 1 — here's the same loop expressed as a LangGraph StateGraph / a CrewAI Crew / an AutoGen GroupChat"
+- When graph > team > conversation and vice versa
+- The common maturity path: raw loop → CrewAI POC → LangGraph production
+
+**Blog angle:** "Graphs vs Teams vs Conversations: Three Ways to Orchestrate AI Agents"
+
+**Sources:**
+
+- [LangGraph Docs](https://docs.langchain.com/oss/python/langgraph/overview)
+- [LangGraph.js for TypeScript](https://github.com/langchain-ai/langgraphjs)
+- [How to Think About Agent Frameworks — LangChain Blog](https://blog.langchain.com/how-to-think-about-agent-frameworks/)
+- [CrewAI Docs](https://docs.crewai.com/)
+- [What is CrewAI? — IBM](https://www.ibm.com/think/topics/crew-ai)
+- [AutoGen GitHub](https://github.com/microsoft/autogen) — note the 4-way split
+- [AG2 GitHub (community fork)](https://github.com/ag2ai/ag2)
+- [Microsoft Agent Framework announcement](https://azure.microsoft.com/en-us/blog/introducing-microsoft-agent-framework/)
+- [CrewAI vs LangGraph — TrueFoundry](https://www.truefoundry.com/blog/crewai-vs-langgraph)
+- [Production Engineer's Honest Comparison — Python Plain English](https://python.plainenglish.io/autogen-vs-langgraph-vs-crewai-a-production-engineers-honest-comparison-d557b3b9262c)
+
+---
+
+### [ ] TypeScript Agent Toolkits [guide]
+
+**What it is:** A deep dive into the two leading TypeScript agent toolkits — Vercel AI SDK and Mastra — comparing their architectures, primitives, and when to use each. This is a guide (README only, no demo code) because these are existing products; the value is in understanding how the TypeScript agent ecosystem works, which is directly relevant since this repo is TypeScript.
+
+**Why it matters:** This repo builds agents from scratch in TypeScript. At some point, readers will want to know: "should I keep building from scratch, or adopt a toolkit?" The two main options represent fundamentally different philosophies. Vercel AI SDK is "functions, not frameworks" — composable primitives (`generateText`, `streamText`, `tool`) with 24+ model providers. Mastra is "the Next.js of AI agents" — batteries-included with agents, workflows, RAG, evals, and one-command deploy. Understanding this choice is essential for any TS developer building agents.
+
+**Builds on:** Agent Framework Landscape — provides the broad taxonomy; this guide focuses on the TypeScript slice.
+
+**Guide brief:** Compare the two toolkits across every dimension relevant to a TS developer. Show how patterns from this repo map to each toolkit's primitives (our `runAgent()` → AI SDK's `generateText()` with `stopWhen`; our tool definitions → AI SDK's `tool()` with Zod). Cover Mastra's relationship to Vercel AI SDK (built on top of it). Include the Vercel d0 agent lesson (15+ tools → 1 bash sandbox = 3.5x faster, 100% success).
+
+**Key areas to cover:**
+
+- Vercel AI SDK: `generateText()`, `streamText()`, `tool()`, `ToolLoopAgent`, `stopWhen`, `prepareStep`, `needsApproval`. 22.2K stars, 20M+ monthly npm downloads. Model-agnostic via Language Model Specification.
+- Mastra: Agents (built on AI SDK), Workflows (graph-based), RAG pipeline, Memory, Evals, one-command deploy. ~19K stars, $13M seed (YC W25). Built by the Gatsby team.
+- How they complement each other: AI SDK = low-level primitives, Mastra = full framework on top
+- The middleware system: `wrapLanguageModel`, `transformParams`, `wrapGenerate`, `wrapStream`
+- Subagents in AI SDK: tools that contain other `generateText` calls, with `toModelOutput` for context compression
+- Provider switching: 5 ways to swap models (plain string, registry, custom provider, global default, dynamic per-step)
+- Pattern mapping: this repo's concepts → AI SDK / Mastra equivalents
+- The d0 lesson: "The model makes better choices when we stop making choices for it"
+
+**Blog angle:** "Vercel AI SDK vs Mastra: Choosing Your TypeScript Agent Stack"
+
+**Sources:**
+
+- [AI SDK Introduction](https://ai-sdk.dev/docs/introduction)
+- [AI SDK 6 Blog Post](https://vercel.com/blog/ai-sdk-6)
+- [AI SDK Agent Loop Control](https://ai-sdk.dev/docs/agents/loop-control)
+- [AI SDK Subagents](https://ai-sdk.dev/docs/agents/subagents)
+- [We Removed 80% of Our Agent's Tools — Vercel](https://vercel.com/blog/we-removed-80-percent-of-our-agents-tools)
+- [Mastra Docs](https://mastra.ai/docs)
+- [Mastra $13M Seed Round](https://mastra.ai/blog/seed-round)
+- [Using AI SDK with Mastra](https://mastra.ai/blog/using-ai-sdk-with-mastra)
+- [GitHub: vercel/ai](https://github.com/vercel/ai)
+- [GitHub: mastra-ai/mastra](https://github.com/mastra-ai/mastra)
+
+---
+
+### [ ] Coding Agent Harness Architecture [guide]
+
+**What it is:** An architectural case study of how production coding agent harnesses (Claude Code, OpenCode, Aider) combine dozens of agentic patterns into a single product. This is a guide (README only, no demo code) because harnesses are products, not patterns — the value is in understanding how patterns compose at scale.
+
+**Why it matters:** Coding agent harnesses are the densest concentration of agentic patterns in production today. By this point in the roadmap, the reader has built most of these patterns from scratch. This guide connects the dots: "you built a ReAct loop, context management, sub-agents, streaming, HITL, and tool descriptions separately — here's how Claude Code weaves them all together into a single product." It transforms harnesses from black boxes into understood systems.
+
+**Builds on:** Agent Framework Landscape — provides ecosystem context; this guide zooms into the harness layer.
+
+**Guide brief:** Analyze 3 harnesses (Claude Code, OpenCode, Aider) as case studies. For each, map their architecture to patterns the reader already knows. Compare their approaches to key challenges: edit strategies, context management, sub-agent design, extension models, and the evolution from CLI tool → harness → platform/SDK.
+
+**Key areas to cover:**
+
+- The harness taxonomy: "Model = CPU, context window = RAM, harness = OS, agents = apps" (Philipp Schmid)
+- Claude Code architecture: the agent loop, tool system, hooks, sub-agents (max 10, strict hierarchy), context compaction, CLAUDE.md as persistent config, evolution to Agent SDK
+- OpenCode architecture: the client-server split (Bun+Hono backend, separate TUI), LSP integration feeding diagnostics back to LLM, Event Bus + SSE, plugin system, AGENTS.md
+- Aider architecture: Architect/Editor model split, AST-based repository mapping (tree-sitter), multiple edit formats, deep git integration, no sub-agents
+- Cross-cutting comparison: how each harness solves edit strategies, context management, multi-model coordination, extensibility
+- The Tool → Harness → Platform evolution and what it means for the ecosystem
+- Pattern mapping table: which repo concept corresponds to which harness feature
+
+**Blog angle:** "Inside the Black Box: How Coding Agents Actually Work"
+
+**Sources:**
+
+- [Effective Harnesses for Long-Running Agents — Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
+- [The Rise of the Agent Harness — Agile Lab](https://agilelab.substack.com/p/the-rise-of-the-agent-harness)
+- [The Importance of Agent Harness in 2026 — Philipp Schmid](https://www.philschmid.de/agent-harness-2026)
+- [How Coding Agents Actually Work: Inside OpenCode — Moncef Abboud](https://cefboud.com/posts/coding-agents-internals-opencode-deepdive/)
+- [Understanding AI Coding Agents Through Aider's Architecture — Simran Chawla](https://simranchawla.com/understanding-ai-coding-agents-through-aiders-architecture/)
+- [Aider Architect/Editor Pattern](https://aider.chat/2024/09/26/architect.html)
+- [Claude Code Docs](https://docs.anthropic.com/en/docs/claude-code)
+- [OpenCode Docs](https://opencode.ai/docs/)

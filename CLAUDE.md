@@ -198,6 +198,57 @@ Change `[ ]` to `[x]` and update the status in the progress table at the bottom.
 
 ---
 
+### Adding a guide (README-only topic)
+
+Some topics are better taught through analysis and comparison than through runnable code. Products, frameworks, ecosystem overviews, and architectural case studies fall into this category. These get a **guide** — a detailed README with no demo code.
+
+**When to create a guide instead of a concept:**
+
+- The topic is a **product or framework** (e.g., "Agent Framework Landscape", "Vendor Agent SDKs") — building a toy version doesn't teach the real thing
+- The topic is an **ecosystem overview** that compares multiple approaches (e.g., how harnesses combine patterns)
+- The value is in **analysis and decision-making** rather than in building something from scratch
+- There's no meaningful code artifact a reader would run — the learning comes from understanding tradeoffs
+
+**How guides are marked:**
+
+- In `LEARNING_ROADMAP.md`, guide topics have `[guide]` appended to the title (e.g., `### [ ] Agent Framework Landscape [guide]`)
+- In the progress table, the Status column shows `Guide` for pending guides and `Done` for completed ones
+- In the root `README.md` patterns table, the Run column shows `—` (no runnable demo) and the Demo column describes the guide content
+
+**Guide folder structure:**
+
+```
+src/<topic-name>/
+└── README.md       # the only file — a detailed essay/analysis
+```
+
+No `index.ts`, no `agent.ts`, no `tools.ts`, no evals, no `package.json` dev script.
+
+**Guide README format:**
+
+Guides follow the same quality bar as concept READMEs — well-written blog post tone — but the structure differs:
+
+- Open with why this topic matters to someone building agents
+- Provide a clear mental model or taxonomy (diagrams, tables, comparison matrices)
+- Go deep on 2-4 key items rather than shallowly covering everything
+- Include concrete code snippets from the products/frameworks being analyzed (not code you wrote, but real examples from their docs)
+- Surface where approaches disagree — these disagreements are the most valuable teaching moments
+- Include a decision guide: "use X when..., use Y when..."
+- Close with how the topic connects back to patterns the reader already built in this repo
+- Include "Sources & Further Reading" section
+- Link back to the root README with `[Agent Patterns — TypeScript](../../README.md)`
+
+**Research process for guides is the same as concepts** (step 0) — web, LLM makers, providers, researchers, practitioners, harnesses. The only difference is that after research, you write the README directly instead of planning code.
+
+**Steps to add a guide:**
+
+1. Research the topic (same as concept step 0)
+2. Create `src/<topic-name>/README.md`
+3. Add a row to the patterns table in the root `README.md` (with `—` in the Run column)
+4. Mark as done in `LEARNING_ROADMAP.md`
+
+---
+
 ### Model Configuration
 
 Set via `.env`. No code changes needed to swap models:
