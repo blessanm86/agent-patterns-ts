@@ -64,7 +64,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | A2A Protocol (Agent-to-Agent)             | Pending | MCP                                                        |
 | Agent Framework Landscape [guide]         | Done    | MCP, A2A Protocol                                          |
 | Vendor Agent SDKs [guide]                 | Done    | Agent Framework Landscape                                  |
-| Orchestration Frameworks [guide]          | Pending | Agent Framework Landscape                                  |
+| Orchestration Frameworks [guide]          | Done    | Agent Framework Landscape                                  |
 | TypeScript Agent Toolkits [guide]         | Pending | Agent Framework Landscape                                  |
 | File Edit Strategies                      | Pending | Tool Description Engineering                               |
 | Architect/Editor Model Split              | Pending | Cost Tracking & Model Selection, File Edit Strategies      |
@@ -1819,7 +1819,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Orchestration Frameworks [guide]
+### [x] Orchestration Frameworks [guide]
 
 **What it is:** A deep comparison of the three dominant multi-agent orchestration paradigms — graph-based (LangGraph), role-based (CrewAI), and conversation-driven (AutoGen/AG2). This is a guide (README only, no demo code) because each framework is a product with its own runtime; the value is in understanding the architectural choices, not in reimplementing them.
 
