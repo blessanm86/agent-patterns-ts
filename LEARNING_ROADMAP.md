@@ -39,7 +39,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Agent TODO Lists (Scaffold)               | Done    |                                                            |
 | Human-in-the-Loop                         | Done    | Guardrails                                                 |
 | Persistent Cross-Session Memory           | Done    | Multi-Turn Memory, Context Window Management               |
-| Agentic RAG                               | Pending | RAG                                                        |
+| Agentic RAG                               | Done    | RAG                                                        |
 | Multi-Modal Agents                        | Pending |                                                            |
 | Ambient Context Store                     | Pending | Structured Entity Tags                                     |
 | Cross-Platform Response Rendering         | Pending | Structured Entity Tags                                     |
@@ -439,7 +439,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Agentic RAG (Iterative Retrieval)
+### [x] Agentic RAG (Iterative Retrieval)
 
 **What it is:** Unlike basic RAG (search once, answer), agentic RAG puts the agent in control of the retrieval loop. The agent decides when to search, formulates its own queries, evaluates whether results are sufficient, and iterates — refining queries or searching different sources until it has enough information.
 
