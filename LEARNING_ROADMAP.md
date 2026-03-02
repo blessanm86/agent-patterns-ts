@@ -65,7 +65,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Agent Framework Landscape [guide]         | Done    | MCP, A2A Protocol                                          |
 | Vendor Agent SDKs [guide]                 | Done    | Agent Framework Landscape                                  |
 | Orchestration Frameworks [guide]          | Done    | Agent Framework Landscape                                  |
-| TypeScript Agent Toolkits [guide]         | Pending | Agent Framework Landscape                                  |
+| TypeScript Agent Toolkits [guide]         | Done    | Agent Framework Landscape                                  |
 | File Edit Strategies                      | Pending | Tool Description Engineering                               |
 | Architect/Editor Model Split              | Pending | Cost Tracking & Model Selection, File Edit Strategies      |
 | Repository Mapping                        | Pending | RAG                                                        |
@@ -1855,7 +1855,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] TypeScript Agent Toolkits [guide]
+### [x] TypeScript Agent Toolkits [guide]
 
 **What it is:** A deep dive into the two leading TypeScript agent toolkits — Vercel AI SDK and Mastra — comparing their architectures, primitives, and when to use each. This is a guide (README only, no demo code) because these are existing products; the value is in understanding how the TypeScript agent ecosystem works, which is directly relevant since this repo is TypeScript.
 
