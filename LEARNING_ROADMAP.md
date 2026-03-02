@@ -62,7 +62,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Test-Time Compute Scaling                 | Pending | Cost Tracking & Model Selection, Self-Validation Tool      |
 | Multi-Agent Coordination Topologies       | Pending | Multi-Agent Routing, Sub-Agent Delegation                  |
 | A2A Protocol (Agent-to-Agent)             | Pending | MCP                                                        |
-| Agent Framework Landscape [guide]         | Pending | MCP, A2A Protocol                                          |
+| Agent Framework Landscape [guide]         | Done    | MCP, A2A Protocol                                          |
 | Vendor Agent SDKs [guide]                 | Pending | Agent Framework Landscape                                  |
 | Orchestration Frameworks [guide]          | Pending | Agent Framework Landscape                                  |
 | TypeScript Agent Toolkits [guide]         | Pending | Agent Framework Landscape                                  |
@@ -1749,7 +1749,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Agent Framework Landscape [guide]
+### [x] Agent Framework Landscape [guide]
 
 **What it is:** A comprehensive overview of the agent framework ecosystem — what the major frameworks are, how they differ architecturally, and when to reach for each one. This is a guide (README only, no demo code) because the value is in analysis and decision-making, not in building a toy version of someone else's product.
 
