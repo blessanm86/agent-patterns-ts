@@ -54,7 +54,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Sub-Agent Event Demultiplexing            | Pending | Sub-Agent Delegation, Streaming                            |
 | Tool-Response Reminder Injection          | Pending | Tool Description Engineering                               |
 | Ordered Precondition Evaluation           | Pending | Evaluation with Mocked Tools                               |
-| Agent Middleware Pipeline                 | Pending | ReAct Loop                                                 |
+| Agent Middleware Pipeline                 | Done    | ReAct Loop                                                 |
 | Observational Memory                      | Pending | Persistent Cross-Session Memory, Context Window Management |
 | Dynamic Tool Selection                    | Pending | Tool Description Engineering                               |
 | Event Sourcing for Agents                 | Pending | State Graph                                                |
@@ -353,7 +353,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Agent Middleware Pipeline (Composable Execution Hooks)
+### [x] Agent Middleware Pipeline (Composable Execution Hooks)
 
 **What it is:** A middleware system for the agent execution loop where composable, ordered interceptors hook into `before_agent` and `after_agent` points. Each middleware can modify, filter, or augment the agent's behavior without changing the core loop — summarization, human-in-the-loop approval, PII redaction, tool retry, model fallback, sub-agent delegation, and context editing all plug in as independent, reusable middleware.
 

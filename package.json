@@ -45,6 +45,7 @@
     "dev:human-in-the-loop": "tsx src/human-in-the-loop/index.ts",
     "dev:persistent-memory": "tsx src/persistent-memory/index.ts",
     "dev:persistent-memory:no-memory": "tsx src/persistent-memory/index.ts --no-memory",
+    "dev:middleware-pipeline": "tsx src/middleware-pipeline/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
