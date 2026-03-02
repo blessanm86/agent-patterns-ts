@@ -63,7 +63,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Multi-Agent Coordination Topologies       | Pending | Multi-Agent Routing, Sub-Agent Delegation                  |
 | A2A Protocol (Agent-to-Agent)             | Pending | MCP                                                        |
 | Agent Framework Landscape [guide]         | Done    | MCP, A2A Protocol                                          |
-| Vendor Agent SDKs [guide]                 | Pending | Agent Framework Landscape                                  |
+| Vendor Agent SDKs [guide]                 | Done    | Agent Framework Landscape                                  |
 | Orchestration Frameworks [guide]          | Pending | Agent Framework Landscape                                  |
 | TypeScript Agent Toolkits [guide]         | Pending | Agent Framework Landscape                                  |
 | File Edit Strategies                      | Pending | Tool Description Engineering                               |
@@ -1786,7 +1786,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Vendor Agent SDKs [guide]
+### [x] Vendor Agent SDKs [guide]
 
 **What it is:** A deep dive into the two major vendor agent SDKs — Claude Agent SDK (Anthropic) and OpenAI Agents SDK — comparing their architectures, primitives, and design philosophies. This is a guide (README only, no demo code) because the value is in understanding product design decisions, not in building within them.
 
