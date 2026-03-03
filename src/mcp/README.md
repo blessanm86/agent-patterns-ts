@@ -246,9 +246,81 @@ MCP isn't always the right choice. Here's when it helps and when it's overhead:
 
 **The token cost is real.** Research shows MCP integration can add 2x to 30x prompt-to-completion token inflation. A single GitHub MCP server's tool definitions consume ~50,000 tokens. Agents exposed to too many tools actually perform **worse** — there's an inverse correlation between tool count and reliability. Windsurf enforces a hard 100-tool limit across all MCP servers for this reason.
 
+## The CLI Counter-Argument: When Bash Is All You Need
+
+MCP is the de facto standard for tool interoperability. But there's a strong practitioner counter-narrative: **for many agent workflows, the Bash tool is the only MCP server you need.** This isn't fringe — it's the architectural reality of every major coding agent.
+
+### The case against MCP servers
+
+The argument landed on the top of Hacker News in early 2026 with Eric Holmes's ["MCP is dead. Long live the CLI"](https://ejholmes.github.io/2026/02/28/mcp-is-dead-long-live-the-cli.html), and it goes like this:
+
+1. **LLMs already speak CLI fluently.** Models are trained on millions of man pages, Stack Overflow answers, and GitHub repos. They know `git`, `curl`, `jq`, `grep`, `kubectl`, and `aws` out of the box. An MCP server that wraps `git` adds a translation layer over something the model already understands natively.
+
+2. **CLIs are composable.** You can pipe output through `jq`, chain with `grep`, redirect to files. MCP tools return structured JSON — useful for the agent, but not composable in the Unix sense. As one practitioner put it: "You're stuck with whatever the MCP server decided to return."
+
+3. **CLIs are debuggable.** Identical CLI commands produce identical outputs. You can reproduce exactly what the agent did. MCP tool calls exist only inside the conversation — there's no standalone way to replay them.
+
+4. **Auth already works.** AWS SSO, GitHub tokens, kubeconfig — CLI tools reuse the same authentication that humans use. MCP servers often need their own credential management, creating a parallel auth system.
+
+5. **No process management.** CLIs are stateless binaries. MCP servers are background processes that need spawning, health checking, and crash recovery. Tom Bedor documented sessions launching "15 MCP processes consuming 1G of memory."
+
+### The token math is damning
+
+The strongest quantitative evidence comes from token benchmarks:
+
+| Approach                        | Token cost           | Source                   |
+| ------------------------------- | -------------------- | ------------------------ |
+| CLI `--help` output (typical)   | 200–500 tokens       | Mario Zechner benchmarks |
+| Equivalent MCP tool definitions | 13,700–18,000 tokens | Mario Zechner benchmarks |
+| GitHub MCP server (all tools)   | ~50,000 tokens       | Multiple sources         |
+| Cloudflare API via MCP          | 1,170,000 tokens     | Cloudflare engineering   |
+| Cloudflare API via Code Mode    | ~1,000 tokens        | Cloudflare engineering   |
+
+That's a **60–80x token difference** between CLI help text and MCP schemas for the same capabilities. For 20 tools, you're looking at 4K–10K tokens (CLI) vs 40K–100K tokens (MCP) — an order of magnitude that directly eats into your context window.
+
+Even MCP's creators acknowledge the problem. Anthropic's [code execution pattern](https://www.anthropic.com/engineering/code-execution-with-mcp) reduced MCP token usage from 150K to 2K tokens (98.7% reduction) — by having agents write code against MCP servers as if they were libraries, rather than injecting all tool definitions upfront. Cloudflare's Code Mode achieved 99.9% reduction with the same idea. Both solutions effectively make MCP more CLI-like: the agent explores and calls tools dynamically rather than receiving the entire schema up front.
+
+### The harness evidence is structural
+
+This isn't just blog post opinions — it's visible in how production agents are architected:
+
+**Claude Code** — built by MCP's creator, Anthropic — runs on six primitive tools: `Bash`, `Read`, `Write`, `Edit`, `Glob`, `Grep`. These are CLI-style tools, not MCP servers. MCP is supported as an extension mechanism, but the core agent is entirely CLI-based. As one architecture analysis noted: "Instead of 100 brittle Jira Plugins, the agent uses Primitive Tools (Bash, Grep, Edit) to compose any workflow a human engineer can execute."
+
+**Aider** — one of the highest-performing coding agents (52.7% accuracy on benchmarks) — has **zero MCP support**. It uses git, shell commands, and direct file manipulation. It's proof that a top-tier agent doesn't need MCP at all.
+
+**Codex CLI** (OpenAI) is built in Rust with shell execution as the primary tool mechanism. MCP was added later as an optional layer: "users can give Codex access to additional third-party tools with MCP."
+
+The pattern is consistent: **every major coding harness is CLI-first, MCP-supplemental.** Not the other way around.
+
+### Where MCP still wins
+
+The CLI argument is strong for local, developer-facing workflows. But MCP has legitimate advantages that CLIs can't match:
+
+- **Cross-client portability.** Write one MCP server, and it works in Claude, ChatGPT, Cursor, Gemini, and every other MCP client. CLIs require each client to implement its own shell execution layer. This is MCP's strongest advantage and the reason it has 97M+ monthly SDK downloads.
+- **Non-shell environments.** Mobile apps, web interfaces, hosted chat — there's no terminal. MCP provides structured tool access where CLIs can't exist.
+- **Enterprise governance.** MCP gateways provide centralized audit logging, permission management, and sandboxed execution. CLI execution is "equivalent to giving an agent full user access."
+- **Stateful integrations.** Services requiring persistent sessions (Notion, Stripe, calendars) — multi-step transactions with approval gates are awkward with stateless CLI calls.
+- **Internal tools.** For bespoke, undocumented tools where the model has no training data, MCP's structured schemas and descriptions provide guidance that CLI `--help` text can't match.
+
+### The emerging consensus: hybrid architecture
+
+The debate is converging on a **pragmatic hybrid** rather than a binary choice:
+
+| Scenario                           | Use CLI                             | Use MCP                                |
+| ---------------------------------- | ----------------------------------- | -------------------------------------- |
+| File operations, git, grep         | Yes — composable, token-efficient   | Overhead                               |
+| Cloud CLIs (aws, gcloud, kubectl)  | Yes — mature auth, complete API     | Overhead                               |
+| Data processing (jq, DuckDB, awk)  | Yes — piping beats structured calls | Overhead                               |
+| Cross-client tool sharing          | No portability                      | Yes — write once, support every client |
+| SaaS integrations (Notion, Stripe) | Awkward — stateless                 | Yes — persistent sessions              |
+| Enterprise with audit requirements | Too permissive                      | Yes — governance layer                 |
+| Mobile/web agent interfaces        | No terminal available               | Yes — only option                      |
+
+The trendline is convergence: MCP solutions are becoming more CLI-like (code execution, dynamic loading, static vendoring), and CLI-based agents are offering MCP as an extension point. The two approaches aren't competing — they're finding their respective niches.
+
 ## In the Wild: Coding Agent Harnesses
 
-MCP is the backbone of tool integration across coding agents. Here's how the major harnesses implement it:
+MCP is a standard integration layer across coding agents — but as the CLI counter-argument shows, it's consistently the **extension mechanism**, not the core. Here's how the major harnesses balance the two:
 
 **Claude Code** has the richest MCP experience. It manages servers at three scope levels — **local** (project-private, `.claude/settings.json`), **project** (git-tracked, `.mcp.json`), and **user** (`~/.claude.json`). The CLI offers `claude mcp add`, `claude mcp list`, and `claude mcp remove` for server management. When tool count grows large enough to consume 10%+ of the context window, Claude Code activates **Tool Search** — an on-demand discovery mechanism that selectively loads only the tools relevant to the current query, rather than injecting all tool definitions into every turn. Claude Code is also **dual-mode**: it can act as an MCP server itself (`claude mcp serve`), exposing its file editing and command execution capabilities to other MCP clients.
 
@@ -282,20 +354,36 @@ v2 adds explicit **output schemas** — the server can declare what shape a tool
 
 3. **The agent loop is unchanged.** Dependency injection is the pattern that makes MCP work: pass `tools` and `executeTool` as config instead of importing them. The same ReAct loop handles both MCP and static tools.
 
-4. **Start with stdio.** For local development, stdio transport (server as subprocess) is the simplest path. Move to Streamable HTTP when you need remote access or production deployment.
+4. **MCP is not always the answer.** For local workflows with well-known CLIs (git, aws, jq, grep), a Bash tool is simpler, cheaper (60-80x fewer tokens), and more composable. Every major coding harness is CLI-first, MCP-supplemental — including Claude Code, built by MCP's creator.
 
-5. **Watch the token budget.** MCP tool definitions consume context window space. Research shows agents perform worse with too many tools. Discover tools dynamically during development, then vendor the ones you need for production.
+5. **Use MCP for portability and enterprise governance.** Cross-client tool sharing, non-shell environments, stateful SaaS integrations, and audit requirements are where MCP's protocol overhead pays for itself.
+
+6. **Start with stdio.** For local development, stdio transport (server as subprocess) is the simplest path. Move to Streamable HTTP when you need remote access or production deployment.
 
 ## Sources & Further Reading
+
+**MCP specification & adoption:**
 
 - [Model Context Protocol — Specification](https://modelcontextprotocol.io/) — official spec and documentation
 - [Introducing the Model Context Protocol](https://www.anthropic.com/news/model-context-protocol) — Anthropic, 2024 — announcement and motivation
 - [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) — official TypeScript client/server implementation
 - [OpenAI adopts MCP](https://openai.com/index/adding-mcp-support/) — OpenAI, 2025 — cross-vendor adoption signal
+- [Block + Goose: MCP at Enterprise Scale](https://block.xyz/inside/open-source-for-agents-how-blocks-engineers-use-goose) — Block, 2025 — production deployment case study
+
+**CLI counter-argument & token bloat:**
+
+- [MCP is dead. Long live the CLI](https://ejholmes.github.io/2026/02/28/mcp-is-dead-long-live-the-cli.html) — Eric Holmes, 2026 — the sharpest practitioner critique
+- [MCP is a fad](https://tombedor.dev/mcp-is-a-fad/) — Tom Bedor, 2025 — process overhead, security vulnerabilities, thin wrappers
+- [MCP vs CLI: Benchmarking Tools for Coding Agents](https://mariozechner.at/posts/2025-08-15-mcp-vs-cli/) — Mario Zechner, 2025 — one of the few sources with actual benchmarks
+- [What if you don't need MCP at all?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) — Mario Zechner, 2025 — 60-80x token efficiency comparison
+- [Code Execution with MCP](https://www.anthropic.com/engineering/code-execution-with-mcp) — Anthropic Engineering, 2025 — 98.7% token reduction
+- [Code Mode: Give Agents an Entire API in 1,000 Tokens](https://blog.cloudflare.com/code-mode-mcp/) — Cloudflare, 2025 — 99.9% token reduction
+- [Addressing Security & Quality Issues with MCP Tools](https://vercel.com/blog/generate-static-ai-sdk-tools-from-mcp-servers-with-mcp-to-ai-sdk) — Vercel, 2025 — static vendoring pattern
+
+**Research:**
+
 - [Advancing Multi-Agent Systems Through Model Context Protocol](https://arxiv.org/abs/2504.21030) — 2025 — formal analysis of MCP for multi-agent coordination
-- [An Empirical Study of MCP Tool Description Smells](https://arxiv.org/abs/2508.12566) — 2025 — tool description quality analysis
-- [MCP — A Critical Analysis](https://raz.farm/p/mcp-a-critical-analysis) — practitioner critique of MCP design decisions
-- [Block + Goose: MCP at Enterprise Scale](https://block.xyz/inside/open-source-for-agents-how-blocks-engineers-use-goose) — Block, 2025 — production MCP deployment case study
+- [An Empirical Study of MCP Tool Description Smells](https://arxiv.org/abs/2508.12566) — 2025 — 97.1% of tool descriptions are deficient
 
 ---
 
