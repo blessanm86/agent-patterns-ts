@@ -73,7 +73,8 @@ A structured list of concepts for building production-grade AI agents, organized
 | KV-Cache-Aware Context Design             | Pending | Prompt Caching, Context Window Management                  |
 | Client-Agnostic Agent Protocol            | Pending | Streaming                                                  |
 | Pre-Execution Validation                  | Pending | Self-Validation Tool, Sandboxed Code Execution             |
-| Coding Agent Harness Architecture [guide] | Pending | Agent Framework Landscape                                  |
+| Coding Agent Harness Architecture [guide] | Done    | Agent Framework Landscape                                  |
+| Harness-Derived Agent Platforms [guide]   | Done    | Coding Agent Harness Architecture, Vendor Agent SDKs, MCP  |
 
 The table order is the recommended learning progression. Start from the top; the **Builds on** column shows prerequisites.
 
@@ -1893,7 +1894,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Coding Agent Harness Architecture [guide]
+### [x] Coding Agent Harness Architecture [guide]
 
 **What it is:** An architectural case study of how production coding agent harnesses (Claude Code, OpenCode, Aider) combine dozens of agentic patterns into a single product. This is a guide (README only, no demo code) because harnesses are products, not patterns — the value is in understanding how patterns compose at scale.
 
@@ -1925,3 +1926,37 @@ Each concept is designed to be completable in a single focused session: build th
 - [Aider Architect/Editor Pattern](https://aider.chat/2024/09/26/architect.html)
 - [Claude Code Docs](https://docs.anthropic.com/en/docs/claude-code)
 - [OpenCode Docs](https://opencode.ai/docs/)
+
+---
+
+### [x] Harness-Derived Agent Platforms [guide]
+
+**What it is:** A guide exploring how production companies take coding agent harness infrastructure (Claude Agent SDK, OpenCode, etc.) and adapt it to build domain-specific agents for non-coding use cases — observability, data analysis, cybersecurity, legal research, financial analytics, and more.
+
+**Why it matters:** The harness architecture guide showed how coding agents combine dozens of patterns into a single product. But the infrastructure powering those products — tool execution, context management, sub-agent delegation, permission systems, hooks, MCP — is domain-agnostic. Companies are already reusing it. Anthropic renamed "Claude Code SDK" to "Claude Agent SDK" explicitly because "the agent harness that powers Claude Code can power many other types of agents." OpenCode's client-server architecture lets any HTTP client build on the same agent backend. Understanding this pattern is the bridge from "I understand how coding agents work" to "I can build production agents for any domain."
+
+**Builds on:** Coding Agent Harness Architecture (harness internals), Vendor Agent SDKs (SDK extraction pattern), MCP (tool integration across domains).
+
+**Guide brief:** Analyze why coding harness infrastructure is reusable, trace the Claude Code → Agent SDK → Cowork evolution, explore OpenCode as a headless domain platform, survey production case studies across industries, and provide a decision framework for when to build on harness infrastructure vs. build from scratch.
+
+**Key areas to cover:**
+
+- Why coding harness infrastructure is domain-agnostic: the seven reusable properties (tool primitives, permissions, MCP, skill injection, sub-agents, session management, hooks)
+- The Claude Code → Claude Agent SDK → Cowork pipeline: how a coding tool became a general-purpose agent runtime; Cowork built in under two weeks on Claude Code infrastructure
+- OpenCode as headless domain platform: client-server architecture, 75+ provider support, plugin system, AGENTS.md configuration as domain adaptation without code changes
+- The configuration-vs-code spectrum: what you can do with CLAUDE.md/AGENTS.md + MCP + plugins vs. what requires forking or custom code
+- Production case studies: BGL (financial analytics), eSentire (cybersecurity, 5hr → 7min), L'Oreal (retail, 44K monthly users), Thomson Reuters (legal), observability/monitoring agents
+- Decision framework: when to build on harness infrastructure vs. use a framework vs. build from scratch
+- The "harness is the new framework" thesis: how harnesses are commoditizing the build-vs-buy decision for production agents
+
+**Blog angle:** "Your Coding Agent Is a General-Purpose Agent Runtime — You Just Don't Know It Yet"
+
+**Sources:**
+
+- [Claude Agent SDK Overview — Anthropic](https://docs.anthropic.com/en/docs/agents/claude-agent-sdk-overview)
+- [Effective Harnesses for Long-Running Agents — Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
+- [The Importance of Agent Harness in 2026 — Philipp Schmid](https://www.philschmid.de/agent-harness-2026)
+- [The Rise of the Agent Harness — Agile Lab](https://agilelab.substack.com/p/the-rise-of-the-agent-harness)
+- [OpenCode Plugins Docs](https://opencode.ai/docs/plugins/)
+- [OpenCode Custom Tools Docs](https://opencode.ai/docs/custom-tools/)
+- [2026 Agentic Coding Trends Report — Anthropic](https://resources.anthropic.com/2026-agentic-coding-trends-report)
