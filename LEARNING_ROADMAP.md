@@ -44,7 +44,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Ambient Context Store                     | Done    | Structured Entity Tags                                     |
 | Cross-Platform Response Rendering         | Done    | Structured Entity Tags                                     |
 | MCP (Model Context Protocol)              | Done    |                                                            |
-| Tool Bundle System                        | Pending |                                                            |
+| Tool Bundle System                        | Done    |                                                            |
 | External Event-Triggered Agent            | Pending | Streaming                                                  |
 | Sandboxed Code Execution                  | Pending |                                                            |
 | Long-Running Agents & Checkpointing       | Pending | State Graph                                                |
@@ -1093,7 +1093,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Tool Bundle System (Dynamic Tool Availability)
+### [x] Tool Bundle System (Dynamic Tool Availability)
 
 **What it is:** Tool sets that are conditionally available based on per-user/per-org OAuth integrations. Three-layer architecture: global bundle config (static code/YAML), org-level enablement (database flag), and session-specific credentials (per-request lazy-loaded OAuth tokens). The agent's available tool set changes at runtime based on what integrations the user has configured — without changing the graph code.
 

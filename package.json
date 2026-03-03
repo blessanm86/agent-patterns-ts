@@ -53,6 +53,7 @@
     "dev:mcp:static": "tsx src/mcp/index.ts --static",
     "dev:ambient-context": "tsx src/ambient-context/index.ts",
     "dev:cross-platform-rendering": "tsx src/cross-platform-rendering/index.ts",
+    "dev:tool-bundle": "tsx src/tool-bundle/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
