@@ -43,7 +43,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Multi-Modal Agents                        | Done    |                                                            |
 | Ambient Context Store                     | Pending | Structured Entity Tags                                     |
 | Cross-Platform Response Rendering         | Pending | Structured Entity Tags                                     |
-| MCP (Model Context Protocol)              | Pending |                                                            |
+| MCP (Model Context Protocol)              | Done    |                                                            |
 | Tool Bundle System                        | Pending |                                                            |
 | External Event-Triggered Agent            | Pending | Streaming                                                  |
 | Sandboxed Code Execution                  | Pending |                                                            |
@@ -1120,7 +1120,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] MCP (Model Context Protocol)
+### [x] MCP (Model Context Protocol)
 
 **What it is:** A standardized protocol for connecting agents to external tools and data sources dynamically. MCP defines how agents discover available tools, negotiate capabilities, and invoke them over a transport layer — making tool integrations portable across agent frameworks rather than hardcoded per-provider.
 
