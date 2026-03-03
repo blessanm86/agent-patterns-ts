@@ -71,7 +71,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Repository Mapping                        | Pending | RAG                                                        |
 | CodeAct (Code-as-Action)                  | Pending | Sandboxed Code Execution                                   |
 | KV-Cache-Aware Context Design             | Pending | Prompt Caching, Context Window Management                  |
-| Client-Agnostic Agent Protocol            | Pending | Streaming                                                  |
+| Client-Agnostic Agent Protocol            | Done    | Streaming                                                  |
 | Pre-Execution Validation                  | Pending | Self-Validation Tool, Sandboxed Code Execution             |
 | Coding Agent Harness Architecture [guide] | Done    | Agent Framework Landscape                                  |
 | Harness-Derived Agent Platforms [guide]   | Done    | Coding Agent Harness Architecture, Vendor Agent SDKs, MCP  |
@@ -1685,7 +1685,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Client-Agnostic Agent Protocol (Agent Server Pattern)
+### [x] Client-Agnostic Agent Protocol (Agent Server Pattern)
 
 **What it is:** Decoupling the agent runtime from its user interface by defining a protocol layer with durable session primitives. The agent backend exposes a stable API (typically JSON-RPC over stdio or HTTP+SSE) that any client — CLI, web app, IDE extension, mobile app — can consume. The protocol defines three core abstractions: an **Item** (atomic unit of input/output with lifecycle events), a **Turn** (sequence of items from one unit of agent work), and a **Thread** (durable container for an ongoing session that supports resume, fork, and archival).
 

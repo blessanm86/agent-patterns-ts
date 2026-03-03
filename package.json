@@ -55,6 +55,8 @@
     "dev:cross-platform-rendering": "tsx src/cross-platform-rendering/index.ts",
     "dev:tool-bundle": "tsx src/tool-bundle/index.ts",
     "dev:external-event-triggered": "tsx src/external-event-triggered/index.ts",
+    "dev:agent-protocol": "tsx src/agent-protocol/index.ts",
+    "dev:agent-protocol:cli": "tsx src/agent-protocol/index.ts --mode=cli",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Protocol — Restaurant Concierge</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #0f0f0f;
+        color: #e0e0e0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── Header ────────────────────────────────────────────────── */
+      header {
+        padding: 12px 24px;
+        border-bottom: 1px solid #2a2a2a;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #151515;
+        gap: 16px;
+      }
+
+      header h1 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #ffffff;
+        white-space: nowrap;
+      }
+
+      header h1 span {
+        opacity: 0.5;
+        font-weight: 400;
+      }
+
+      .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      /* ── Thread Picker ──────────────────────────────────────────── */
+      #thread-select {
+        background: #222;
+        color: #ccc;
+        border: 1px solid #333;
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 13px;
+        min-width: 180px;
+      }
+
+      .btn {
+        padding: 6px 14px;
+        border: 1px solid #333;
+        background: #222;
+        color: #ccc;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .btn:hover {
+        background: #2d6ee6;
+        border-color: #2d6ee6;
+        color: #fff;
+      }
+
+      /* ── Chat Area ─────────────────────────────────────────────── */
+      #chat {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .message {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .message-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+
+      .user-msg .message-label {
+        color: #6ea8fe;
+      }
+      .assistant-msg .message-label {
+        color: #75b798;
+      }
+
+      .message-body {
+        padding: 12px 16px;
+        border-radius: 10px;
+        line-height: 1.6;
+        font-size: 14px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .user-msg .message-body {
+        background: #1a2744;
+        border: 1px solid #2a3f66;
+      }
+
+      .assistant-msg .message-body {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+      }
+
+      /* Blinking cursor for streaming */
+      .cursor::after {
+        content: "\2588";
+        animation: blink 0.8s step-end infinite;
+        color: #75b798;
+      }
+
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      /* ── Tool Cards ────────────────────────────────────────────── */
+      .tool-card {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        background: #1a1a2e;
+        border: 1px solid #2a2a44;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 13px;
+      }
+
+      .tool-card-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+        color: #c4a7e7;
+        margin-bottom: 4px;
+      }
+
+      .tool-args {
+        color: #888;
+        font-family: "SF Mono", Monaco, Consolas, monospace;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .tool-result {
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid #2a2a44;
+        color: #aaa;
+        font-family: "SF Mono", Monaco, Consolas, monospace;
+        font-size: 12px;
+        max-height: 120px;
+        overflow-y: auto;
+      }
+
+      .tool-duration {
+        display: inline-block;
+        background: #2a2a44;
+        color: #c4a7e7;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        margin-left: 8px;
+      }
+
+      /* ── Approval Card ─────────────────────────────────────────── */
+      .approval-card {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        background: #2d1a1a;
+        border: 1px solid #5a3030;
+        border-radius: 8px;
+        padding: 14px 18px;
+        font-size: 13px;
+      }
+
+      .approval-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        color: #ff8a80;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .approval-details {
+        color: #ccc;
+        margin-bottom: 12px;
+        line-height: 1.5;
+      }
+
+      .approval-details .detail-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 2px;
+      }
+
+      .approval-details .detail-label {
+        color: #888;
+        min-width: 70px;
+      }
+
+      .approval-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn-approve {
+        padding: 8px 20px;
+        border: 1px solid #4caf50;
+        background: #1a3a1a;
+        color: #81c784;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .btn-approve:hover {
+        background: #4caf50;
+        color: #fff;
+      }
+
+      .btn-deny {
+        padding: 8px 20px;
+        border: 1px solid #e53935;
+        background: #3a1a1a;
+        color: #ef9a9a;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .btn-deny:hover {
+        background: #e53935;
+        color: #fff;
+      }
+
+      .approval-resolved {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .approval-resolved.approved {
+        background: #1a3a1a;
+        color: #81c784;
+        border: 1px solid #4caf50;
+      }
+
+      .approval-resolved.denied {
+        background: #3a1a1a;
+        color: #ef9a9a;
+        border: 1px solid #e53935;
+      }
+
+      /* ── Error Banner ──────────────────────────────────────────── */
+      .error-banner {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        background: #2d1515;
+        border: 1px solid #5a2020;
+        border-radius: 8px;
+        padding: 10px 14px;
+        color: #ff6b6b;
+        font-size: 13px;
+      }
+
+      /* ── Status Indicator ──────────────────────────────────────── */
+      .status-bar {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 6px 14px;
+        font-size: 12px;
+        color: #666;
+        display: none;
+      }
+
+      .status-bar.visible {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .spinner {
+        width: 12px;
+        height: 12px;
+        border: 2px solid #333;
+        border-top-color: #6ea8fe;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ── Welcome ───────────────────────────────────────────────── */
+      .welcome {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+      }
+
+      .welcome h2 {
+        color: #aaa;
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+
+      .welcome p {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      /* ── Input Bar ─────────────────────────────────────────────── */
+      #input-area {
+        padding: 16px 24px;
+        border-top: 1px solid #2a2a2a;
+        background: #151515;
+      }
+
+      #input-form {
+        display: flex;
+        max-width: 720px;
+        margin: 0 auto;
+        gap: 10px;
+      }
+
+      #user-input {
+        flex: 1;
+        padding: 10px 14px;
+        border: 1px solid #333;
+        border-radius: 8px;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+
+      #user-input:focus {
+        border-color: #2d6ee6;
+      }
+
+      #user-input:disabled {
+        opacity: 0.5;
+      }
+
+      #send-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #2d6ee6;
+        color: white;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+
+      #send-btn:hover {
+        background: #3d7ef6;
+      }
+
+      #send-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Agent Protocol <span>/ Restaurant Concierge</span></h1>
+      <div class="header-controls">
+        <select id="thread-select">
+          <option value="">-- select thread --</option>
+        </select>
+        <button class="btn" id="new-thread-btn">+ New Thread</button>
+      </div>
+    </header>
+
+    <div id="chat">
+      <div class="welcome">
+        <h2>Client-Agnostic Agent Protocol</h2>
+        <p>
+          This browser client talks to the agent server via JSON-RPC + SSE.<br />
+          The same server also supports a CLI client over stdio/JSONL.<br /><br />
+          Click <strong>+ New Thread</strong> to start a conversation.
+        </p>
+      </div>
+    </div>
+
+    <div id="input-area">
+      <form id="input-form">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Ask about restaurants, menus, or reservations..."
+          disabled
+        />
+        <button type="submit" id="send-btn" disabled>Send</button>
+      </form>
+    </div>
+
+    <script>
+      // ── State ────────────────────────────────────────────────────
+      let currentThreadId = null;
+      let eventSource = null;
+      let currentAssistantEl = null;
+      let isProcessing = false;
+
+      const chat = document.getElementById("chat");
+      const input = document.getElementById("user-input");
+      const sendBtn = document.getElementById("send-btn");
+      const form = document.getElementById("input-form");
+      const threadSelect = document.getElementById("thread-select");
+      const newThreadBtn = document.getElementById("new-thread-btn");
+
+      // ── JSON-RPC Helper ─────────────────────────────────────────
+      let rpcId = 0;
+      async function rpc(method, params = {}) {
+        const res = await fetch("/rpc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            id: ++rpcId,
+            method,
+            params,
+          }),
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error.message);
+        return data.result;
+      }
+
+      // ── SSE Connection ──────────────────────────────────────────
+      function connectSSE(threadId) {
+        if (eventSource) eventSource.close();
+
+        eventSource = new EventSource(`/events/${threadId}`);
+
+        eventSource.addEventListener("item.started", (e) => {
+          const event = JSON.parse(e.data);
+          const item = event.item;
+
+          if (item.type === "agent_message") {
+            currentAssistantEl = addAssistantMessage("");
+          } else if (item.type === "tool_execution") {
+            addToolCard(item.toolName, item.toolArgs);
+          } else if (item.type === "approval_request") {
+            addApprovalCard(item);
+          }
+        });
+
+        eventSource.addEventListener("item.delta", (e) => {
+          const event = JSON.parse(e.data);
+          if (currentAssistantEl) {
+            const body = currentAssistantEl.querySelector(".message-body");
+            body.classList.add("cursor");
+            body.textContent += event.delta;
+            scrollToBottom();
+          }
+        });
+
+        eventSource.addEventListener("item.completed", (e) => {
+          const event = JSON.parse(e.data);
+          const item = event.item;
+
+          if (item.type === "agent_message" && currentAssistantEl) {
+            const body = currentAssistantEl.querySelector(".message-body");
+            body.classList.remove("cursor");
+            currentAssistantEl = null;
+          } else if (item.type === "tool_execution" && item.result) {
+            updateToolCard(item.toolName, item.result, item.durationMs);
+          } else if (item.type === "approval_request") {
+            resolveApprovalCard(item.id, item.resolution);
+          }
+        });
+
+        eventSource.addEventListener("turn.awaiting_approval", (e) => {
+          // Approval card already rendered via item.started
+          hideStatus();
+        });
+
+        eventSource.addEventListener("turn.completed", (e) => {
+          isProcessing = false;
+          enableInput();
+          hideStatus();
+        });
+
+        eventSource.addEventListener("error", (e) => {
+          // SSE error — might be disconnect
+          console.warn("SSE error:", e);
+        });
+      }
+
+      // ── Thread Management ───────────────────────────────────────
+      async function refreshThreadList() {
+        const result = await rpc("thread.list");
+        threadSelect.innerHTML = '<option value="">-- select thread --</option>';
+        for (const t of result.threads) {
+          const opt = document.createElement("option");
+          opt.value = t.id;
+          opt.textContent = `${t.title} (${t.turnCount} turns)`;
+          if (t.id === currentThreadId) opt.selected = true;
+          threadSelect.appendChild(opt);
+        }
+      }
+
+      async function createThread() {
+        const result = await rpc("thread.create", { title: "Restaurant chat" });
+        currentThreadId = result.threadId;
+        chat.innerHTML = "";
+        showStatus("Ready to chat");
+        connectSSE(currentThreadId);
+        await refreshThreadList();
+        enableInput();
+      }
+
+      async function loadThread(threadId) {
+        currentThreadId = threadId;
+        chat.innerHTML = "";
+
+        const result = await rpc("thread.get", { threadId });
+        const thread = result.thread;
+
+        // Replay turns as chat bubbles
+        for (const turn of thread.turns) {
+          for (const item of turn.items) {
+            if (item.type === "user_message") {
+              addUserMessage(item.content);
+            } else if (item.type === "agent_message") {
+              addAssistantMessage(item.content);
+            } else if (item.type === "tool_execution") {
+              addToolCard(item.toolName, item.toolArgs);
+              if (item.result) updateToolCard(item.toolName, item.result, item.durationMs);
+            } else if (item.type === "approval_request") {
+              addApprovalCard(item);
+              if (item.resolution) resolveApprovalCard(item.id, item.resolution);
+            }
+          }
+        }
+
+        // Reset streaming state
+        currentAssistantEl = null;
+
+        connectSSE(threadId);
+        enableInput();
+        scrollToBottom();
+      }
+
+      // ── Send Message ────────────────────────────────────────────
+      async function sendMessage(text) {
+        if (!currentThreadId || !text.trim() || isProcessing) return;
+
+        isProcessing = true;
+        disableInput();
+        addUserMessage(text);
+        showStatus("Agent is thinking...");
+
+        try {
+          await rpc("turn.submit", {
+            threadId: currentThreadId,
+            message: text.trim(),
+          });
+        } catch (err) {
+          addError(err.message);
+          isProcessing = false;
+          enableInput();
+          hideStatus();
+        }
+      }
+
+      // ── UI Helpers ──────────────────────────────────────────────
+      function addUserMessage(text) {
+        const div = document.createElement("div");
+        div.className = "message user-msg";
+        div.innerHTML = `<div class="message-label">You</div><div class="message-body">${escapeHtml(text)}</div>`;
+        chat.appendChild(div);
+        scrollToBottom();
+      }
+
+      function addAssistantMessage(text) {
+        const div = document.createElement("div");
+        div.className = "message assistant-msg";
+        div.innerHTML = `<div class="message-label">Agent</div><div class="message-body">${escapeHtml(text)}</div>`;
+        chat.appendChild(div);
+        scrollToBottom();
+        return div;
+      }
+
+      function addToolCard(toolName, args) {
+        const div = document.createElement("div");
+        div.className = "tool-card";
+        div.dataset.tool = toolName;
+        div.innerHTML = `
+          <div class="tool-card-header">
+            <span>&#9881;</span> ${escapeHtml(toolName)}
+          </div>
+          <div class="tool-args">${escapeHtml(JSON.stringify(args, null, 2))}</div>
+          <div class="tool-result" style="display:none"></div>
+        `;
+        chat.appendChild(div);
+        scrollToBottom();
+      }
+
+      function updateToolCard(toolName, result, durationMs) {
+        // Find the last tool card with this name that has no result yet
+        const cards = chat.querySelectorAll(`.tool-card[data-tool="${toolName}"]`);
+        const card = cards[cards.length - 1];
+        if (!card) return;
+
+        const resultEl = card.querySelector(".tool-result");
+        resultEl.style.display = "block";
+        try {
+          resultEl.textContent = JSON.stringify(JSON.parse(result), null, 2);
+        } catch {
+          resultEl.textContent = result;
+        }
+
+        if (durationMs !== undefined) {
+          const header = card.querySelector(".tool-card-header");
+          header.innerHTML += `<span class="tool-duration">${durationMs}ms</span>`;
+        }
+      }
+
+      function addApprovalCard(item) {
+        const div = document.createElement("div");
+        div.className = "approval-card";
+        div.id = `approval-${item.id}`;
+        div.innerHTML = `
+          <div class="approval-header">
+            <span>&#9888;</span> Approval Required
+          </div>
+          <div class="approval-details">
+            <div class="detail-row"><span class="detail-label">Tool:</span> ${escapeHtml(item.toolName)}</div>
+            <div class="detail-row"><span class="detail-label">Action:</span> ${escapeHtml(item.description)}</div>
+            <div class="detail-row"><span class="detail-label">Risk:</span> ${escapeHtml(item.riskLevel)}</div>
+            <div class="detail-row"><span class="detail-label">Args:</span> <code>${escapeHtml(JSON.stringify(item.toolArgs))}</code></div>
+          </div>
+          <div class="approval-actions" id="actions-${item.id}">
+            <button class="btn-approve" onclick="handleApproval('${item.id}', 'approved')">Approve</button>
+            <button class="btn-deny" onclick="handleApproval('${item.id}', 'denied')">Deny</button>
+          </div>
+        `;
+        chat.appendChild(div);
+        scrollToBottom();
+      }
+
+      function resolveApprovalCard(itemId, resolution) {
+        const actions = document.getElementById(`actions-${itemId}`);
+        if (!actions) return;
+        actions.innerHTML = `<span class="approval-resolved ${resolution}">${resolution === "approved" ? "Approved" : "Denied"}</span>`;
+      }
+
+      async function handleApproval(itemId, decision) {
+        const actions = document.getElementById(`actions-${itemId}`);
+        if (actions) {
+          actions.innerHTML = `<span class="approval-resolved ${decision}">${decision === "approved" ? "Approved" : "Denied"}</span>`;
+        }
+        showStatus("Agent is continuing...");
+
+        try {
+          await rpc("turn.approve", { itemId, decision });
+        } catch (err) {
+          addError(err.message);
+        }
+      }
+
+      function addError(message) {
+        const div = document.createElement("div");
+        div.className = "error-banner";
+        div.textContent = `Error: ${message}`;
+        chat.appendChild(div);
+        scrollToBottom();
+      }
+
+      function showStatus(text) {
+        let bar = chat.querySelector(".status-bar");
+        if (!bar) {
+          bar = document.createElement("div");
+          bar.className = "status-bar visible";
+          bar.innerHTML = `<div class="spinner"></div><span class="status-text"></span>`;
+          chat.appendChild(bar);
+        }
+        bar.classList.add("visible");
+        bar.querySelector(".status-text").textContent = text;
+        scrollToBottom();
+      }
+
+      function hideStatus() {
+        const bar = chat.querySelector(".status-bar");
+        if (bar) bar.remove();
+      }
+
+      function enableInput() {
+        input.disabled = false;
+        sendBtn.disabled = false;
+        input.focus();
+      }
+
+      function disableInput() {
+        input.disabled = true;
+        sendBtn.disabled = true;
+      }
+
+      function scrollToBottom() {
+        requestAnimationFrame(() => {
+          chat.scrollTop = chat.scrollHeight;
+        });
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // ── Event Listeners ─────────────────────────────────────────
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const text = input.value;
+        input.value = "";
+        sendMessage(text);
+      });
+
+      newThreadBtn.addEventListener("click", () => createThread());
+
+      threadSelect.addEventListener("change", (e) => {
+        const threadId = e.target.value;
+        if (threadId) loadThread(threadId);
+      });
+
+      // ── Init ────────────────────────────────────────────────────
+      refreshThreadList();
+    </script>
+  </body>
+</html>
