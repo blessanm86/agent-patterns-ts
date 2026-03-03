@@ -41,7 +41,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Persistent Cross-Session Memory           | Done    | Multi-Turn Memory, Context Window Management               |
 | Agentic RAG                               | Done    | RAG                                                        |
 | Multi-Modal Agents                        | Done    |                                                            |
-| Ambient Context Store                     | Pending | Structured Entity Tags                                     |
+| Ambient Context Store                     | Done    | Structured Entity Tags                                     |
 | Cross-Platform Response Rendering         | Pending | Structured Entity Tags                                     |
 | MCP (Model Context Protocol)              | Done    |                                                            |
 | Tool Bundle System                        | Pending |                                                            |
@@ -980,7 +980,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Ambient Context Store (UI-Driven Context Injection)
+### [x] Ambient Context Store (UI-Driven Context Injection)
 
 **What it is:** Any UI component that displays domain data (a service sidebar, a chart, a trace explorer) can register contextual data that gets automatically included in the agent's next prompt. Uses reference counting: mounting a component adds context, unmounting removes it. Active contexts appear as chips the user can individually exclude. When the user submits a prompt, accumulated contexts are serialized as structured tags injected into the message.
 

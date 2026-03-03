@@ -51,6 +51,7 @@
     "dev:multi-modal:text-only": "tsx src/multi-modal/index.ts --text-only",
     "dev:mcp": "tsx src/mcp/index.ts",
     "dev:mcp:static": "tsx src/mcp/index.ts --static",
+    "dev:ambient-context": "tsx src/ambient-context/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
