@@ -54,6 +54,7 @@
     "dev:ambient-context": "tsx src/ambient-context/index.ts",
     "dev:cross-platform-rendering": "tsx src/cross-platform-rendering/index.ts",
     "dev:tool-bundle": "tsx src/tool-bundle/index.ts",
+    "dev:external-event-triggered": "tsx src/external-event-triggered/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

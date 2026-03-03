@@ -45,7 +45,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Cross-Platform Response Rendering         | Done    | Structured Entity Tags                                     |
 | MCP (Model Context Protocol)              | Done    |                                                            |
 | Tool Bundle System                        | Done    |                                                            |
-| External Event-Triggered Agent            | Pending | Streaming                                                  |
+| External Event-Triggered Agent            | Done    | Streaming                                                  |
 | Sandboxed Code Execution                  | Pending |                                                            |
 | Long-Running Agents & Checkpointing       | Pending | State Graph                                                |
 | In-Band Metadata via Streaming Sentinel   | Pending | Streaming, Structured Output                               |
@@ -1037,7 +1037,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] External Event-Triggered Agent (Webhook-Driven)
+### [x] External Event-Triggered Agent (Webhook-Driven)
 
 **What it is:** The agent is triggered not by a human typing in a UI but by webhooks from external platforms (Slack, Linear, etc.). This involves: HMAC signature verification of the raw request body, immediate ACK within the platform's timeout window (Slack: 3s, Linear: 5s), async background processing, user identity resolution from the webhook payload, response posting back to the platform, and per-session promise queue serialization for concurrent events. Includes live progress broadcasting with throttled heartbeats to keep external platforms from timing out.
 

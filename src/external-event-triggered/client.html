@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Webhook Agent — CI/CD Pipeline Assistant</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #0f0f0f;
+        color: #e0e0e0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── Header ────────────────────────────────────────────────── */
+      header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #2a2a2a;
+        background: #151515;
+      }
+
+      header h1 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #ffffff;
+      }
+
+      header h1 span {
+        opacity: 0.5;
+        font-weight: 400;
+      }
+
+      /* ── Status Bar ──────────────────────────────────────────── */
+      #status-bar {
+        display: flex;
+        gap: 20px;
+        padding: 10px 24px;
+        background: #111;
+        border-bottom: 1px solid #2a2a2a;
+        font-size: 12px;
+        color: #888;
+      }
+
+      .status-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #555;
+      }
+
+      .status-dot.connected {
+        background: #4ade80;
+      }
+
+      .status-dot.disconnected {
+        background: #ef4444;
+      }
+
+      .status-value {
+        color: #aaa;
+        font-weight: 600;
+      }
+
+      /* ── Simulator Panel ─────────────────────────────────────── */
+      #simulator {
+        padding: 16px 24px;
+        border-bottom: 1px solid #2a2a2a;
+        background: #151515;
+      }
+
+      #simulator h2 {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #666;
+        margin-bottom: 12px;
+      }
+
+      .sim-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .sim-btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .sim-btn:hover {
+        border-color: #555;
+        background: #222;
+      }
+
+      .sim-btn:active {
+        transform: scale(0.98);
+      }
+
+      .sim-btn.pr {
+        border-color: #2d5a27;
+      }
+      .sim-btn.pr:hover {
+        background: #1a2e17;
+      }
+
+      .sim-btn.fail {
+        border-color: #5a2020;
+      }
+      .sim-btn.fail:hover {
+        background: #2e1717;
+      }
+
+      .sim-btn.mention {
+        border-color: #2a3f66;
+      }
+      .sim-btn.mention:hover {
+        background: #172040;
+      }
+
+      .sim-icon {
+        font-size: 16px;
+      }
+
+      /* ── Timeline ────────────────────────────────────────────── */
+      #timeline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .timeline-entry {
+        max-width: 800px;
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        gap: 12px;
+        font-size: 13px;
+      }
+
+      .timeline-time {
+        flex-shrink: 0;
+        width: 70px;
+        color: #555;
+        font-family: "SF Mono", Monaco, Consolas, monospace;
+        font-size: 11px;
+        padding-top: 2px;
+      }
+
+      .timeline-content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      /* ── Event-specific styles ───────────────────────────────── */
+      .entry-webhook {
+        background: #1a1a2e;
+        border: 1px solid #2a2a44;
+        border-radius: 8px;
+        padding: 10px 14px;
+      }
+
+      .entry-webhook .entry-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+
+      .entry-webhook .event-type {
+        font-weight: 600;
+        color: #c4a7e7;
+      }
+
+      .entry-webhook .delivery-id {
+        color: #555;
+        font-family: "SF Mono", Monaco, Consolas, monospace;
+        font-size: 11px;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 1px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .badge-ack {
+        background: #1a3a1a;
+        color: #4ade80;
+      }
+
+      .badge-duplicate {
+        background: #3a3a1a;
+        color: #fbbf24;
+      }
+
+      .entry-text {
+        color: #aaa;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .entry-tool {
+        background: #1a1a2e;
+        border: 1px solid #2a2a44;
+        border-radius: 6px;
+        padding: 8px 12px;
+      }
+
+      .entry-tool .tool-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+        color: #c4a7e7;
+        font-size: 12px;
+      }
+
+      .entry-tool .tool-args {
+        color: #666;
+        font-family: "SF Mono", Monaco, Consolas, monospace;
+        font-size: 11px;
+        margin-top: 4px;
+      }
+
+      .entry-tool .tool-result {
+        margin-top: 6px;
+        padding-top: 6px;
+        border-top: 1px solid #2a2a44;
+        color: #888;
+        font-family: "SF Mono", Monaco, Consolas, monospace;
+        font-size: 11px;
+        max-height: 100px;
+        overflow-y: auto;
+      }
+
+      .tool-duration {
+        display: inline-block;
+        background: #2a2a44;
+        color: #c4a7e7;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+        margin-left: 6px;
+      }
+
+      .entry-platform {
+        background: #17261a;
+        border: 1px solid #2a5a2a;
+        border-radius: 8px;
+        padding: 10px 14px;
+      }
+
+      .entry-platform .platform-header {
+        font-weight: 600;
+        color: #4ade80;
+        margin-bottom: 6px;
+        font-size: 12px;
+      }
+
+      .entry-platform .platform-body {
+        color: #aaa;
+        font-size: 12px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      .entry-heartbeat {
+        color: #555;
+        font-style: italic;
+        font-size: 12px;
+      }
+
+      .entry-done {
+        background: #111;
+        border: 1px solid #2a2a2a;
+        border-radius: 6px;
+        padding: 6px 12px;
+        display: flex;
+        gap: 16px;
+        font-size: 12px;
+        color: #888;
+      }
+
+      .entry-done .metric-value {
+        color: #aaa;
+        font-weight: 600;
+      }
+
+      .entry-error {
+        background: #2d1515;
+        border: 1px solid #5a2020;
+        border-radius: 6px;
+        padding: 8px 12px;
+        color: #ff6b6b;
+        font-size: 12px;
+      }
+
+      .session-tag {
+        display: inline-block;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        font-family: "SF Mono", Monaco, Consolas, monospace;
+        margin-right: 6px;
+      }
+
+      .session-tag.pr {
+        background: #1a2e17;
+        color: #4ade80;
+      }
+      .session-tag.issue {
+        background: #172040;
+        color: #6ea8fe;
+      }
+
+      /* ── Welcome ─────────────────────────────────────────────── */
+      .welcome {
+        max-width: 800px;
+        width: 100%;
+        margin: 40px auto 0;
+        text-align: center;
+        color: #666;
+      }
+
+      .welcome h2 {
+        font-size: 20px;
+        color: #aaa;
+        margin-bottom: 8px;
+      }
+
+      .welcome p {
+        font-size: 14px;
+        line-height: 1.8;
+      }
+
+      .welcome code {
+        background: #1a1a1a;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 13px;
+        color: #c4a7e7;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>CI/CD Pipeline Assistant <span>— Webhook-Driven Agent</span></h1>
+    </header>
+
+    <div id="status-bar">
+      <div class="status-item">
+        <div id="sse-dot" class="status-dot disconnected"></div>
+        <span id="sse-status">Connecting...</span>
+      </div>
+      <div class="status-item">Active: <span id="active-count" class="status-value">0</span></div>
+      <div class="status-item">
+        Processed: <span id="processed-count" class="status-value">0</span>
+      </div>
+    </div>
+
+    <div id="simulator">
+      <h2>Event Simulator</h2>
+      <div class="sim-buttons">
+        <button class="sim-btn pr" onclick="simulateEvent('pr_opened')">
+          <span class="sim-icon">+</span> PR Opened
+        </button>
+        <button class="sim-btn fail" onclick="simulateEvent('build_failed')">
+          <span class="sim-icon">!</span> Build Failed
+        </button>
+        <button class="sim-btn mention" onclick="simulateEvent('bot_mention')">
+          <span class="sim-icon">@</span> @bot Mention
+        </button>
+      </div>
+    </div>
+
+    <div id="timeline">
+      <div class="welcome">
+        <h2>Webhook Event Timeline</h2>
+        <p>
+          Click the buttons above to simulate GitHub webhook events.<br />
+          Watch the agent receive, verify, and process each event in real-time.<br /><br />
+          Try clicking <code>PR Opened</code> then quickly clicking it again<br />
+          to see serialized queue processing and duplicate detection.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // ── State ──────────────────────────────────────────────────
+      let processedCount = 0;
+      let eventSource = null;
+
+      // ── SSE Connection ─────────────────────────────────────────
+      function connectSSE() {
+        eventSource = new EventSource("/events");
+
+        eventSource.onopen = () => {
+          document.getElementById("sse-dot").className = "status-dot connected";
+          document.getElementById("sse-status").textContent = "Connected";
+        };
+
+        eventSource.onerror = () => {
+          document.getElementById("sse-dot").className = "status-dot disconnected";
+          document.getElementById("sse-status").textContent = "Disconnected";
+        };
+
+        // Handle each event type
+        eventSource.addEventListener("connected", (e) => {
+          const data = JSON.parse(e.data);
+          document.getElementById("active-count").textContent = data.activeSessions.length;
+          processedCount = data.eventsProcessed;
+          document.getElementById("processed-count").textContent = processedCount;
+        });
+
+        eventSource.addEventListener("webhook_received", (e) => {
+          removeWelcome();
+          const data = JSON.parse(e.data);
+          addWebhookEntry(data);
+        });
+
+        eventSource.addEventListener("ack", (e) => {
+          const data = JSON.parse(e.data);
+          addAckBadge(data.sessionId, data.ackTimeMs);
+        });
+
+        eventSource.addEventListener("duplicate", (e) => {
+          removeWelcome();
+          const data = JSON.parse(e.data);
+          addDuplicateEntry(data);
+        });
+
+        eventSource.addEventListener("text", (e) => {
+          const data = JSON.parse(e.data);
+          appendText(data.sessionId, data.content);
+        });
+
+        eventSource.addEventListener("tool_call", (e) => {
+          const data = JSON.parse(e.data);
+          addToolCallEntry(data);
+        });
+
+        eventSource.addEventListener("tool_result", (e) => {
+          const data = JSON.parse(e.data);
+          addToolResultEntry(data);
+        });
+
+        eventSource.addEventListener("platform_post", (e) => {
+          const data = JSON.parse(e.data);
+          addPlatformEntry(data);
+        });
+
+        eventSource.addEventListener("heartbeat", (e) => {
+          const data = JSON.parse(e.data);
+          addHeartbeatEntry(data);
+        });
+
+        eventSource.addEventListener("done", (e) => {
+          const data = JSON.parse(e.data);
+          processedCount++;
+          document.getElementById("processed-count").textContent = processedCount;
+          addDoneEntry(data);
+        });
+
+        eventSource.addEventListener("error", (e) => {
+          try {
+            const data = JSON.parse(e.data);
+            addErrorEntry(data);
+          } catch {
+            // SSE connection error, not a parsed event
+          }
+        });
+      }
+
+      // ── Simulate Events ────────────────────────────────────────
+      const EVENT_PAYLOADS = {
+        pr_opened: {
+          type: "pull_request.opened",
+          payload: {
+            number: 42,
+            title: "Add rate limiting to login endpoint",
+            author: "dev-sarah",
+            base_branch: "main",
+            head_branch: "feature/rate-limit-login",
+            files_changed: 2,
+          },
+        },
+        build_failed: {
+          type: "check_run.completed",
+          payload: {
+            name: "CI / Test Suite",
+            conclusion: "failure",
+            pr_number: 42,
+            sha: "a1b2c3d",
+            run_id: 98765,
+          },
+        },
+        bot_mention: {
+          type: "issue_comment.created",
+          payload: {
+            issue_number: 42,
+            author: "dev-jake",
+            body: "@bot Can you explain how the rate limiting in login.ts works? Is 5 attempts the right threshold?",
+          },
+        },
+      };
+
+      async function simulateEvent(type) {
+        const payload = EVENT_PAYLOADS[type];
+        if (!payload) return;
+
+        try {
+          await fetch("/simulate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        } catch (err) {
+          addErrorEntry({
+            sessionId: "client",
+            message: "Failed to send: " + err.message,
+          });
+        }
+      }
+
+      // ── Timeline Entry Builders ────────────────────────────────
+
+      function removeWelcome() {
+        const welcome = document.querySelector(".welcome");
+        if (welcome) welcome.remove();
+      }
+
+      function sessionTag(sessionId) {
+        const cls = sessionId.startsWith("pr-") ? "pr" : "issue";
+        return '<span class="session-tag ' + cls + '">' + escapeHTML(sessionId) + "</span>";
+      }
+
+      function addWebhookEntry(data) {
+        const entry = createEntry(data.sessionId);
+        entry.innerHTML =
+          '<div class="entry-webhook" id="webhook-' +
+          escapeAttr(data.deliveryId) +
+          '">' +
+          '<div class="entry-header">' +
+          sessionTag(data.sessionId) +
+          '<span class="event-type">' +
+          escapeHTML(data.eventType) +
+          "</span>" +
+          '<span class="delivery-id">' +
+          escapeHTML(data.deliveryId.slice(0, 8)) +
+          "...</span>" +
+          "</div>" +
+          "</div>";
+        appendEntry(entry);
+      }
+
+      function addAckBadge(sessionId, ackTimeMs) {
+        // Find the most recent webhook entry for this session
+        const entries = document.querySelectorAll(".entry-webhook");
+        for (let i = entries.length - 1; i >= 0; i--) {
+          const header = entries[i].querySelector(".entry-header");
+          if (header && entries[i].closest(".timeline-entry")) {
+            header.innerHTML += ' <span class="badge badge-ack">ACK ' + ackTimeMs + "ms</span>";
+            break;
+          }
+        }
+      }
+
+      function addDuplicateEntry(data) {
+        const entry = createEntry(data.sessionId);
+        entry.innerHTML =
+          '<div class="entry-webhook">' +
+          '<div class="entry-header">' +
+          sessionTag(data.sessionId) +
+          '<span class="delivery-id">' +
+          escapeHTML(data.deliveryId.slice(0, 8)) +
+          "...</span>" +
+          ' <span class="badge badge-duplicate">DUPLICATE</span>' +
+          "</div>" +
+          "</div>";
+        appendEntry(entry);
+      }
+
+      let textBuffers = {};
+
+      function appendText(sessionId, content) {
+        // Accumulate text — we'll show it in the done entry or skip
+        // Agent text is internal, but we show it for transparency
+        if (!textBuffers[sessionId]) textBuffers[sessionId] = "";
+        textBuffers[sessionId] += content;
+      }
+
+      function addToolCallEntry(data) {
+        const entry = createEntry(data.sessionId);
+        const argsStr = Object.entries(data.arguments)
+          .map(function (pair) {
+            return pair[0] + ": " + pair[1];
+          })
+          .join("  |  ");
+        entry.innerHTML =
+          '<div class="entry-tool" id="tool-' +
+          data.name +
+          "-" +
+          Date.now() +
+          '">' +
+          '<div class="tool-header">' +
+          sessionTag(data.sessionId) +
+          escapeHTML(data.name) +
+          "</div>" +
+          '<div class="tool-args">' +
+          escapeHTML(argsStr) +
+          "</div>" +
+          "</div>";
+        appendEntry(entry);
+      }
+
+      function addToolResultEntry(data) {
+        const cards = document.querySelectorAll(".entry-tool");
+        const card = cards[cards.length - 1];
+        if (!card) return;
+
+        const resultDiv = document.createElement("div");
+        resultDiv.className = "tool-result";
+        resultDiv.innerHTML =
+          escapeHTML(formatResult(data.result)) +
+          '<span class="tool-duration">' +
+          data.durationMs +
+          "ms</span>";
+        card.appendChild(resultDiv);
+        scrollToBottom();
+      }
+
+      function addPlatformEntry(data) {
+        const entry = createEntry(data.sessionId);
+        entry.innerHTML =
+          '<div class="entry-platform">' +
+          '<div class="platform-header">' +
+          sessionTag(data.sessionId) +
+          "Comment posted to " +
+          escapeHTML(data.target) +
+          "</div>" +
+          '<div class="platform-body">' +
+          escapeHTML(data.body) +
+          "</div>" +
+          "</div>";
+        appendEntry(entry);
+      }
+
+      function addHeartbeatEntry(data) {
+        const entry = createEntry(data.sessionId);
+        entry.innerHTML =
+          '<div class="entry-heartbeat">' +
+          sessionTag(data.sessionId) +
+          escapeHTML(data.message) +
+          "</div>";
+        appendEntry(entry);
+      }
+
+      function addDoneEntry(data) {
+        const entry = createEntry(data.sessionId);
+        entry.innerHTML =
+          '<div class="entry-done">' +
+          sessionTag(data.sessionId) +
+          '<span>Total: <span class="metric-value">' +
+          formatMs(data.totalDurationMs) +
+          "</span></span>" +
+          '<span>Tools: <span class="metric-value">' +
+          data.toolCallCount +
+          "</span></span>" +
+          "</div>";
+        appendEntry(entry);
+
+        // Clear text buffer
+        delete textBuffers[data.sessionId];
+      }
+
+      function addErrorEntry(data) {
+        const entry = createEntry(data.sessionId);
+        entry.innerHTML =
+          '<div class="entry-error">' +
+          sessionTag(data.sessionId) +
+          "Error: " +
+          escapeHTML(data.message) +
+          "</div>";
+        appendEntry(entry);
+      }
+
+      // ── DOM Helpers ────────────────────────────────────────────
+
+      function createEntry(sessionId) {
+        const div = document.createElement("div");
+        div.className = "timeline-entry";
+        div.dataset.session = sessionId;
+        return div;
+      }
+
+      function appendEntry(entry) {
+        const timeline = document.getElementById("timeline");
+
+        // Add timestamp
+        const timeDiv = document.createElement("div");
+        timeDiv.className = "timeline-time";
+        timeDiv.textContent = new Date().toLocaleTimeString("en-US", {
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+
+        const contentDiv = document.createElement("div");
+        contentDiv.className = "timeline-content";
+        contentDiv.innerHTML = entry.innerHTML;
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "timeline-entry";
+        if (entry.dataset.session) wrapper.dataset.session = entry.dataset.session;
+        wrapper.appendChild(timeDiv);
+        wrapper.appendChild(contentDiv);
+
+        timeline.appendChild(wrapper);
+        scrollToBottom();
+      }
+
+      // ── Utilities ──────────────────────────────────────────────
+
+      function escapeHTML(str) {
+        if (!str) return "";
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function escapeAttr(str) {
+        return str.replace(/[&"'<>]/g, function (c) {
+          return "&#" + c.charCodeAt(0) + ";";
+        });
+      }
+
+      function formatResult(result) {
+        try {
+          const parsed = JSON.parse(result);
+          return JSON.stringify(parsed, null, 2);
+        } catch {
+          return result;
+        }
+      }
+
+      function formatMs(ms) {
+        if (ms < 1000) return ms + "ms";
+        return (ms / 1000).toFixed(1) + "s";
+      }
+
+      function scrollToBottom() {
+        const timeline = document.getElementById("timeline");
+        timeline.scrollTop = timeline.scrollHeight;
+      }
+
+      // ── Initialize ─────────────────────────────────────────────
+      connectSSE();
+    </script>
+  </body>
+</html>
