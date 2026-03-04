@@ -68,7 +68,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | TypeScript Agent Toolkits [guide]         | Done    | Agent Framework Landscape                                  |
 | File Edit Strategies                      | Pending | Tool Description Engineering                               |
 | Architect/Editor Model Split              | Pending | Cost Tracking & Model Selection, File Edit Strategies      |
-| Repository Mapping                        | Pending | RAG                                                        |
+| Repository Mapping                        | Done    | RAG                                                        |
 | CodeAct (Code-as-Action)                  | Pending | Sandboxed Code Execution                                   |
 | KV-Cache-Aware Context Design             | Pending | Prompt Caching, Context Window Management                  |
 | Client-Agnostic Agent Protocol            | Done    | Streaming                                                  |
@@ -1587,7 +1587,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Repository Mapping (Codebase-Aware Context Assembly)
+### [x] Repository Mapping (Codebase-Aware Context Assembly)
 
 **What it is:** Building a compact structural representation of an entire codebase — its files, functions, classes, imports, and dependencies — so the agent can intelligently select which code to include in its context window. Unlike RAG (which retrieves by text similarity), repository mapping uses AST parsing and graph algorithms to understand code structure and rank files by relevance.
 
