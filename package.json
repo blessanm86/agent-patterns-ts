@@ -58,6 +58,7 @@
     "dev:repo-mapping": "tsx src/repo-mapping/index.ts",
     "dev:agent-protocol": "tsx src/agent-protocol/index.ts",
     "dev:agent-protocol:cli": "tsx src/agent-protocol/index.ts --mode=cli",
+    "dev:sandbox": "tsx src/sandboxed-code-execution/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

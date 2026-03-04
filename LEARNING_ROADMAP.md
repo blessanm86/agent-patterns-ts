@@ -46,7 +46,16 @@ A structured list of concepts for building production-grade AI agents, organized
 | MCP (Model Context Protocol)              | Done    |                                                            |
 | Tool Bundle System                        | Done    |                                                            |
 | External Event-Triggered Agent            | Done    | Streaming                                                  |
-| Sandboxed Code Execution                  | Pending |                                                            |
+| Agent Middleware Pipeline                 | Done    | ReAct Loop                                                 |
+| Agent Framework Landscape [guide]         | Done    | MCP, A2A Protocol                                          |
+| Vendor Agent SDKs [guide]                 | Done    | Agent Framework Landscape                                  |
+| Orchestration Frameworks [guide]          | Done    | Agent Framework Landscape                                  |
+| TypeScript Agent Toolkits [guide]         | Done    | Agent Framework Landscape                                  |
+| Repository Mapping                        | Done    | RAG                                                        |
+| Client-Agnostic Agent Protocol            | Done    | Streaming                                                  |
+| Coding Agent Harness Architecture [guide] | Done    | Agent Framework Landscape                                  |
+| Harness-Derived Agent Platforms [guide]   | Done    | Coding Agent Harness Architecture, Vendor Agent SDKs, MCP  |
+| Sandboxed Code Execution                  | Done    |                                                            |
 | Long-Running Agents & Checkpointing       | Pending | State Graph                                                |
 | In-Band Metadata via Streaming Sentinel   | Pending | Streaming, Structured Output                               |
 | Sandboxed CLI Tool Bridge                 | Pending | Sandboxed Code Execution                                   |
@@ -54,7 +63,6 @@ A structured list of concepts for building production-grade AI agents, organized
 | Sub-Agent Event Demultiplexing            | Pending | Sub-Agent Delegation, Streaming                            |
 | Tool-Response Reminder Injection          | Pending | Tool Description Engineering                               |
 | Ordered Precondition Evaluation           | Pending | Evaluation with Mocked Tools                               |
-| Agent Middleware Pipeline                 | Done    | ReAct Loop                                                 |
 | Agent Dependency Injection                | Pending | ReAct Loop, Multi-Agent Routing                            |
 | Observational Memory                      | Pending | Persistent Cross-Session Memory, Context Window Management |
 | Dynamic Tool Selection                    | Pending | Tool Description Engineering                               |
@@ -62,19 +70,11 @@ A structured list of concepts for building production-grade AI agents, organized
 | Test-Time Compute Scaling                 | Pending | Cost Tracking & Model Selection, Self-Validation Tool      |
 | Multi-Agent Coordination Topologies       | Pending | Multi-Agent Routing, Sub-Agent Delegation                  |
 | A2A Protocol (Agent-to-Agent)             | Pending | MCP                                                        |
-| Agent Framework Landscape [guide]         | Done    | MCP, A2A Protocol                                          |
-| Vendor Agent SDKs [guide]                 | Done    | Agent Framework Landscape                                  |
-| Orchestration Frameworks [guide]          | Done    | Agent Framework Landscape                                  |
-| TypeScript Agent Toolkits [guide]         | Done    | Agent Framework Landscape                                  |
 | File Edit Strategies                      | Pending | Tool Description Engineering                               |
 | Architect/Editor Model Split              | Pending | Cost Tracking & Model Selection, File Edit Strategies      |
-| Repository Mapping                        | Done    | RAG                                                        |
 | CodeAct (Code-as-Action)                  | Pending | Sandboxed Code Execution                                   |
 | KV-Cache-Aware Context Design             | Pending | Prompt Caching, Context Window Management                  |
-| Client-Agnostic Agent Protocol            | Done    | Streaming                                                  |
 | Pre-Execution Validation                  | Pending | Self-Validation Tool, Sandboxed Code Execution             |
-| Coding Agent Harness Architecture [guide] | Done    | Agent Framework Landscape                                  |
-| Harness-Derived Agent Platforms [guide]   | Done    | Coding Agent Harness Architecture, Vendor Agent SDKs, MCP  |
 
 The table order is the recommended learning progression. Start from the top; the **Builds on** column shows prerequisites.
 
@@ -1065,7 +1065,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Sandboxed Code Execution with Worker Pool
+### [x] Sandboxed Code Execution with Worker Pool
 
 **What it is:** Running AI agent code inside isolated cloud sandbox VMs. Includes: a pre-warmed pool of ready sandboxes (pop in O(1), replenish in background), thread-bound affinity (same sandbox reused for same conversation), a token-scoped API proxy (revocable short-lived tokens instead of real credentials inside the sandbox), and a CLI bridge for tool invocation across process boundaries (CLI subprocess → WebSocket → orchestrator).
 
