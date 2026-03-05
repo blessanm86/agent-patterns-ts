@@ -58,7 +58,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Sandboxed Code Execution                  | Done    |                                                            |
 | Long-Running Agents & Checkpointing       | Done    | State Graph                                                |
 | In-Band Metadata via Streaming Sentinel   | Done    | Streaming, Structured Output                               |
-| Sandboxed CLI Tool Bridge                 | Pending | Sandboxed Code Execution                                   |
+| Sandboxed CLI Tool Bridge                 | Done    | Sandboxed Code Execution                                   |
 | Stateless Agent with History Re-Injection | Pending | Multi-Turn Memory, Context Window Management               |
 | Sub-Agent Event Demultiplexing            | Pending | Sub-Agent Delegation, Streaming                            |
 | Tool-Response Reminder Injection          | Pending | Tool Description Engineering                               |
@@ -1365,7 +1365,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Sandboxed CLI Tool Bridge
+### [x] Sandboxed CLI Tool Bridge
 
 **What it is:** An agent running inside a sandboxed process (VM, container) cannot make direct API calls to the host's tool registry. Instead, tools are exposed as a CLI binary inside the sandbox. The agent calls tools by running shell commands (`tools describe toolName`, `tools invoke toolName --args='...'`). The CLI binary sends IPC messages (WebSocket or stdin) back to the host, which resolves the tool, executes it, and returns stdout/exitCode. A describe-before-invoke protocol prevents schema-guessing errors.
 

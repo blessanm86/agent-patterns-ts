@@ -61,6 +61,7 @@
     "dev:sandbox": "tsx src/sandboxed-code-execution/index.ts",
     "dev:long-running": "tsx src/long-running-agents/index.ts",
     "dev:streaming-sentinel": "tsx src/streaming-sentinel/index.ts",
+    "dev:cli-bridge": "tsx src/sandboxed-cli-tool-bridge/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
