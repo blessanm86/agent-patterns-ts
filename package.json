@@ -60,6 +60,7 @@
     "dev:agent-protocol:cli": "tsx src/agent-protocol/index.ts --mode=cli",
     "dev:sandbox": "tsx src/sandboxed-code-execution/index.ts",
     "dev:long-running": "tsx src/long-running-agents/index.ts",
+    "dev:streaming-sentinel": "tsx src/streaming-sentinel/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

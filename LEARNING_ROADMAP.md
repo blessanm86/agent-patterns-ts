@@ -57,7 +57,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Harness-Derived Agent Platforms [guide]   | Done    | Coding Agent Harness Architecture, Vendor Agent SDKs, MCP  |
 | Sandboxed Code Execution                  | Done    |                                                            |
 | Long-Running Agents & Checkpointing       | Done    | State Graph                                                |
-| In-Band Metadata via Streaming Sentinel   | Pending | Streaming, Structured Output                               |
+| In-Band Metadata via Streaming Sentinel   | Done    | Streaming, Structured Output                               |
 | Sandboxed CLI Tool Bridge                 | Pending | Sandboxed Code Execution                                   |
 | Stateless Agent with History Re-Injection | Pending | Multi-Turn Memory, Context Window Management               |
 | Sub-Agent Event Demultiplexing            | Pending | Sub-Agent Delegation, Streaming                            |
@@ -1334,7 +1334,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 > Patterns for scaling agents across compute boundaries, maintaining coherence in long tool chains, and evaluating behavioral correctness beyond accuracy.
 
-### [ ] In-Band Metadata Extraction via Streaming Sentinel
+### [x] In-Band Metadata Extraction via Streaming Sentinel
 
 **What it is:** The LLM appends a structured JSON block delimited by sentinel tags (e.g., `<metadata>...</metadata>`) at the end of every streaming response. A stream processor detects the sentinel marker in real-time, stops forwarding tokens to the client, strips the block on completion, and parses the JSON — extracting thread names, follow-up suggestions, and security flags from a single generation pass with zero additional inference cost.
 

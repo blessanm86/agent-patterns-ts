@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Streaming Sentinel — CloudStack Support</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #0f0f0f;
+        color: #e0e0e0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── Header ────────────────────────────────────────────────── */
+      header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #2a2a2a;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #151515;
+      }
+
+      header h1 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #ffffff;
+      }
+
+      header h1 span {
+        opacity: 0.5;
+        font-weight: 400;
+      }
+
+      #thread-title {
+        font-size: 13px;
+        color: #6ea8fe;
+        margin-left: 12px;
+        font-weight: 400;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      #thread-title.visible {
+        opacity: 1;
+      }
+
+      /* ── Mode Toggle ───────────────────────────────────────────── */
+      .toggle-group {
+        display: flex;
+        background: #222;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #333;
+      }
+
+      .toggle-btn {
+        padding: 6px 16px;
+        border: none;
+        background: transparent;
+        color: #888;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .toggle-btn.active {
+        background: #2d6ee6;
+        color: #fff;
+      }
+
+      /* ── Chat Area ─────────────────────────────────────────────── */
+      #chat {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .message {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .message-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+
+      .user-msg .message-label {
+        color: #6ea8fe;
+      }
+      .assistant-msg .message-label {
+        color: #75b798;
+      }
+
+      .message-body {
+        padding: 12px 16px;
+        border-radius: 10px;
+        line-height: 1.6;
+        font-size: 14px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .user-msg .message-body {
+        background: #1a2744;
+        border: 1px solid #2a3f66;
+      }
+
+      .assistant-msg .message-body {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+      }
+
+      .cursor::after {
+        content: "\2588";
+        animation: blink 0.8s step-end infinite;
+        color: #75b798;
+      }
+
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      /* ── Tool Cards ────────────────────────────────────────────── */
+      .tool-card {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        background: #1a1a2e;
+        border: 1px solid #2a2a44;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 13px;
+      }
+
+      .tool-card-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+        color: #c4a7e7;
+        margin-bottom: 4px;
+      }
+
+      .tool-args {
+        color: #888;
+        font-family: "SF Mono", Monaco, Consolas, monospace;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .tool-result {
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid #2a2a44;
+        color: #aaa;
+        font-family: "SF Mono", Monaco, Consolas, monospace;
+        font-size: 12px;
+        max-height: 120px;
+        overflow-y: auto;
+      }
+
+      .tool-duration {
+        display: inline-block;
+        background: #2a2a44;
+        color: #c4a7e7;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        margin-left: 8px;
+      }
+
+      /* ── Metadata Panel ──────────────────────────────────────── */
+      .metadata-panel {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        background: #121825;
+        border: 1px solid #1e2d4a;
+        border-radius: 10px;
+        padding: 16px;
+        animation: slideIn 0.3s ease-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .metadata-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .metadata-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6ea8fe;
+        font-weight: 600;
+      }
+
+      .metadata-mode-badge {
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+      }
+
+      .badge-sentinel {
+        background: #1a3a2a;
+        color: #75b798;
+        border: 1px solid #2a5a3a;
+      }
+
+      .badge-separate {
+        background: #3a2a1a;
+        color: #e6a756;
+        border: 1px solid #5a3a2a;
+      }
+
+      .metadata-thread-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 12px;
+      }
+
+      .metadata-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .metadata-row-label {
+        font-size: 12px;
+        color: #666;
+        min-width: 70px;
+      }
+
+      /* Category badge */
+      .category-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .cat-billing {
+        background: #2a2a1a;
+        color: #e6d056;
+        border: 1px solid #4a4a2a;
+      }
+      .cat-technical {
+        background: #2a1a2a;
+        color: #c4a7e7;
+        border: 1px solid #4a2a4a;
+      }
+      .cat-feature-request {
+        background: #1a2a2a;
+        color: #56c4e6;
+        border: 1px solid #2a4a4a;
+      }
+      .cat-account {
+        background: #1a2744;
+        color: #6ea8fe;
+        border: 1px solid #2a3f66;
+      }
+      .cat-general {
+        background: #2a2a2a;
+        color: #aaa;
+        border: 1px solid #3a3a3a;
+      }
+
+      /* Security flag */
+      .security-flag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .security-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+
+      .sec-none .security-dot {
+        background: #4ade80;
+      }
+      .sec-none {
+        color: #4ade80;
+      }
+      .sec-pii-detected .security-dot {
+        background: #fbbf24;
+      }
+      .sec-pii-detected {
+        color: #fbbf24;
+      }
+      .sec-prompt-injection .security-dot,
+      .sec-suspicious .security-dot {
+        background: #f87171;
+      }
+      .sec-prompt-injection,
+      .sec-suspicious {
+        color: #f87171;
+      }
+
+      /* Suggestion chips */
+      .suggestions-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .suggestion-chip {
+        padding: 6px 14px;
+        border-radius: 16px;
+        border: 1px solid #2a3f66;
+        background: #1a2744;
+        color: #6ea8fe;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .suggestion-chip:hover {
+        background: #2a3f66;
+        color: #fff;
+      }
+
+      /* No metadata indicator */
+      .no-metadata {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 8px 14px;
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #666;
+        font-style: italic;
+      }
+
+      /* ── Error Banner ──────────────────────────────────────────── */
+      .error-banner {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        background: #2d1515;
+        border: 1px solid #5a2020;
+        border-radius: 8px;
+        padding: 10px 14px;
+        color: #ff6b6b;
+        font-size: 13px;
+      }
+
+      /* ── Metrics Bar ───────────────────────────────────────────── */
+      .metrics-bar {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        padding: 8px 14px;
+        background: #111;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #888;
+      }
+
+      .metric {
+        display: flex;
+        gap: 4px;
+      }
+      .metric-label {
+        color: #666;
+      }
+      .metric-value {
+        color: #aaa;
+        font-weight: 600;
+      }
+      .metric-value.highlight {
+        color: #6ea8fe;
+      }
+      .metric-value.good {
+        color: #4ade80;
+      }
+      .metric-value.warn {
+        color: #fbbf24;
+      }
+
+      /* ── Input Bar ─────────────────────────────────────────────── */
+      #input-area {
+        padding: 16px 24px;
+        border-top: 1px solid #2a2a2a;
+        background: #151515;
+      }
+
+      #input-form {
+        max-width: 720px;
+        margin: 0 auto;
+        display: flex;
+        gap: 8px;
+      }
+
+      #input-field {
+        flex: 1;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      #input-field:focus {
+        border-color: #2d6ee6;
+      }
+
+      #input-field:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      #send-btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        background: #2d6ee6;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      #send-btn:hover {
+        background: #3d7ef6;
+      }
+      #send-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* ── Welcome ───────────────────────────────────────────────── */
+      .welcome {
+        max-width: 720px;
+        width: 100%;
+        margin: 40px auto 0;
+        text-align: center;
+        color: #666;
+      }
+
+      .welcome h2 {
+        font-size: 20px;
+        color: #aaa;
+        margin-bottom: 8px;
+      }
+
+      .welcome p {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .welcome code {
+        background: #1a1a1a;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 13px;
+        color: #6ea8fe;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div style="display: flex; align-items: center">
+        <h1>CloudStack Support <span>— Streaming Sentinel</span></h1>
+        <span id="thread-title"></span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn active" data-mode="sentinel" onclick="setMode('sentinel')">
+          Sentinel
+        </button>
+        <button class="toggle-btn" data-mode="separate" onclick="setMode('separate')">
+          Separate Call
+        </button>
+      </div>
+    </header>
+
+    <div id="chat">
+      <div class="welcome">
+        <h2>Welcome to the Streaming Sentinel Demo</h2>
+        <p>
+          Ask about CloudStack accounts and watch metadata extracted in real-time.<br />
+          <strong>Sentinel</strong> mode extracts metadata from the same generation.<br />
+          <strong>Separate Call</strong> mode makes a second LLM call (slower, costlier).<br /><br />
+          Try: <code>Can you look up the account for Acme Corp?</code>
+        </p>
+      </div>
+    </div>
+
+    <div id="input-area">
+      <form id="input-form" onsubmit="handleSubmit(event)">
+        <input
+          id="input-field"
+          type="text"
+          placeholder="Ask about accounts, billing, known issues..."
+          autofocus
+        />
+        <button id="send-btn" type="submit">Send</button>
+      </form>
+    </div>
+
+    <script>
+      // ── State ──────────────────────────────────────────────────
+      let conversationHistory = [];
+      let currentMode = "sentinel";
+      let isGenerating = false;
+
+      // ── Mode Toggle ───────────────────────────────────────────
+      function setMode(mode) {
+        currentMode = mode;
+        document.querySelectorAll(".toggle-btn").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.mode === mode);
+        });
+      }
+
+      // ── Submit Handler ────────────────────────────────────────
+      async function handleSubmit(e) {
+        e.preventDefault();
+        const input = document.getElementById("input-field");
+        const message = input.value.trim();
+        if (!message || isGenerating) return;
+
+        isGenerating = true;
+        input.value = "";
+        input.disabled = true;
+        document.getElementById("send-btn").disabled = true;
+
+        const welcome = document.querySelector(".welcome");
+        if (welcome) welcome.remove();
+
+        addMessage("user", message);
+
+        const assistantEl = addMessage("assistant", "");
+        const bodyEl = assistantEl.querySelector(".message-body");
+        bodyEl.classList.add("cursor");
+
+        try {
+          await streamChat(message, bodyEl);
+        } catch (err) {
+          addError("Connection error: " + err.message);
+        }
+
+        bodyEl.classList.remove("cursor");
+        isGenerating = false;
+        input.disabled = false;
+        document.getElementById("send-btn").disabled = false;
+        input.focus();
+      }
+
+      // ── Suggestion click handler ──────────────────────────────
+      function useSuggestion(prompt) {
+        const input = document.getElementById("input-field");
+        input.value = prompt;
+        input.focus();
+      }
+
+      // ── SSE Stream ────────────────────────────────────────────
+
+      async function streamChat(message, bodyEl) {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message,
+            history: conversationHistory,
+            mode: currentMode,
+          }),
+        });
+
+        if (!res.ok) {
+          addError("Server returned " + res.status);
+          return;
+        }
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let gotMetadata = false;
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+
+          const frames = buffer.split("\n\n");
+          buffer = frames.pop() || "";
+
+          for (const frame of frames) {
+            if (!frame.trim()) continue;
+            const parsed = parseSSEFrame(frame);
+            if (!parsed) continue;
+            if (parsed.event === "metadata") gotMetadata = true;
+            handleEvent(parsed.event, parsed.data, bodyEl);
+          }
+        }
+
+        if (buffer.trim()) {
+          const parsed = parseSSEFrame(buffer);
+          if (parsed) {
+            if (parsed.event === "metadata") gotMetadata = true;
+            handleEvent(parsed.event, parsed.data, bodyEl);
+          }
+        }
+
+        if (!gotMetadata) {
+          addNoMetadata();
+        }
+      }
+
+      function parseSSEFrame(frame) {
+        let event = "message";
+        let data = "";
+
+        for (const line of frame.split("\n")) {
+          if (line.startsWith("event: ")) {
+            event = line.slice(7).trim();
+          } else if (line.startsWith("data: ")) {
+            data = line.slice(6);
+          }
+        }
+
+        if (!data) return null;
+        try {
+          return { event, data: JSON.parse(data) };
+        } catch {
+          return null;
+        }
+      }
+
+      // ── Event Handlers ────────────────────────────────────────
+
+      function handleEvent(event, data, bodyEl) {
+        switch (event) {
+          case "text":
+            bodyEl.textContent += data.content;
+            scrollToBottom();
+            break;
+
+          case "tool_call":
+            addToolCall(data.name, data.arguments);
+            scrollToBottom();
+            break;
+
+          case "tool_result":
+            addToolResult(data.name, data.result, data.durationMs);
+            scrollToBottom();
+            break;
+
+          case "metadata":
+            addMetadataPanel(data.metadata);
+            scrollToBottom();
+            break;
+
+          case "done":
+            addMetrics(data.metrics);
+            scrollToBottom();
+            break;
+
+          case "error":
+            addError(data.message);
+            scrollToBottom();
+            break;
+
+          case "history":
+            conversationHistory = data;
+            break;
+        }
+      }
+
+      // ── DOM Helpers ───────────────────────────────────────────
+
+      function addMessage(role, content) {
+        const chat = document.getElementById("chat");
+        const div = document.createElement("div");
+        div.className = `message ${role === "user" ? "user-msg" : "assistant-msg"}`;
+        div.innerHTML = `
+        <div class="message-label">${role === "user" ? "You" : "Assistant"}</div>
+        <div class="message-body">${escapeHTML(content)}</div>
+      `;
+        chat.appendChild(div);
+        scrollToBottom();
+        return div;
+      }
+
+      function addToolCall(name, args) {
+        const chat = document.getElementById("chat");
+        const div = document.createElement("div");
+        div.className = "tool-card";
+        div.id = "tool-" + name + "-" + Date.now();
+        div.innerHTML = `
+        <div class="tool-card-header">
+          <span>&#x1f527;</span>
+          <span>${escapeHTML(name)}</span>
+        </div>
+        <div class="tool-args">${escapeHTML(formatArgs(args))}</div>
+      `;
+        chat.appendChild(div);
+      }
+
+      function addToolResult(name, result, durationMs) {
+        const cards = document.querySelectorAll(".tool-card");
+        const card = cards[cards.length - 1];
+        if (!card) return;
+
+        const resultDiv = document.createElement("div");
+        resultDiv.className = "tool-result";
+        resultDiv.innerHTML = `
+        ${escapeHTML(formatResult(result))}
+        <span class="tool-duration">${durationMs}ms</span>
+      `;
+        card.appendChild(resultDiv);
+      }
+
+      function addMetadataPanel(metadata) {
+        const chat = document.getElementById("chat");
+        const div = document.createElement("div");
+        div.className = "metadata-panel";
+
+        const isSentinel = currentMode === "sentinel";
+        const badgeClass = isSentinel ? "badge-sentinel" : "badge-separate";
+        const badgeText = isSentinel ? "SENTINEL" : "SEPARATE CALL";
+        const catClass = "cat-" + metadata.category;
+        const secClass = "sec-" + metadata.securityFlag;
+
+        let suggestionsHTML = "";
+        if (metadata.suggestions && metadata.suggestions.length > 0) {
+          const chips = metadata.suggestions
+            .map(
+              (s) =>
+                `<button class="suggestion-chip" onclick="useSuggestion('${escapeAttr(s.prompt)}')" title="${escapeAttr(s.prompt)}">${escapeHTML(s.label)}</button>`,
+            )
+            .join("");
+          suggestionsHTML = `<div class="suggestions-row">${chips}</div>`;
+        }
+
+        div.innerHTML = `
+        <div class="metadata-header">
+          <span class="metadata-label">Metadata</span>
+          <span class="metadata-mode-badge ${badgeClass}">${badgeText}</span>
+        </div>
+        <div class="metadata-thread-name">${escapeHTML(metadata.threadName)}</div>
+        <div class="metadata-row">
+          <span class="metadata-row-label">Category</span>
+          <span class="category-badge ${catClass}">${escapeHTML(metadata.category)}</span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-row-label">Security</span>
+          <span class="security-flag ${secClass}">
+            <span class="security-dot"></span>
+            ${escapeHTML(metadata.securityFlag)}
+          </span>
+        </div>
+        ${suggestionsHTML}
+      `;
+        chat.appendChild(div);
+
+        // Update header thread title
+        const titleEl = document.getElementById("thread-title");
+        titleEl.textContent = metadata.threadName;
+        titleEl.classList.add("visible");
+      }
+
+      function addNoMetadata() {
+        const chat = document.getElementById("chat");
+        const div = document.createElement("div");
+        div.className = "no-metadata";
+        div.textContent = "No metadata extracted from this response";
+        chat.appendChild(div);
+      }
+
+      function addMetrics(metrics) {
+        const chat = document.getElementById("chat");
+        const div = document.createElement("div");
+        div.className = "metrics-bar";
+
+        const ttftClass = metrics.ttftMs < 1000 ? "highlight" : "";
+        const metaLatencyClass = metrics.metadataLatencyMs === 0 ? "good" : "warn";
+        const sentinelText = metrics.sentinelDetected ? "yes" : "no";
+        const sentinelClass = metrics.sentinelDetected ? "good" : "";
+
+        div.innerHTML = `
+        <div class="metric">
+          <span class="metric-label">TTFT:</span>
+          <span class="metric-value ${ttftClass}">${formatMs(metrics.ttftMs)}</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Total:</span>
+          <span class="metric-value">${formatMs(metrics.totalDurationMs)}</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Tokens:</span>
+          <span class="metric-value">${metrics.tokenCount}</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Speed:</span>
+          <span class="metric-value">${metrics.tokensPerSecond} tok/s</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Tools:</span>
+          <span class="metric-value">${metrics.toolCallCount}</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Meta Latency:</span>
+          <span class="metric-value ${metaLatencyClass}">${metrics.metadataLatencyMs === 0 ? "0ms (inline)" : formatMs(metrics.metadataLatencyMs)}</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Sentinel:</span>
+          <span class="metric-value ${sentinelClass}">${sentinelText}</span>
+        </div>
+      `;
+        chat.appendChild(div);
+      }
+
+      function addError(message) {
+        const chat = document.getElementById("chat");
+        const div = document.createElement("div");
+        div.className = "error-banner";
+        div.textContent = "Error: " + message;
+        chat.appendChild(div);
+      }
+
+      // ── Utilities ─────────────────────────────────────────────
+
+      function escapeHTML(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function escapeAttr(str) {
+        return str.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+      }
+
+      function formatArgs(args) {
+        return Object.entries(args)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join("  |  ");
+      }
+
+      function formatResult(result) {
+        try {
+          const parsed = JSON.parse(result);
+          return JSON.stringify(parsed, null, 2);
+        } catch {
+          return result;
+        }
+      }
+
+      function formatMs(ms) {
+        if (ms < 1000) return ms + "ms";
+        return (ms / 1000).toFixed(1) + "s";
+      }
+
+      function scrollToBottom() {
+        const chat = document.getElementById("chat");
+        chat.scrollTop = chat.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
