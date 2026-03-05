@@ -56,7 +56,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Coding Agent Harness Architecture [guide] | Done    | Agent Framework Landscape                                  |
 | Harness-Derived Agent Platforms [guide]   | Done    | Coding Agent Harness Architecture, Vendor Agent SDKs, MCP  |
 | Sandboxed Code Execution                  | Done    |                                                            |
-| Long-Running Agents & Checkpointing       | Pending | State Graph                                                |
+| Long-Running Agents & Checkpointing       | Done    | State Graph                                                |
 | In-Band Metadata via Streaming Sentinel   | Pending | Streaming, Structured Output                               |
 | Sandboxed CLI Tool Bridge                 | Pending | Sandboxed Code Execution                                   |
 | Stateless Agent with History Re-Injection | Pending | Multi-Turn Memory, Context Window Management               |
@@ -1149,7 +1149,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Long-Running Agents & Checkpointing
+### [x] Long-Running Agents & Checkpointing
 
 **What it is:** Agents that execute tasks spanning minutes or hours — not just request-response cycles. Includes state checkpointing (persisting agent state so it can resume after crashes), progress reporting, cancellation support, and resource cleanup. The agent survives process restarts and picks up where it left off.
 

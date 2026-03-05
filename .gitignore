@@ -5,3 +5,4 @@ dist/
 memory/
 .claude/settings.local.json
 .research/
+.checkpoints/
