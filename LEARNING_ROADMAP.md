@@ -62,7 +62,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Stateless Agent with History Re-Injection | Done    | Multi-Turn Memory, Context Window Management               |
 | Sub-Agent Event Demultiplexing            | Done    | Sub-Agent Delegation, Streaming                            |
 | Tool-Response Reminder Injection          | Done    | Tool Description Engineering                               |
-| Ordered Precondition Evaluation           | Pending | Evaluation with Mocked Tools                               |
+| Ordered Precondition Evaluation           | Done    | Evaluation with Mocked Tools                               |
 | Agent Dependency Injection                | Done    | ReAct Loop, Multi-Agent Routing                            |
 | Observational Memory                      | Pending | Persistent Cross-Session Memory, Context Window Management |
 | Dynamic Tool Selection                    | Done    | Tool Description Engineering                               |
@@ -1489,7 +1489,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Ordered Precondition Evaluation (Stateful Tool Call Simulation)
+### [x] Ordered Precondition Evaluation (Stateful Tool Call Simulation)
 
 **What it is:** An evaluation pattern where a simulation harness maintains explicit mutable state tracking which information-discovery steps the agent has completed. Each intercepted tool call checks preconditions against that state before counting as a "match." Calls made out-of-order or without prerequisites are flagged. This tests whether the agent reasons in a logically valid sequence, not just whether it calls the right tools.
 
