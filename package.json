@@ -65,6 +65,7 @@
     "dev:dynamic-tools": "tsx src/dynamic-tool-selection/index.ts",
     "dev:dynamic-tools:all": "tsx src/dynamic-tool-selection/index.ts --all",
     "dev:dynamic-tools:llm": "tsx src/dynamic-tool-selection/index.ts --llm",
+    "dev:stateless-agent": "tsx src/stateless-agent/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

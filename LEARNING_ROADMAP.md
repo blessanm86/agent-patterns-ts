@@ -59,7 +59,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Long-Running Agents & Checkpointing       | Done    | State Graph                                                |
 | In-Band Metadata via Streaming Sentinel   | Done    | Streaming, Structured Output                               |
 | Sandboxed CLI Tool Bridge                 | Done    | Sandboxed Code Execution                                   |
-| Stateless Agent with History Re-Injection | Pending | Multi-Turn Memory, Context Window Management               |
+| Stateless Agent with History Re-Injection | Done    | Multi-Turn Memory, Context Window Management               |
 | Sub-Agent Event Demultiplexing            | Pending | Sub-Agent Delegation, Streaming                            |
 | Tool-Response Reminder Injection          | Pending | Tool Description Engineering                               |
 | Ordered Precondition Evaluation           | Pending | Evaluation with Mocked Tools                               |
@@ -1396,7 +1396,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Stateless Agent with History Re-Injection
+### [x] Stateless Agent with History Re-Injection
 
 **What it is:** Every agent invocation creates a fresh session — no session resumption, no sticky processes. The full conversation history is serialized as timestamped, role-prefixed text and injected into the user message. The canonical history is stored in a database. Any worker in a pool can serve any turn with no session handoff, enabling true horizontal scaling.
 
