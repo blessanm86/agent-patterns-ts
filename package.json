@@ -77,6 +77,8 @@
     "dev:dependency-injection": "tsx src/dependency-injection/index.ts",
     "dev:dependency-injection:bob": "tsx src/dependency-injection/index.ts --user=bob",
     "dev:ordered-precondition-eval": "tsx src/ordered-precondition-eval/index.ts",
+    "dev:observational-memory": "tsx src/observational-memory/index.ts",
+    "dev:observational-memory:no-observe": "tsx src/observational-memory/index.ts --no-observe",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

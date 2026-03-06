@@ -64,7 +64,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Tool-Response Reminder Injection          | Done    | Tool Description Engineering                               |
 | Ordered Precondition Evaluation           | Done    | Evaluation with Mocked Tools                               |
 | Agent Dependency Injection                | Done    | ReAct Loop, Multi-Agent Routing                            |
-| Observational Memory                      | Pending | Persistent Cross-Session Memory, Context Window Management |
+| Observational Memory                      | Done    | Persistent Cross-Session Memory, Context Window Management |
 | Dynamic Tool Selection                    | Done    | Tool Description Engineering                               |
 | Event Sourcing for Agents                 | Pending | State Graph                                                |
 | Test-Time Compute Scaling                 | Done    | Cost Tracking & Model Selection, Self-Validation Tool      |
@@ -1209,7 +1209,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Observational Memory (Compression-Based Agent Memory)
+### [x] Observational Memory (Compression-Based Agent Memory)
 
 **What it is:** A memory architecture where two background agents — an Observer and a Reflector — compress raw conversation history into dated observation logs. The Observer fires at a token threshold (~30K tokens), distilling recent messages into timestamped factual observations. The Reflector garbage-collects at a higher threshold (~40K tokens), merging and pruning observations. The agent's context always contains two blocks: a compact observation block and a sliding window of recent raw messages.
 
