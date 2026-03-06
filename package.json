@@ -79,6 +79,7 @@
     "dev:ordered-precondition-eval": "tsx src/ordered-precondition-eval/index.ts",
     "dev:observational-memory": "tsx src/observational-memory/index.ts",
     "dev:observational-memory:no-observe": "tsx src/observational-memory/index.ts --no-observe",
+    "dev:event-sourcing": "tsx src/event-sourcing/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

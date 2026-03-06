@@ -66,7 +66,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Agent Dependency Injection                | Done    | ReAct Loop, Multi-Agent Routing                            |
 | Observational Memory                      | Done    | Persistent Cross-Session Memory, Context Window Management |
 | Dynamic Tool Selection                    | Done    | Tool Description Engineering                               |
-| Event Sourcing for Agents                 | Pending | State Graph                                                |
+| Event Sourcing for Agents                 | Done    | State Graph                                                |
 | Test-Time Compute Scaling                 | Done    | Cost Tracking & Model Selection, Self-Validation Tool      |
 | Multi-Agent Coordination Topologies       | Pending | Multi-Agent Routing, Sub-Agent Delegation                  |
 | A2A Protocol (Agent-to-Agent)             | Pending | MCP                                                        |
@@ -1239,7 +1239,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Event Sourcing for Agents
+### [x] Event Sourcing for Agents
 
 **What it is:** Applying the event sourcing pattern from distributed systems to agent state management. Instead of mutating state directly, agents emit structured JSON intention events validated by a deterministic orchestrator. An append-only event log records every decision, tool call, and state transition. The current state is always reconstructable by replaying the event log. This provides deterministic replay for debugging, forensic traceability for auditing, and time-travel debugging for development.
 
