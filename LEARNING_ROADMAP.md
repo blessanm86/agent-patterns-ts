@@ -67,7 +67,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Observational Memory                      | Pending | Persistent Cross-Session Memory, Context Window Management |
 | Dynamic Tool Selection                    | Done    | Tool Description Engineering                               |
 | Event Sourcing for Agents                 | Pending | State Graph                                                |
-| Test-Time Compute Scaling                 | Pending | Cost Tracking & Model Selection, Self-Validation Tool      |
+| Test-Time Compute Scaling                 | Done    | Cost Tracking & Model Selection, Self-Validation Tool      |
 | Multi-Agent Coordination Topologies       | Pending | Multi-Agent Routing, Sub-Agent Delegation                  |
 | A2A Protocol (Agent-to-Agent)             | Pending | MCP                                                        |
 | File Edit Strategies                      | Pending | Tool Description Engineering                               |
@@ -810,7 +810,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Test-Time Compute Scaling (Adaptive Agent Reasoning)
+### [x] Test-Time Compute Scaling (Adaptive Agent Reasoning)
 
 **What it is:** Instead of running the agent once and accepting the result, allocating variable amounts of reasoning compute based on task difficulty and confidence. When the agent is uncertain (low-confidence tool choices, ambiguous queries), run multiple parallel agent trajectories and select the best result via voting or scoring. When confident, use a single pass. This trades compute for accuracy on hard queries while staying fast on easy ones.
 
