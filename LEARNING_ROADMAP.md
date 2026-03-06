@@ -61,7 +61,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Sandboxed CLI Tool Bridge                 | Done    | Sandboxed Code Execution                                   |
 | Stateless Agent with History Re-Injection | Done    | Multi-Turn Memory, Context Window Management               |
 | Sub-Agent Event Demultiplexing            | Done    | Sub-Agent Delegation, Streaming                            |
-| Tool-Response Reminder Injection          | Pending | Tool Description Engineering                               |
+| Tool-Response Reminder Injection          | Done    | Tool Description Engineering                               |
 | Ordered Precondition Evaluation           | Pending | Evaluation with Mocked Tools                               |
 | Agent Dependency Injection                | Pending | ReAct Loop, Multi-Agent Routing                            |
 | Observational Memory                      | Pending | Persistent Cross-Session Memory, Context Window Management |
@@ -1458,7 +1458,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Tool-Response Reminder Injection (Instruction Reinforcement)
+### [x] Tool-Response Reminder Injection (Instruction Reinforcement)
 
 **What it is:** Every tool response is suffixed with a `<system-reminder>` block before being returned to the agent, re-asserting the most critical behavioral rules (formatting, conciseness, safety constraints). This exploits the tool-response channel — processed at every reasoning step — to counteract the model's tendency to drift from system prompt instructions over long multi-tool chains.
 
