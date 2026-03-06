@@ -65,7 +65,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Ordered Precondition Evaluation           | Pending | Evaluation with Mocked Tools                               |
 | Agent Dependency Injection                | Pending | ReAct Loop, Multi-Agent Routing                            |
 | Observational Memory                      | Pending | Persistent Cross-Session Memory, Context Window Management |
-| Dynamic Tool Selection                    | Pending | Tool Description Engineering                               |
+| Dynamic Tool Selection                    | Done    | Tool Description Engineering                               |
 | Event Sourcing for Agents                 | Pending | State Graph                                                |
 | Test-Time Compute Scaling                 | Pending | Cost Tracking & Model Selection, Self-Validation Tool      |
 | Multi-Agent Coordination Topologies       | Pending | Multi-Agent Routing, Sub-Agent Delegation                  |
@@ -780,7 +780,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Dynamic Tool Selection (Semantic Tool Filtering)
+### [x] Dynamic Tool Selection (Semantic Tool Filtering)
 
 **What it is:** When an agent has access to a large tool catalog (20+ tools), instead of sending all tool definitions to the model on every turn, an intermediate step filters tools down to only the relevant ones for the current query — using either semantic search over tool descriptions or a lightweight LLM call that selects which tools are relevant.
 
