@@ -63,7 +63,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Sub-Agent Event Demultiplexing            | Done    | Sub-Agent Delegation, Streaming                            |
 | Tool-Response Reminder Injection          | Done    | Tool Description Engineering                               |
 | Ordered Precondition Evaluation           | Pending | Evaluation with Mocked Tools                               |
-| Agent Dependency Injection                | Pending | ReAct Loop, Multi-Agent Routing                            |
+| Agent Dependency Injection                | Done    | ReAct Loop, Multi-Agent Routing                            |
 | Observational Memory                      | Pending | Persistent Cross-Session Memory, Context Window Management |
 | Dynamic Tool Selection                    | Done    | Tool Description Engineering                               |
 | Event Sourcing for Agents                 | Pending | State Graph                                                |
@@ -1179,7 +1179,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Agent Dependency Injection
+### [x] Agent Dependency Injection
 
 **What it is:** A typed context carrier that flows through the entire agent loop — available to tools, hooks, guardrails, and handoff callbacks — but is never sent to the LLM. Instead of passing database connections, user info, and loggers as ad-hoc parameters, you define a typed `RunContext<Deps>` object that the framework threads through every function that needs it.
 

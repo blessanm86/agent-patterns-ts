@@ -74,6 +74,8 @@
     "dev:test-time-compute": "tsx src/test-time-compute/index.ts",
     "dev:test-time-compute:single": "tsx src/test-time-compute/index.ts --single",
     "dev:test-time-compute:uniform": "tsx src/test-time-compute/index.ts --uniform",
+    "dev:dependency-injection": "tsx src/dependency-injection/index.ts",
+    "dev:dependency-injection:bob": "tsx src/dependency-injection/index.ts --user=bob",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
