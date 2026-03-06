@@ -60,7 +60,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | In-Band Metadata via Streaming Sentinel   | Done    | Streaming, Structured Output                               |
 | Sandboxed CLI Tool Bridge                 | Done    | Sandboxed Code Execution                                   |
 | Stateless Agent with History Re-Injection | Done    | Multi-Turn Memory, Context Window Management               |
-| Sub-Agent Event Demultiplexing            | Pending | Sub-Agent Delegation, Streaming                            |
+| Sub-Agent Event Demultiplexing            | Done    | Sub-Agent Delegation, Streaming                            |
 | Tool-Response Reminder Injection          | Pending | Tool Description Engineering                               |
 | Ordered Precondition Evaluation           | Pending | Evaluation with Mocked Tools                               |
 | Agent Dependency Injection                | Pending | ReAct Loop, Multi-Agent Routing                            |
@@ -1427,7 +1427,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Sub-Agent Event Demultiplexing
+### [x] Sub-Agent Event Demultiplexing
 
 **What it is:** When a parent agent delegates to a sub-agent that uses a different streaming protocol or event schema, a stateful transformer normalizes the foreign event stream into the host's typed message schema. It tracks part IDs to route reasoning vs. text deltas correctly, accumulates text segments across multi-step tool-call boundaries, and maps sub-agent threads to parent threads.
 
