@@ -71,7 +71,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Multi-Agent Coordination Topologies       | Done    | Multi-Agent Routing, Sub-Agent Delegation                  |
 | A2A Protocol (Agent-to-Agent)             | Done    | MCP                                                        |
 | File Edit Strategies                      | Done    | Tool Description Engineering                               |
-| Architect/Editor Model Split              | Pending | Cost Tracking & Model Selection, File Edit Strategies      |
+| Architect/Editor Model Split              | Done    | Cost Tracking & Model Selection, File Edit Strategies      |
 | CodeAct (Code-as-Action)                  | Pending | Sandboxed Code Execution                                   |
 | KV-Cache-Aware Context Design             | Pending | Prompt Caching, Context Window Management                  |
 | Pre-Execution Validation                  | Pending | Self-Validation Tool, Sandboxed Code Execution             |
@@ -1556,7 +1556,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Architect/Editor Model Split (Dual-Model Pipeline)
+### [x] Architect/Editor Model Split (Dual-Model Pipeline)
 
 **What it is:** Separating reasoning from formatting by routing a task through two models in sequence: a powerful "architect" model that decides _what_ to change, and a specialized "editor" model that produces the precise file edits. The architect reasons in natural language; the editor converts that reasoning into the exact format needed.
 
