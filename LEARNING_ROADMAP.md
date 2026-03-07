@@ -70,7 +70,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Test-Time Compute Scaling                 | Done    | Cost Tracking & Model Selection, Self-Validation Tool      |
 | Multi-Agent Coordination Topologies       | Done    | Multi-Agent Routing, Sub-Agent Delegation                  |
 | A2A Protocol (Agent-to-Agent)             | Done    | MCP                                                        |
-| File Edit Strategies                      | Pending | Tool Description Engineering                               |
+| File Edit Strategies                      | Done    | Tool Description Engineering                               |
 | Architect/Editor Model Split              | Pending | Cost Tracking & Model Selection, File Edit Strategies      |
 | CodeAct (Code-as-Action)                  | Pending | Sandboxed Code Execution                                   |
 | KV-Cache-Aware Context Design             | Pending | Prompt Caching, Context Window Management                  |
@@ -1522,7 +1522,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 > Patterns extracted from studying production coding agent harnesses (Claude Code, Cursor, Aider, Codex, Cline, Windsurf, Devin, Manus). These are the engineering techniques that make real-world harnesses work — distilled into implementable, teachable concepts.
 
-### [ ] File Edit Strategies (Search/Replace, Diff, Apply Model)
+### [x] File Edit Strategies (Search/Replace, Diff, Apply Model)
 
 **What it is:** The different approaches agents use to modify files — the format the LLM outputs edits in, and the algorithm that applies those edits to the actual file. Approaches range from full-file regeneration to search/replace blocks to unified diffs, each with different tradeoffs in accuracy, token efficiency, and model compatibility.
 

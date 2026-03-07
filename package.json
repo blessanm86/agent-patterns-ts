@@ -87,6 +87,7 @@
     "dev:coordination-topologies:graph": "tsx src/coordination-topologies/index.ts --topology=graph",
     "dev:a2a-protocol": "tsx src/a2a-protocol/index.ts",
     "dev:a2a-protocol:sync": "tsx src/a2a-protocol/index.ts --sync",
+    "dev:file-edit-strategies": "tsx src/file-edit-strategies/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
