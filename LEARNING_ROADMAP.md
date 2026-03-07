@@ -73,7 +73,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | File Edit Strategies                      | Done    | Tool Description Engineering                               |
 | Architect/Editor Model Split              | Done    | Cost Tracking & Model Selection, File Edit Strategies      |
 | CodeAct (Code-as-Action)                  | Done    | Sandboxed Code Execution                                   |
-| KV-Cache-Aware Context Design             | Pending | Prompt Caching, Context Window Management                  |
+| KV-Cache-Aware Context Design             | Done    | Prompt Caching, Context Window Management                  |
 | Pre-Execution Validation                  | Pending | Self-Validation Tool, Sandboxed Code Execution             |
 
 The table order is the recommended learning progression. Start from the top; the **Builds on** column shows prerequisites.
@@ -1652,7 +1652,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] KV-Cache-Aware Context Design (Cache-First Architecture)
+### [x] KV-Cache-Aware Context Design (Cache-First Architecture)
 
 **What it is:** Designing the entire agent context pipeline — message ordering, tool definitions, system prompts, action history — around maximizing prefix cache hit rate. Every architectural decision serves cache efficiency: context is append-only (never mutate previous entries), tool lists use stable ordering and naming conventions, timestamps are excluded from system prompts, and tool availability is controlled via logit masking rather than removing tools from the prompt (which would change the prefix and invalidate the cache).
 

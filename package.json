@@ -90,6 +90,7 @@
     "dev:file-edit-strategies": "tsx src/file-edit-strategies/index.ts",
     "dev:architect-editor": "tsx src/architect-editor/index.ts",
     "dev:code-act": "tsx src/code-act/index.ts",
+    "dev:kv-cache-design": "tsx src/kv-cache-design/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",
