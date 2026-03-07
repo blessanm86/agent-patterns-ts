@@ -69,7 +69,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Event Sourcing for Agents                 | Done    | State Graph                                                |
 | Test-Time Compute Scaling                 | Done    | Cost Tracking & Model Selection, Self-Validation Tool      |
 | Multi-Agent Coordination Topologies       | Done    | Multi-Agent Routing, Sub-Agent Delegation                  |
-| A2A Protocol (Agent-to-Agent)             | Pending | MCP                                                        |
+| A2A Protocol (Agent-to-Agent)             | Done    | MCP                                                        |
 | File Edit Strategies                      | Pending | Tool Description Engineering                               |
 | Architect/Editor Model Split              | Pending | Cost Tracking & Model Selection, File Edit Strategies      |
 | CodeAct (Code-as-Action)                  | Pending | Sandboxed Code Execution                                   |
@@ -1300,7 +1300,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] A2A Protocol (Agent-to-Agent Communication)
+### [x] A2A Protocol (Agent-to-Agent Communication)
 
 **What it is:** An open protocol for agents built on different platforms to discover, authenticate, and delegate tasks to each other. Unlike MCP (which connects agents to tools), A2A connects agents to other agents. Each agent publishes an "Agent Card" describing its capabilities. A client agent discovers available agents, negotiates tasks, and receives results — all over standard HTTP/JSON-RPC with SSE for streaming. This enables cross-platform agent interoperability without shared codebases.
 
