@@ -91,6 +91,8 @@
     "dev:architect-editor": "tsx src/architect-editor/index.ts",
     "dev:code-act": "tsx src/code-act/index.ts",
     "dev:kv-cache-design": "tsx src/kv-cache-design/index.ts",
+    "dev:shadow-validation": "tsx src/pre-execution-validation/index.ts",
+    "dev:shadow-validation:direct": "tsx src/pre-execution-validation/index.ts --direct",
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "evalite run",

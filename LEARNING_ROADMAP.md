@@ -10,71 +10,71 @@ A structured list of concepts for building production-grade AI agents, organized
 
 ## Progress Tracking
 
-| Concept                                   | Status  | Builds on                                                  |
-| ----------------------------------------- | ------- | ---------------------------------------------------------- |
-| Multi-Turn Conversation Memory            | Done    |                                                            |
-| Structured Output (JSON Mode)             | Done    |                                                            |
-| Reasoning Tool Pattern                    | Done    | Structured Output                                          |
-| Guardrails & Circuit Breakers             | Done    |                                                            |
-| Evaluation with Mocked Tools              | Done    |                                                            |
-| LLM Error Recovery                        | Done    |                                                            |
-| State Graph                               | Done    | ReAct Loop                                                 |
-| Context Window Management                 | Done    | Multi-Turn Memory                                          |
-| Multi-Agent Routing                       | Done    |                                                            |
-| Sub-Agent Delegation                      | Done    | Multi-Agent Routing                                        |
-| Streaming Responses (SSE)                 | Done    |                                                            |
-| RAG                                       | Done    |                                                            |
-| Prompt Caching                            | Done    |                                                            |
-| Tool Description Engineering              | Done    |                                                            |
-| Dual Return Pattern                       | Done    |                                                            |
-| Query Builder Pattern                     | Done    |                                                            |
-| Structured Entity Tags                    | Done    |                                                            |
-| Prompt Injection Detection                | Done    |                                                            |
-| Self-Instrumentation                      | Done    |                                                            |
-| Cost Tracking & Model Selection           | Done    |                                                            |
-| Declarative Plan Execution Tool           | Done    | Plan+Execute                                               |
-| On-Demand Skill Injection                 | Done    | Tool Description Engineering                               |
-| Self-Validation Tool (QA Gate)            | Done    | LLM Error Recovery                                         |
-| Post-Conversation Metadata                | Done    |                                                            |
-| Agent TODO Lists (Scaffold)               | Done    |                                                            |
-| Human-in-the-Loop                         | Done    | Guardrails                                                 |
-| Persistent Cross-Session Memory           | Done    | Multi-Turn Memory, Context Window Management               |
-| Agentic RAG                               | Done    | RAG                                                        |
-| Multi-Modal Agents                        | Done    |                                                            |
-| Ambient Context Store                     | Done    | Structured Entity Tags                                     |
-| Cross-Platform Response Rendering         | Done    | Structured Entity Tags                                     |
-| MCP (Model Context Protocol)              | Done    |                                                            |
-| Tool Bundle System                        | Done    |                                                            |
-| External Event-Triggered Agent            | Done    | Streaming                                                  |
-| Agent Middleware Pipeline                 | Done    | ReAct Loop                                                 |
-| Agent Framework Landscape [guide]         | Done    | MCP, A2A Protocol                                          |
-| Vendor Agent SDKs [guide]                 | Done    | Agent Framework Landscape                                  |
-| Orchestration Frameworks [guide]          | Done    | Agent Framework Landscape                                  |
-| TypeScript Agent Toolkits [guide]         | Done    | Agent Framework Landscape                                  |
-| Repository Mapping                        | Done    | RAG                                                        |
-| Client-Agnostic Agent Protocol            | Done    | Streaming                                                  |
-| Coding Agent Harness Architecture [guide] | Done    | Agent Framework Landscape                                  |
-| Harness-Derived Agent Platforms [guide]   | Done    | Coding Agent Harness Architecture, Vendor Agent SDKs, MCP  |
-| Sandboxed Code Execution                  | Done    |                                                            |
-| Long-Running Agents & Checkpointing       | Done    | State Graph                                                |
-| In-Band Metadata via Streaming Sentinel   | Done    | Streaming, Structured Output                               |
-| Sandboxed CLI Tool Bridge                 | Done    | Sandboxed Code Execution                                   |
-| Stateless Agent with History Re-Injection | Done    | Multi-Turn Memory, Context Window Management               |
-| Sub-Agent Event Demultiplexing            | Done    | Sub-Agent Delegation, Streaming                            |
-| Tool-Response Reminder Injection          | Done    | Tool Description Engineering                               |
-| Ordered Precondition Evaluation           | Done    | Evaluation with Mocked Tools                               |
-| Agent Dependency Injection                | Done    | ReAct Loop, Multi-Agent Routing                            |
-| Observational Memory                      | Done    | Persistent Cross-Session Memory, Context Window Management |
-| Dynamic Tool Selection                    | Done    | Tool Description Engineering                               |
-| Event Sourcing for Agents                 | Done    | State Graph                                                |
-| Test-Time Compute Scaling                 | Done    | Cost Tracking & Model Selection, Self-Validation Tool      |
-| Multi-Agent Coordination Topologies       | Done    | Multi-Agent Routing, Sub-Agent Delegation                  |
-| A2A Protocol (Agent-to-Agent)             | Done    | MCP                                                        |
-| File Edit Strategies                      | Done    | Tool Description Engineering                               |
-| Architect/Editor Model Split              | Done    | Cost Tracking & Model Selection, File Edit Strategies      |
-| CodeAct (Code-as-Action)                  | Done    | Sandboxed Code Execution                                   |
-| KV-Cache-Aware Context Design             | Done    | Prompt Caching, Context Window Management                  |
-| Pre-Execution Validation                  | Pending | Self-Validation Tool, Sandboxed Code Execution             |
+| Concept                                   | Status | Builds on                                                  |
+| ----------------------------------------- | ------ | ---------------------------------------------------------- |
+| Multi-Turn Conversation Memory            | Done   |                                                            |
+| Structured Output (JSON Mode)             | Done   |                                                            |
+| Reasoning Tool Pattern                    | Done   | Structured Output                                          |
+| Guardrails & Circuit Breakers             | Done   |                                                            |
+| Evaluation with Mocked Tools              | Done   |                                                            |
+| LLM Error Recovery                        | Done   |                                                            |
+| State Graph                               | Done   | ReAct Loop                                                 |
+| Context Window Management                 | Done   | Multi-Turn Memory                                          |
+| Multi-Agent Routing                       | Done   |                                                            |
+| Sub-Agent Delegation                      | Done   | Multi-Agent Routing                                        |
+| Streaming Responses (SSE)                 | Done   |                                                            |
+| RAG                                       | Done   |                                                            |
+| Prompt Caching                            | Done   |                                                            |
+| Tool Description Engineering              | Done   |                                                            |
+| Dual Return Pattern                       | Done   |                                                            |
+| Query Builder Pattern                     | Done   |                                                            |
+| Structured Entity Tags                    | Done   |                                                            |
+| Prompt Injection Detection                | Done   |                                                            |
+| Self-Instrumentation                      | Done   |                                                            |
+| Cost Tracking & Model Selection           | Done   |                                                            |
+| Declarative Plan Execution Tool           | Done   | Plan+Execute                                               |
+| On-Demand Skill Injection                 | Done   | Tool Description Engineering                               |
+| Self-Validation Tool (QA Gate)            | Done   | LLM Error Recovery                                         |
+| Post-Conversation Metadata                | Done   |                                                            |
+| Agent TODO Lists (Scaffold)               | Done   |                                                            |
+| Human-in-the-Loop                         | Done   | Guardrails                                                 |
+| Persistent Cross-Session Memory           | Done   | Multi-Turn Memory, Context Window Management               |
+| Agentic RAG                               | Done   | RAG                                                        |
+| Multi-Modal Agents                        | Done   |                                                            |
+| Ambient Context Store                     | Done   | Structured Entity Tags                                     |
+| Cross-Platform Response Rendering         | Done   | Structured Entity Tags                                     |
+| MCP (Model Context Protocol)              | Done   |                                                            |
+| Tool Bundle System                        | Done   |                                                            |
+| External Event-Triggered Agent            | Done   | Streaming                                                  |
+| Agent Middleware Pipeline                 | Done   | ReAct Loop                                                 |
+| Agent Framework Landscape [guide]         | Done   | MCP, A2A Protocol                                          |
+| Vendor Agent SDKs [guide]                 | Done   | Agent Framework Landscape                                  |
+| Orchestration Frameworks [guide]          | Done   | Agent Framework Landscape                                  |
+| TypeScript Agent Toolkits [guide]         | Done   | Agent Framework Landscape                                  |
+| Repository Mapping                        | Done   | RAG                                                        |
+| Client-Agnostic Agent Protocol            | Done   | Streaming                                                  |
+| Coding Agent Harness Architecture [guide] | Done   | Agent Framework Landscape                                  |
+| Harness-Derived Agent Platforms [guide]   | Done   | Coding Agent Harness Architecture, Vendor Agent SDKs, MCP  |
+| Sandboxed Code Execution                  | Done   |                                                            |
+| Long-Running Agents & Checkpointing       | Done   | State Graph                                                |
+| In-Band Metadata via Streaming Sentinel   | Done   | Streaming, Structured Output                               |
+| Sandboxed CLI Tool Bridge                 | Done   | Sandboxed Code Execution                                   |
+| Stateless Agent with History Re-Injection | Done   | Multi-Turn Memory, Context Window Management               |
+| Sub-Agent Event Demultiplexing            | Done   | Sub-Agent Delegation, Streaming                            |
+| Tool-Response Reminder Injection          | Done   | Tool Description Engineering                               |
+| Ordered Precondition Evaluation           | Done   | Evaluation with Mocked Tools                               |
+| Agent Dependency Injection                | Done   | ReAct Loop, Multi-Agent Routing                            |
+| Observational Memory                      | Done   | Persistent Cross-Session Memory, Context Window Management |
+| Dynamic Tool Selection                    | Done   | Tool Description Engineering                               |
+| Event Sourcing for Agents                 | Done   | State Graph                                                |
+| Test-Time Compute Scaling                 | Done   | Cost Tracking & Model Selection, Self-Validation Tool      |
+| Multi-Agent Coordination Topologies       | Done   | Multi-Agent Routing, Sub-Agent Delegation                  |
+| A2A Protocol (Agent-to-Agent)             | Done   | MCP                                                        |
+| File Edit Strategies                      | Done   | Tool Description Engineering                               |
+| Architect/Editor Model Split              | Done   | Cost Tracking & Model Selection, File Edit Strategies      |
+| CodeAct (Code-as-Action)                  | Done   | Sandboxed Code Execution                                   |
+| KV-Cache-Aware Context Design             | Done   | Prompt Caching, Context Window Management                  |
+| Pre-Execution Validation                  | Done   | Self-Validation Tool, Sandboxed Code Execution             |
 
 The table order is the recommended learning progression. Start from the top; the **Builds on** column shows prerequisites.
 
@@ -1718,7 +1718,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Pre-Execution Validation (Shadow Workspace)
+### [x] Pre-Execution Validation (Shadow Workspace)
 
 **What it is:** Before committing an agent's action to the user's real environment, the action is first applied in an isolated shadow environment where automated validators (linters, type checkers, test suites, language servers) verify correctness. Only if validation passes does the action propagate to the real workspace. This catches errors _before_ the user sees them, reducing the back-and-forth correction loop.
 
