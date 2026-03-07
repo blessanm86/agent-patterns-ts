@@ -68,7 +68,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | Dynamic Tool Selection                    | Done    | Tool Description Engineering                               |
 | Event Sourcing for Agents                 | Done    | State Graph                                                |
 | Test-Time Compute Scaling                 | Done    | Cost Tracking & Model Selection, Self-Validation Tool      |
-| Multi-Agent Coordination Topologies       | Pending | Multi-Agent Routing, Sub-Agent Delegation                  |
+| Multi-Agent Coordination Topologies       | Done    | Multi-Agent Routing, Sub-Agent Delegation                  |
 | A2A Protocol (Agent-to-Agent)             | Pending | MCP                                                        |
 | File Edit Strategies                      | Pending | Tool Description Engineering                               |
 | Architect/Editor Model Split              | Pending | Cost Tracking & Model Selection, File Edit Strategies      |
@@ -1269,7 +1269,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] Multi-Agent Coordination Topologies
+### [x] Multi-Agent Coordination Topologies
 
 **What it is:** The structural pattern of how multiple agents are connected and communicate — star (one orchestrator, many workers), chain (sequential pipeline), tree (hierarchical decomposition), and graph (peer-to-peer mesh). Each topology has different failure modes, latency profiles, and error propagation characteristics. The topology of coordination matters more than the number of agents: wrong topology amplifies errors up to 17x.
 
