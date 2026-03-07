@@ -72,7 +72,7 @@ A structured list of concepts for building production-grade AI agents, organized
 | A2A Protocol (Agent-to-Agent)             | Done    | MCP                                                        |
 | File Edit Strategies                      | Done    | Tool Description Engineering                               |
 | Architect/Editor Model Split              | Done    | Cost Tracking & Model Selection, File Edit Strategies      |
-| CodeAct (Code-as-Action)                  | Pending | Sandboxed Code Execution                                   |
+| CodeAct (Code-as-Action)                  | Done    | Sandboxed Code Execution                                   |
 | KV-Cache-Aware Context Design             | Pending | Prompt Caching, Context Window Management                  |
 | Pre-Execution Validation                  | Pending | Self-Validation Tool, Sandboxed Code Execution             |
 
@@ -1620,7 +1620,7 @@ Each concept is designed to be completable in a single focused session: build th
 
 ---
 
-### [ ] CodeAct (Code-as-Action)
+### [x] CodeAct (Code-as-Action)
 
 **What it is:** Instead of calling tools via structured JSON function calls, the agent writes executable code (Python, JavaScript, shell scripts) as its action mechanism. The code is executed in a sandboxed environment, and stdout/stderr become the observation. This replaces the traditional `{"tool": "search", "args": {"query": "..."}}` pattern with `results = search("...")` — real code that can combine multiple operations, use conditionals, and leverage libraries.
 
