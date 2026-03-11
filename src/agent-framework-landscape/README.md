@@ -1,5 +1,11 @@
 # The Agent Framework Landscape: A Taxonomy for Confused Developers
 
+---
+
+🎧 **Audio Overview** — [Listen](https://blessanm86.github.io/agent-patterns-ts/src/agent-framework-landscape/agent-framework-landscape-podcast.mp3) · 53:11
+
+---
+
 You've built a ReAct loop from scratch. You've wired up tools, managed context windows, streamed tokens, added guardrails, and delegated to sub-agents. Now the internet tells you to use a framework, and you're staring at a wall of options: LangGraph, CrewAI, AutoGen, Vercel AI SDK, Mastra, PydanticAI, Claude Agent SDK, OpenAI Agents SDK, Google ADK. Each claims to be the "right" way to build agents. Some are thin wrappers. Some are full runtimes. Some are products dressed as frameworks.
 
 This guide cuts through the confusion. It provides a taxonomy for understanding the agent framework ecosystem, compares the major players across every meaningful dimension, and gives you a decision framework for choosing — or not choosing — one.
