@@ -294,6 +294,28 @@ When checking harnesses during research:
 
 - **Do NOT use observability/monitoring examples** for demos (no dashboards, metrics, tracing, alerting). Pick domains like e-commerce, travel, recipes, restaurants, CI/CD pipelines, etc.
 
+### Audio Podcasts
+
+Each concept can optionally have a NotebookLM-generated podcast. The convention:
+
+- Drop the `.m4a` file into the concept folder (e.g. `src/react/react-podcast.m4a`)
+- From Claude Code, run: `/handle-podcasts`
+
+The skill converts to `.mp3` (64kbps mono), inserts the audio link into the concept README immediately after the first `---` near the top, and updates the root README Audio column.
+
+**Audio link format** (in concept READMEs):
+```markdown
+🎧 **Audio Overview** — [Listen](./filename.mp3) · MM:SS
+```
+
+**Storage:** `.mp3` files are committed via Git LFS (tracked in `.gitattributes`). Source `.m4a` files are gitignored.
+
+**Prerequisites (one-time per machine):**
+```bash
+brew install ffmpeg
+brew install git-lfs && git lfs install
+```
+
 ### Concept Kickoff
 
 When the user names a concept from the roadmap (e.g. "Context Window Management"), trigger the full process automatically: research (step 0) → plan → implement. No extra prompting needed.

@@ -4,6 +4,10 @@ _Part of the [Agent Patterns — TypeScript](../../README.md) series._
 
 ---
 
+🎧 **Audio Overview** — [Listen](./react-podcast.mp3) · 50:35
+
+---
+
 Unit tests break when you add AI. A function that routes tool calls through an LLM can't be pinned to a deterministic output — the model might phrase things differently, call tools in a different order, or reason through a problem in an unexpected way. Yet agents still need to be tested.
 
 This post builds a hotel reservation agent using the **ReAct pattern**, then walks through two phases of eval design: simple deterministic checks (did the agent call the right tools?) up through LLM-as-judge scoring (was the final response actually good?). All evals run locally against Ollama — no API keys, no network calls.

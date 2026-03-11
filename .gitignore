@@ -6,3 +6,6 @@ memory/
 .claude/settings.local.json
 .research/
 .checkpoints/
+
+# Audio source files (NotebookLM exports — convert via /handle-podcasts)
+*.m4a

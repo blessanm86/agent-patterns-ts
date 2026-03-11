@@ -1,5 +1,11 @@
 # Inside the Black Box: How Coding Agents Actually Work
 
+---
+
+🎧 **Audio Overview** — [Listen](./coding-agent-harness-architecture-podcast.mp3) · 50:32
+
+---
+
 You've built a ReAct loop, wired up tools, managed context windows, streamed tokens, delegated to sub-agents, and added guardrails. You've studied frameworks, SDKs, and orchestration libraries. But there's one layer of the agent stack you use every day that still feels like a black box: the **coding agent harness**.
 
 Claude Code, Aider, OpenCode — these aren't toy demos or framework examples. They're production systems that combine _dozens_ of the patterns you've built in this repo into a single product. This guide cracks them open. By the end, you'll look at your coding agent and think: "oh, _that's_ what it's doing when it pauses to compact context" or "so _that's_ why it spawns a sub-agent for file exploration."
