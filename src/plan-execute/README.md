@@ -4,6 +4,10 @@ _Part of the [Agent Patterns — TypeScript](../../README.md) series. If you hav
 
 ---
 
+🎧 **Audio Overview** — [Listen](https://blessanm86.github.io/agent-patterns-ts/src/plan-execute/plan-execute-podcast.mp3) · 50:24
+
+---
+
 ReAct works well when each step depends on the previous result — you can't confirm a room price until you've checked availability, and you shouldn't book a room until the guest confirms. The model needs to see each result before it can decide what to do next.
 
 But not all tasks have that dependency structure. Consider trip planning: searching for flights, hotels, attractions, and restaurants are four **independent** tasks. You don't need flight results before you can look up restaurants. There's no chain of dependencies — just a set of parallel lookups that all feed into a final synthesis.
