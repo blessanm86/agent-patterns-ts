@@ -14,18 +14,7 @@ Process any new `.m4a` podcast files in `src/`, convert them to `.mp3`, and upda
 **Check ffmpeg:**
 Run `which ffmpeg`. If missing, stop and tell the user: `ffmpeg is required. Run: brew install ffmpeg`
 
-**Check git-lfs:**
-Run `which git-lfs`. If missing, stop and tell the user:
-
-```
-git-lfs is required. Run:
-  brew install git-lfs && git lfs install
-```
-
-**Ensure .gitattributes tracks \*.mp3:**
-Check if `.gitattributes` exists and contains `*.mp3`. If not, run:
-`git lfs track "*.mp3"`
-This creates or updates `.gitattributes`. Stage it immediately: `git add .gitattributes`
+**No git-lfs needed:** `.mp3` files are committed as regular git objects and served via GitHub Pages. Skip any LFS setup.
 
 ---
 
@@ -58,20 +47,27 @@ For each successfully converted `.mp3`, open the corresponding concept `README.m
 
   ---
 
-  🎧 **Audio Overview** — [Listen](./file.mp3) · MM:SS
+  🎧 **Audio Overview** — [Listen](PAGES_URL) · MM:SS
 
   ---
 
   (rest of file)
   ```
 
+**Audio URL format:** GitHub Pages, not a relative path.
+
+The base URL is `https://blessanm86.github.io/agent-patterns-ts/`. Derive the full URL from the `.mp3` path relative to the repo root.
+
+Example: for `src/react/react-podcast.mp3` →
+`https://blessanm86.github.io/agent-patterns-ts/src/react/react-podcast.mp3`
+
 **Line to insert:**
 
 ```
-🎧 **Audio Overview** — [Listen](./FILENAME.mp3) · DURATION
+🎧 **Audio Overview** — [Listen](https://blessanm86.github.io/agent-patterns-ts/src/CONCEPT/FILENAME.mp3) · DURATION
 ```
 
-Example: `🎧 **Audio Overview** — [Listen](./react-podcast.mp3) · 23:45`
+Example: `🎧 **Audio Overview** — [Listen](https://blessanm86.github.io/agent-patterns-ts/src/react/react-podcast.mp3) · 50:35`
 
 **Duplicate guard:** Before inserting, check if a `🎧` line already exists. If so, update it in place.
 
@@ -90,7 +86,7 @@ Open `README.md` at the repo root.
 - Add `—` in the Audio cell for every existing row
 
 **For each newly converted concept**, find the matching row and set its Audio cell to:
-`[🎧](src/CONCEPT-FOLDER/FILENAME.mp3)`
+`[🎧](https://blessanm86.github.io/agent-patterns-ts/src/CONCEPT-FOLDER/FILENAME.mp3)`
 
 **If the Audio column already exists**, only update cells for the newly converted concepts.
 

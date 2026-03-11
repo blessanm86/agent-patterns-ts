@@ -304,16 +304,17 @@ Each concept can optionally have a NotebookLM-generated podcast. The convention:
 The skill converts to `.mp3` (64kbps mono), inserts the audio link into the concept README immediately after the first `---` near the top, and updates the root README Audio column.
 
 **Audio link format** (in concept READMEs):
+
 ```markdown
 🎧 **Audio Overview** — [Listen](./filename.mp3) · MM:SS
 ```
 
-**Storage:** `.mp3` files are committed via Git LFS (tracked in `.gitattributes`). Source `.m4a` files are gitignored.
+**Storage:** `.mp3` files are committed as regular git objects and served via GitHub Pages at `https://blessanm86.github.io/agent-patterns-ts/`. Source `.m4a` files are gitignored.
 
 **Prerequisites (one-time per machine):**
+
 ```bash
 brew install ffmpeg
-brew install git-lfs && git lfs install
 ```
 
 ### Concept Kickoff

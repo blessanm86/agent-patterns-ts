@@ -4,7 +4,7 @@ _Part of the [Agent Patterns — TypeScript](../../README.md) series._
 
 ---
 
-🎧 **Audio Overview** — [Listen](./react-podcast.mp3) · 50:35
+🎧 **Audio Overview** — [Listen](https://blessanm86.github.io/agent-patterns-ts/src/react/react-podcast.mp3) · 50:35
 
 ---
 

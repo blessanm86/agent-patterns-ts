@@ -2,7 +2,7 @@
 
 ---
 
-🎧 **Audio Overview** — [Listen](./coding-agent-harness-architecture-podcast.mp3) · 50:32
+🎧 **Audio Overview** — [Listen](https://blessanm86.github.io/agent-patterns-ts/src/coding-agent-harness-architecture/coding-agent-harness-architecture-podcast.mp3) · 50:32
 
 ---
 
